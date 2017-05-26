@@ -1,0 +1,74 @@
+#CMakeLists.txt for WISCO_Plugin
+#===============================================================================
+#
+#
+#-------------------------------------------------------------------------------
+# Author: Colin Smith
+# Date: 1/27/2017
+#===============================================================================
+set(PLUGIN_NAME "WISCO_Plugin"
+    CACHE STRING "Name of shared library to create")
+
+#Specify Files
+file(GLOB SOURCE_FILES *.cpp *.c)
+file(GLOB INCLUDE_FILES *.h)
+
+#Specify Plugin Details
+add_library(${PLUGIN_NAME} SHARED ${SOURCE_FILES} ${INCLUDE_FILES})
+set_target_properties(${PLUGIN_NAME} PROPERTIES DEBUG_POSTFIX "_d")
+#Specify Libraries to Link
+
+target_link_libraries(${PLUGIN_NAME} ${OpenSim_LIBRARIES})
+
+SET_TARGET_PROPERTIES (${PLUGIN_NAME} PROPERTIES FOLDER WISCO_Plugin)
+
+# Find dependencies
+# -----------------------
+set(special_ext_lib "HDF5;")
+
+FILE(GLOB EXTERNAL_LIB_NAMES RELATIVE "${WISCO_OPENSIM_DIR}/../install-dependencies/" "${WISCO_OPENSIM_DIR}/../install-dependencies/*")
+FOREACH(external_lib_name ${EXTERNAL_LIB_NAMES})
+  if(external_lib_name IN_LIST special_ext_lib)
+    continue()
+  endif()
+
+  find_library(external_lib_debug "${external_lib_name}_d.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/${external_lib_name}/")
+  find_library(external_lib "${external_lib_name}.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/${external_lib_name}/")
+
+  if(${external_lib} STREQUAL "external_lib-NOTFOUND")
+      message(FATAL_ERROR "Couldn't find the ${external_lib_name} library")
+  elseif(${external_lib_debug} STREQUAL "external_lib_debug-NOTFOUND")
+      message(FATAL_ERROR "Couldn't find the ${external_lib_name} debug library")
+  else()
+    message(STATUS "Found ${external_lib_name} at: ${external_lib}")
+  endif()
+
+  target_link_libraries(${PLUGIN_NAME} debug ${external_lib_debug} optimized ${external_lib})
+
+  unset(external_lib_debug)
+  unset(external_lib)
+ENDFOREACH(external_lib_name)
+
+# Find Special External Libraries
+#--------------------------------
+
+#HDF5
+find_library(HDF5_hl_cpp_lib_debug "libhdf5_hl_cpp_D.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
+find_library(HDF5_hl_cpp_lib "libhdf5_hl_cpp.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
+target_link_libraries(${PLUGIN_NAME} debug ${HDF5_hl_cpp_lib_debug} optimized ${HDF5_hl_cpp_lib})
+
+find_library(HDF5_cpp_lib_debug "libhdf5_cpp_D.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
+find_library(HDF5_cpp_lib "libhdf5_cpp.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
+target_link_libraries(${PLUGIN_NAME} debug ${HDF5_cpp_lib_debug} optimized ${HDF5_cpp_lib})
+
+find_library(HDF5_lib_debug "libhdf5_D.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
+find_library(HDF5_lib "libhdf5.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
+target_link_libraries(${PLUGIN_NAME} debug ${HDF5_lib_debug} optimized ${HDF5_lib})
+
+
+set_target_properties(
+    ${PLUGIN_NAME} PROPERTIES
+    DEFINE_SYMBOL OSIMPLUGIN_EXPORTS
+    PROJECT_LABEL "Libraries - ${PLUGIN_NAME}")
+
+install(TARGETS ${PLUGIN_NAME} DESTINATION plugin)
