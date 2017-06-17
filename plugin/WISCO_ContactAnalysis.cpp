@@ -29,11 +29,11 @@
 #include "WISCO_ContactAnalysis.h"
 #include <OpenSim\Common\Reporter.h>
 #include <OpenSim/Simulation/osimSimulation.h>
-#include "WISCO_VTKFileAdapter.h"
-//#include <OpenSim\OpenSim.h>
+#include "WISCO_VTPFileAdapter.h"
 #include "H5Cpp.h"
 #include "hdf5_hl.h"
 #include "WISCO_ElasticFoundationForce.h"
+#include "WISCO_HelperFunctions.h"
 using namespace OpenSim;
 
 
@@ -44,7 +44,7 @@ using namespace OpenSim;
 WISCO_ContactAnalysis::WISCO_ContactAnalysis() : Analysis()
 {
 	setNull();
-	constructProperties();
+	constructProperties();	
 }
 
 WISCO_ContactAnalysis::WISCO_ContactAnalysis(Model *aModel) :
@@ -58,7 +58,6 @@ WISCO_ContactAnalysis::WISCO_ContactAnalysis(Model *aModel) :
     setModel(*aModel);
 
 }
-
 
 //_____________________________________________________________________________
 /**
@@ -79,6 +78,7 @@ void WISCO_ContactAnalysis::constructProperties()
 	defaultContactNames.append("all");
 
     constructProperty_contact_names(defaultContactNames);
+	constructProperty_time_interval(0);
 	constructProperty_output_pressure(true);
 	constructProperty_output_proximity(true);
 	constructProperty_output_data_mesh_format("face");
@@ -90,7 +90,7 @@ void WISCO_ContactAnalysis::constructProperties()
 	constructProperty_write_static_vtk_files(true);
 	constructProperty_write_dynamic_vtk_files(true);
 	constructProperty_dynamic_output_frame("ground");
-	constructProperty_write_variable_property_vtk(false);
+	constructProperty_write_variable_property_vtk("none");
 
 }
 
@@ -113,7 +113,155 @@ void WISCO_ContactAnalysis::setModel(Model& aModel)
 //=============================================================================
 // ANALYSIS
 //=============================================================================
+//_____________________________________________________________________________
+/**
+* This method is called at the beginning of an analysis so that any
+* necessary initializations may be performed.
+*
+* This method is meant to be called at the beginning of an integration
+*
+* @param s current state of System
+*
+* @return -1 on error, 0 otherwise.
+*/
+int WISCO_ContactAnalysis::begin(SimTK::State& s)
+{
+	if (!proceed()) return(0);
 
+	//Save initial pose
+	SimTK::Vector initial_Q = s.getQ();
+	SimTK::Vector initial_U = s.getU();
+
+	//Find contact pairs for analysis
+	const ForceSet& forceSet = _model->getForceSet();
+
+	if (get_contact_names(0) == "all") {
+		for (const WISCO_ElasticFoundationForce& contactForce : _model->getComponentList<WISCO_ElasticFoundationForce>()) {
+			_contact_force_names.push_back(contactForce.getName());
+			_contact_mesh_names.push_back(contactForce.getConnectee<WISCO_ContactMesh>("casting_mesh").getName());
+			_contact_mesh_names.push_back(contactForce.getConnectee<WISCO_ContactMesh>("target_mesh").getName());
+		}
+	}
+	else {
+		for (int i = 0; i < getProperty_contact_names().size(); ++i) {
+			const WISCO_ElasticFoundationForce& contactForce = _model->getComponent<WISCO_ElasticFoundationForce>(get_contact_names(i));
+			_contact_force_names.push_back(contactForce.getName());
+			_contact_mesh_names.push_back(contactForce.getConnectee<WISCO_ContactMesh>("casting_mesh").getName());
+			_contact_mesh_names.push_back(contactForce.getConnectee<WISCO_ContactMesh>("target_mesh").getName());
+		}
+	}
+
+	//Add Contact Reporters
+	for (int i = 0; i < _contact_force_names.size(); ++i) {
+
+		WISCO_ElasticFoundationForce& contactForce = _model->updComponent
+			<WISCO_ElasticFoundationForce>(_contact_force_names[i]);
+
+		addContactReportersToModel(contactForce);
+	}
+
+	//States Reporter
+	StatesTrajectoryReporter* states_reporter = new StatesTrajectoryReporter();
+	states_reporter->setName("states_reporter");
+	states_reporter->set_report_time_interval(0);
+	_model->addComponent(states_reporter);
+
+	//SimTK::State new_state = _model->initSystem();
+	s = _model->initSystem();
+	//Setup WISCO_ElasticFoundationForces in model for contact analysis
+	for (int i = 0; i < _contact_force_names.size(); ++i) {
+
+		WISCO_ElasticFoundationForce& contactForce = _model->updComponent
+			<WISCO_ElasticFoundationForce>(_contact_force_names[i]);
+
+		contactForce.setModelingOption(s, "flip_meshes", 1);
+
+		SimTK::String mesh_output_format =
+			SimTK::String::toLower(get_output_data_mesh_format());
+
+		if (mesh_output_format == "vertex" || mesh_output_format == "both") {
+			contactForce.setModelingOption(s, "interpolate_vertex_data", 1);
+		}
+
+		if (get_h5_summary_contact_data()) {
+			contactForce.setModelingOption(s, "contact_stats", 1);
+
+			if (get_h5_medial_lateral_summary()) {
+				contactForce.setModelingOption(s, "contact_stats_medial_lateral", 1);
+			}
+		}
+	}
+
+	//Setup Vertex location storage (dynamic output only)
+	if (get_write_dynamic_vtk_files()) {
+		_mesh_vertex_locations.resize(_contact_mesh_names.size());
+
+		for (int i = 0; i < _contact_mesh_names.size(); ++i) {
+
+			int mesh_nVer = _model->getComponent<WISCO_ContactMesh>
+				(_contact_mesh_names[i]).getPolygonalMesh().getNumVertices();
+
+			_mesh_vertex_locations[i].resize(mesh_nVer, 0);
+		}
+	}
+
+
+	//Repose state
+	s.setQ(initial_Q);
+	s.setU(initial_U);
+
+	record(s);
+	return(0);
+}
+
+
+//_____________________________________________________________________________
+/**
+* This method is called to perform the analysis.  It can be called during
+* the execution of a forward integrations or after the integration by
+* feeding it the necessary data.
+*
+* When called during an integration, this method is meant to be called
+*
+* This method should be overridden in derived classes.  It is
+* included here so that the derived class will not have to implement it if
+* it is not necessary.
+*
+* @param s current state of system
+*
+* @return -1 on error, 0 otherwise.
+*/
+int WISCO_ContactAnalysis::step(const SimTK::State& s, int stepNumber)
+{
+	if (!proceed(stepNumber)) return(0);
+
+	record(s);
+
+	return(0);
+}
+//_____________________________________________________________________________
+/**
+* This method is called at the end of an analysis so that any
+* necessary finalizations may be performed.
+*
+* This method is meant to be called at the end of an integration
+*
+* This method should be overridden in the child class.  It is
+* included here so that the child class will not have to implement it if it
+* is not necessary.
+*
+* @param s current state of System
+*
+* @return -1 on error, 0 otherwise.
+*/
+int WISCO_ContactAnalysis::end(SimTK::State& s)
+{
+	if (!proceed()) return 0;
+
+	record(s);
+
+	return(0);
+}
 
 int WISCO_ContactAnalysis::record(const SimTK::State& s)
 {
@@ -122,37 +270,23 @@ int WISCO_ContactAnalysis::record(const SimTK::State& s)
 	//Store mesh vertex locations
 	if (get_write_dynamic_vtk_files()) {
 		std::string frame = get_dynamic_output_frame();
-
 		
+		for (int i = 0; i < _contact_mesh_names.size(); ++i) {
 
-		for (int i = 0; i < _contact_force_names.size(); ++i) {
 			//Target Mesh
-			int mesh1_nRow = _mesh1_vertex_locations[i].nrow();
-			int mesh1_nCol = _mesh1_vertex_locations[i].ncol();
+			int nRow = _mesh_vertex_locations[i].nrow();
+			int nCol = _mesh_vertex_locations[i].ncol();
 
-			_mesh1_vertex_locations[i].resizeKeep(mesh1_nRow, mesh1_nCol + 1);
+			_mesh_vertex_locations[i].resizeKeep(nRow, nCol + 1);
 
-			SimTK::Vector_<SimTK::Vec3> mesh1_ver = _model->getComponent<WISCO_ElasticFoundationForce>
-				(_contact_force_names[i]).getMeshVerticesInFrame(s, "target_mesh", frame);
+			SimTK::Vector_<SimTK::Vec3> ver = _model->getComponent<WISCO_ContactMesh>
+				(_contact_mesh_names[i]).getVertexLocationsInFrame(s, frame);
 
-			double test = mesh1_ver(0)(0);
+			double test = ver(0)(0);
 
-			for (int j = 0; j < mesh1_nRow; ++j){
-				_mesh1_vertex_locations[i](j, mesh1_nCol) = mesh1_ver(j);
-			}
-			
-			//Mesh2
-			int mesh2_nRow = _mesh2_vertex_locations[i].nrow();
-			int mesh2_nCol = _mesh2_vertex_locations[i].ncol();
-
-			_mesh2_vertex_locations[i].resizeKeep(mesh2_nRow, mesh2_nCol + 1);
-
-			SimTK::Vector_<SimTK::Vec3> mesh2_ver = _model->getComponent<WISCO_ElasticFoundationForce>
-				(_contact_force_names[i]).getMeshVerticesInFrame(s, "casting_mesh", frame);
-
-			for (int j = 0; j < mesh2_nRow; ++j) {
-				_mesh2_vertex_locations[i](j, mesh2_nCol) = mesh2_ver(j);
-			}
+			for (int j = 0; j < nRow; ++j){
+				_mesh_vertex_locations[i](j, nCol) = ver(j);
+			}			
 		}
 
 	}
@@ -169,20 +303,20 @@ void WISCO_ContactAnalysis::addContactReportersToModel(WISCO_ElasticFoundationFo
 	std::string force_name = contactForce.getName();
 
 	//Raw Data
-	if (get_h5_raw_contact_data()) {
+	if (get_h5_raw_contact_data() || get_write_static_vtk_files() || get_write_dynamic_vtk_files()) {
 		//Pressure Reporters
 		if (get_output_pressure()) {
 
 			//Triangle Pressure
 			if (mesh_output_format == "face" || mesh_output_format == "both") {
-				addContactReporter(contactForce, "target_mesh_tri_pressure", "vector");
-				addContactReporter(contactForce, "casting_mesh_tri_pressure", "vector");
+				addContactReporter(contactForce, "target_mesh", mesh1_name, "tri","pressure","vector");
+				addContactReporter(contactForce, "casting_mesh", mesh2_name, "tri","pressure","vector");
 			}
 
 			//Vertex Pressure
 			if (mesh_output_format == "vertex" || mesh_output_format == "both") {
-				addContactReporter(contactForce, "target_mesh_vertex_pressure", "vector");
-				addContactReporter(contactForce, "casting_mesh_vertex_pressure", "vector");
+				addContactReporter(contactForce, "target_mesh", mesh1_name, "vertex","pressure", "vector");
+				addContactReporter(contactForce, "casting_mesh", mesh2_name, "vertex","pressure","vector");
 
 			}
 		}
@@ -191,265 +325,88 @@ void WISCO_ContactAnalysis::addContactReportersToModel(WISCO_ElasticFoundationFo
 		if (get_output_proximity()) {
 			//Triangle Proximity
 			if (mesh_output_format == "face" || mesh_output_format == "both") {
-				addContactReporter(contactForce, "target_mesh_tri_proximity", "vector");
-				addContactReporter(contactForce, "casting_mesh_tri_proximity", "vector");
+				addContactReporter(contactForce, "target_mesh", mesh1_name, "tri","proximity","vector");
+				addContactReporter(contactForce, "casting_mesh", mesh2_name, "tri","proximity","vector");
 			}
 			//Vertex Proximity
 			if (mesh_output_format == "vertex" || mesh_output_format == "both") {
-				addContactReporter(contactForce, "target_mesh_vertex_proximity","vector");
-				addContactReporter(contactForce, "casting_mesh_vertex_proximity","vector");
+				addContactReporter(contactForce, "target_mesh", mesh1_name,"vertex","proximity","vector");
+				addContactReporter(contactForce, "casting_mesh", mesh2_name, "vertex","proximity","vector");
 			}
 		}
 	}
 	//Summary Stats
 	if (get_h5_summary_contact_data()) {
-		addContactReporter(contactForce, "target_mesh_mean_pressure","real");
-		addContactReporter(contactForce, "target_mesh_max_pressure", "real");
-		addContactReporter(contactForce, "target_mesh_mean_proximity", "real");
-		addContactReporter(contactForce, "target_mesh_max_proximity", "real");
-		addContactReporter(contactForce, "target_mesh_contact_area", "real");
-		addContactReporter(contactForce, "target_mesh_cop", "vec3");
-		addContactReporter(contactForce, "target_mesh_contact_force", "vec3");
-
-		addContactReporter(contactForce, "casting_mesh_mean_pressure", "real");
-		addContactReporter(contactForce, "casting_mesh_max_pressure", "real");
-		addContactReporter(contactForce, "casting_mesh_mean_proximity", "real");
-		addContactReporter(contactForce, "casting_mesh_max_proximity", "real");
-		addContactReporter(contactForce, "casting_mesh_contact_area", "real");
-		addContactReporter(contactForce, "casting_mesh_cop", "vec3");
-		addContactReporter(contactForce, "casting_mesh_contact_force", "vec3");
+		std::vector<std::string> stat_names;
+		std::vector<std::string> stat_types;
+		
+		stat_names.push_back("mean_pressure");
+		stat_types.push_back("real");
+		stat_names.push_back("max_pressure");
+		stat_types.push_back("real");
+		stat_names.push_back("mean_proximity");
+		stat_types.push_back("real");
+		stat_names.push_back("max_proximity");
+		stat_types.push_back("real");
+		stat_names.push_back("contact_area");
+		stat_types.push_back("real");
+		stat_names.push_back("cop");
+		stat_types.push_back("vec3");
+		stat_names.push_back("contact_force");
+		stat_types.push_back("vec3");
+		
+		for (int i = 0; i < stat_names.size(); ++i) {
+				addContactReporter(contactForce, "target_mesh", mesh1_name, "total", stat_names[i], stat_types[i]);
+				addContactReporter(contactForce, "casting_mesh", mesh2_name, "total", stat_names[i], stat_types[i]);
+		}
 
 		if (get_h5_medial_lateral_summary()) {
-			addContactReporter(contactForce, "target_mesh_mean_pressure_medial", "real");
-			addContactReporter(contactForce, "target_mesh_max_pressure_medial", "real");
-			addContactReporter(contactForce, "target_mesh_mean_proximity_medial", "real");
-			addContactReporter(contactForce, "target_mesh_max_proximity_medial", "real");
-			addContactReporter(contactForce, "target_mesh_contact_area_medial", "real");
-			addContactReporter(contactForce, "target_mesh_cop_medial", "vec3");
-			addContactReporter(contactForce, "target_mesh_contact_force_medial", "vec3");
+			for (int i = 0; i < stat_names.size(); ++i) {
+				addContactReporter(contactForce, "target_mesh", mesh1_name, "medial", stat_names[i], stat_types[i]);
+				addContactReporter(contactForce, "casting_mesh", mesh2_name, "medial", stat_names[i], stat_types[i]);
 
-			addContactReporter(contactForce, "casting_mesh_mean_pressure_medial", "real");
-			addContactReporter(contactForce, "casting_mesh_max_pressure_medial", "real");
-			addContactReporter(contactForce, "casting_mesh_mean_proximity_medial", "real");
-			addContactReporter(contactForce, "casting_mesh_max_proximity_medial", "real");
-			addContactReporter(contactForce, "casting_mesh_contact_area_medial", "real");
-			addContactReporter(contactForce, "casting_mesh_cop_medial", "vec3");
-			addContactReporter(contactForce, "casting_mesh_contact_force_medial", "vec3");
-
-			addContactReporter(contactForce, "target_mesh_mean_pressure_lateral", "real");
-			addContactReporter(contactForce, "target_mesh_max_pressure_lateral", "real");
-			addContactReporter(contactForce, "target_mesh_mean_proximity_lateral", "real");
-			addContactReporter(contactForce, "target_mesh_max_proximity_lateral", "real");
-			addContactReporter(contactForce, "target_mesh_contact_area_lateral", "real");
-			addContactReporter(contactForce, "target_mesh_cop_lateral", "vec3");
-			addContactReporter(contactForce, "target_mesh_contact_force_lateral", "vec3");
-
-			addContactReporter(contactForce, "casting_mesh_mean_pressure_lateral", "real");
-			addContactReporter(contactForce, "casting_mesh_max_pressure_lateral", "real");
-			addContactReporter(contactForce, "casting_mesh_mean_proximity_lateral", "real");
-			addContactReporter(contactForce, "casting_mesh_max_proximity_lateral", "real");
-			addContactReporter(contactForce, "casting_mesh_contact_area_lateral", "real");
-			addContactReporter(contactForce, "casting_mesh_cop_lateral", "vec3");
-			addContactReporter(contactForce, "casting_mesh_contact_force_lateral", "vec3");
+				addContactReporter(contactForce, "target_mesh", mesh1_name, "lateral", stat_names[i], stat_types[i]);
+				addContactReporter(contactForce, "casting_mesh", mesh2_name, "lateral", stat_names[i], stat_types[i]);
+			}
 		}
 	}
 }
-/**
-reporter_type = "vector" or "
-*/
-void WISCO_ContactAnalysis::addContactReporter(WISCO_ElasticFoundationForce& contactForce,
-	const SimTK::String& output_name, const SimTK::String& reporter_type) {
 
-	SimTK::String target_id = "target_mesh";
-	SimTK::String casting_id = "casting_mesh";
+void WISCO_ContactAnalysis::addContactReporter(
+	WISCO_ElasticFoundationForce& contactForce, 
+	const std::string& mesh_type, const std::string& mesh_name,
+	const std::string& data_type, const std::string& data_name, 
+	const std::string& reporter_type) {
 
-	SimTK::String mesh_name, data_name;
-	
-
-	if (output_name.compare(0, target_id.size(), target_id)==0) {
-		mesh_name = contactForce.getConnectee<WISCO_ContactMesh>("target_mesh").getName();
-		data_name = output_name.substr(target_id.size());
-	}
-
-	if (output_name.compare(0, casting_id.size(), casting_id)==0) {
-		mesh_name = contactForce.getConnectee<WISCO_ContactMesh>("casting_mesh").getName();
-		data_name = output_name.substr(casting_id.size());
-	}
-
-	SimTK::String force_name = contactForce.getName();
+	std::string force_name = contactForce.getName();
+	std::string reporter_name = force_name + "|" + mesh_name + "|" + data_type + "|" + data_name;
+	std::string output_name = mesh_type + "_" + data_type + "_" + data_name;
+	double time_interval = get_time_interval();
 
 	if (reporter_type == "vector") {
 		TableReporterVector* mesh1_reporter = new TableReporterVector();
-		mesh1_reporter->setName(force_name + "_" + mesh_name + data_name);
-		mesh1_reporter->set_report_time_interval(0);
+		mesh1_reporter->setName(reporter_name);
+		mesh1_reporter->set_report_time_interval(time_interval);
 		mesh1_reporter->addToReport(contactForce.getOutput(output_name));
 		_model->addComponent(mesh1_reporter);
 	}
 
 	if (reporter_type == "real") {
 		TableReporter* mesh1_reporter = new TableReporter();
-		mesh1_reporter->setName(force_name + "_" + mesh_name + data_name);
-		mesh1_reporter->set_report_time_interval(0);
+		mesh1_reporter->setName(reporter_name);
+		mesh1_reporter->set_report_time_interval(time_interval);
 		mesh1_reporter->addToReport(contactForce.getOutput(output_name));
 		_model->addComponent(mesh1_reporter);
 	}
 
 	if (reporter_type == "vec3") {
 		TableReporterVec3* mesh1_reporter = new TableReporterVec3();
-		mesh1_reporter->setName(force_name + "_" + mesh_name + data_name);
-		mesh1_reporter->set_report_time_interval(0);
+		mesh1_reporter->setName(reporter_name);
+		mesh1_reporter->set_report_time_interval(time_interval);
 		mesh1_reporter->addToReport(contactForce.getOutput(output_name));
 		_model->addComponent(mesh1_reporter);
 	}
 }
-//_____________________________________________________________________________
-/**
- * This method is called at the beginning of an analysis so that any
- * necessary initializations may be performed.
- *
- * This method is meant to be called at the beginning of an integration 
- *
- * @param s current state of System
- *
- * @return -1 on error, 0 otherwise.
- */
-int WISCO_ContactAnalysis::begin( SimTK::State& s )
-{
-    if(!proceed()) return(0);
-	
-
-	//Find contact pairs for analysis
-	const ForceSet& forceSet = _model->getForceSet();
-
-	if (get_contact_names(0) == "all") {
-		for (const WISCO_ElasticFoundationForce& contactForce : _model->getComponentList<WISCO_ElasticFoundationForce>()){
-			_contact_force_names.push_back(contactForce.getName());			
-		}
-	}
-	else {
-		for (int i = 0; i < getProperty_contact_names().size(); ++i) {
-			const WISCO_ElasticFoundationForce& contactForce = _model->getComponent<WISCO_ElasticFoundationForce>(get_contact_names(i));
-			_contact_force_names.push_back(contactForce.getName());
-		}
-	}
-
-	//Add Reporters
-	for (int i = 0; i < _contact_force_names.size(); ++i) {
-		
-		WISCO_ElasticFoundationForce& contactForce = _model->updComponent
-			<WISCO_ElasticFoundationForce>(_contact_force_names[i]);
-
-		addContactReportersToModel(contactForce);
-	}
-
-	//States Reporter
-	StatesTrajectoryReporter* states_reporter = new StatesTrajectoryReporter();
-	states_reporter->setName("states_reporter");
-	states_reporter->set_report_time_interval(0);
-	_model->addComponent(states_reporter);
-
-	_model->initSystem();
-
-	//Setup WISCO_ElasticFoundationForces in model for contact analysis
-	for (int i = 0; i < _contact_force_names.size(); ++i) {
-
-		WISCO_ElasticFoundationForce& contactForce = _model->updComponent
-			<WISCO_ElasticFoundationForce>(_contact_force_names[i]);
-
-		contactForce.setModelingOption(s, "contact_analysis", 1);
-		
-		SimTK::String mesh_output_format =
-			SimTK::String::toLower(get_output_data_mesh_format());
-
-		if (mesh_output_format == "vertex" || mesh_output_format == "both") {
-			contactForce.setModelingOption(s, "interpolate_vertex_data", 1);
-		}
-
-		if (get_h5_summary_contact_data()) {
-			contactForce.setModelingOption(s, "contact_stats", 1);
-
-			if (get_h5_medial_lateral_summary()) {
-				contactForce.setModelingOption(s, "contact_stats_medial_lateral", 1);
-			}
-		}
-	}
-	
-	//Setup Vertex location storage (dynamic output only)
-	if (get_write_dynamic_vtk_files()) {
-		_mesh1_vertex_locations.resize(_contact_force_names.size());
-		_mesh2_vertex_locations.resize(_contact_force_names.size());
-
-		for (int i = 0; i < _contact_force_names.size(); ++i) {
-
-			int mesh1_nVer = _model->getComponent<WISCO_ElasticFoundationForce>
-				(_contact_force_names[i]).getConnectee<WISCO_ContactMesh>
-				("target_mesh").getPolygonalMesh().getNumVertices();
-
-			_mesh1_vertex_locations[i].resize(mesh1_nVer, 0);
-
-			int mesh2_nVer = _model->getComponent<WISCO_ElasticFoundationForce>
-				(_contact_force_names[i]).getConnectee<WISCO_ContactMesh>
-				("casting_mesh").getPolygonalMesh().getNumVertices();
-
-			_mesh2_vertex_locations[i].resize(mesh2_nVer, 0);
-
-		}
-	}
-	//record(s);
-    return(0);
-}
-
-
-//_____________________________________________________________________________
-/**
- * This method is called to perform the analysis.  It can be called during
- * the execution of a forward integrations or after the integration by
- * feeding it the necessary data.
- *
- * When called during an integration, this method is meant to be called 
- *
- * This method should be overridden in derived classes.  It is
- * included here so that the derived class will not have to implement it if
- * it is not necessary.
- *
- * @param s current state of system
- *
- * @return -1 on error, 0 otherwise.
- */
-int WISCO_ContactAnalysis::step(const SimTK::State& s, int stepNumber )
-{
-	if (!proceed(stepNumber)) return(0);
-
-	record(s);
-
-	return(0);
-}
-//_____________________________________________________________________________
-/**
- * This method is called at the end of an analysis so that any
- * necessary finalizations may be performed.
- *
- * This method is meant to be called at the end of an integration 
- *
- * This method should be overridden in the child class.  It is
- * included here so that the child class will not have to implement it if it
- * is not necessary.
- *
- * @param s current state of System
- *
- * @return -1 on error, 0 otherwise.
- */
-int WISCO_ContactAnalysis::end( SimTK::State& s )
-{
-    if (!proceed()) return 0;
-
-    record(s);
-
-    return(0);
-}
-
-
-
 
 //=============================================================================
 // IO
@@ -472,119 +429,16 @@ int WISCO_ContactAnalysis::end( SimTK::State& s )
 int WISCO_ContactAnalysis::printResults(const std::string &aBaseName,const std::string &aDir,double aDT,
                  const std::string &aExtension)
 {
-	for (int i = 0; i < _contact_force_names.size(); ++i) {
-
-		std::string contact_name = _contact_force_names[i];
-
-		std::vector<SimTK::Matrix> mesh1FaceData, mesh1PointData;
-		std::vector<std::string> mesh1FaceDataNames, mesh1PointDataNames;
-
-		std::vector<SimTK::Matrix> mesh2FaceData, mesh2PointData;
-		std::vector<std::string> mesh2FaceDataNames, mesh2PointDataNames;
-
-		collectMeshOutputs(contact_name, 
-			mesh1FaceData, mesh1FaceDataNames, mesh1PointData, mesh1PointDataNames,
-			mesh2FaceData, mesh2FaceDataNames, mesh2PointData, mesh2PointDataNames);
+	for (std::string mesh_name : _contact_mesh_names) {
 
 		//Write Static VTK Files
 		if (get_write_static_vtk_files()) {
-			
-			SimTK::PolygonalMesh mesh1 = _model->getComponent<WISCO_ElasticFoundationForce>(contact_name).
-				getConnectee<WISCO_ContactMesh>("target_mesh").getPolygonalMesh();
-			SimTK::PolygonalMesh mesh2 = _model->getComponent<WISCO_ElasticFoundationForce>(contact_name).
-				getConnectee<WISCO_ContactMesh>("casting_mesh").getPolygonalMesh();
-
-			std::string mesh1_name = _model->getComponent<WISCO_ElasticFoundationForce>(contact_name).
-				getConnectee<WISCO_ContactMesh>("target_mesh").getName();
-			std::string mesh2_name = _model->getComponent<WISCO_ElasticFoundationForce>(contact_name).
-				getConnectee<WISCO_ContactMesh>("casting_mesh").getName();
-
-			WISCO_VTKFileAdapter* mesh1_vtk = new WISCO_VTKFileAdapter();
-			WISCO_VTKFileAdapter* mesh2_vtk = new WISCO_VTKFileAdapter();
-
-			SimTK::String mesh_output_format =
-				SimTK::String::toLower(get_output_data_mesh_format());
-
-			int nTimeStep = 1;
-
-			if (mesh_output_format == "face" || mesh_output_format == "both") {
-				mesh1_vtk->setFaceData(mesh1FaceDataNames, mesh1FaceData);
-				mesh2_vtk->setFaceData(mesh2FaceDataNames, mesh2FaceData);
-				nTimeStep = mesh1FaceData[0].nrow();
-			}
-
-			if (mesh_output_format == "vertex" || mesh_output_format == "both") {
-				mesh1_vtk->setPointData(mesh1PointDataNames, mesh1PointData);
-				mesh2_vtk->setPointData(mesh2PointDataNames, mesh2PointData);
-				nTimeStep = mesh1PointData[0].nrow();
-			}
-
-			mesh1_vtk->write(aBaseName + "_" + contact_name + "_" + mesh1_name + "_static", aDir +"/",
-				mesh1,nTimeStep);
-			mesh2_vtk->write(aBaseName + "_" + contact_name + "_" + mesh1_name + "_static", aDir + "/",
-				mesh2, nTimeStep);
+			writeVTKFile(aDir, aBaseName, mesh_name, _contact_force_names, false);
 		}
 		
-
 		//Write Dynamic VTK Files
 		if (get_write_dynamic_vtk_files()) {
-
-			//Mesh1 Vertex Positions
-			SimTK::PolygonalMesh mesh1 = _model->getComponent<WISCO_ElasticFoundationForce>(contact_name).
-				getConnectee<WISCO_ContactMesh>("target_mesh").getPolygonalMesh();
-
-			SimTK::Matrix mesh1_faces(mesh1.getNumFaces(), mesh1.getNumVerticesForFace(0));
-
-			for (int j = 0; j < mesh1.getNumFaces(); ++j) {
-				for (int k = 0; k < mesh1.getNumVerticesForFace(0); ++k) {
-					mesh1_faces(j, k) = mesh1.getFaceVertex(j, k);
-				}				
-			}
-			
-			//Mesh2 Vertex Positions
-			SimTK::PolygonalMesh mesh2 = _model->getComponent<WISCO_ElasticFoundationForce>(contact_name).
-				getConnectee<WISCO_ContactMesh>("casting_mesh").getPolygonalMesh();
-
-			SimTK::Matrix mesh2_faces(mesh2.getNumFaces(), mesh2.getNumVerticesForFace(0));
-
-			for (int j = 0; j < mesh2.getNumFaces(); ++j) {
-				for (int k = 0; k < mesh2.getNumVerticesForFace(0); ++k) {
-					mesh2_faces(j, k) = mesh2.getFaceVertex(j, k);
-				}
-			}
-			
-			WISCO_VTKFileAdapter* mesh1_vtk = new WISCO_VTKFileAdapter();
-			WISCO_VTKFileAdapter* mesh2_vtk = new WISCO_VTKFileAdapter();
-			
-			SimTK::String mesh_output_format =
-				SimTK::String::toLower(get_output_data_mesh_format());
-
-			int nTimeStep = 1;
-
-			if (mesh_output_format == "face" || mesh_output_format == "both") {
-				mesh1_vtk->setFaceData(mesh1FaceDataNames, mesh1FaceData);
-				mesh2_vtk->setFaceData(mesh2FaceDataNames, mesh2FaceData);
-				nTimeStep = mesh1FaceData[0].nrow();
-			}
-
-			if (mesh_output_format == "vertex" || mesh_output_format == "both") {
-				mesh1_vtk->setPointData(mesh1PointDataNames, mesh1PointData);
-				mesh2_vtk->setPointData(mesh2PointDataNames, mesh2PointData);
-				nTimeStep = mesh1PointData[0].nrow();
-			}
-
-			std::string mesh1_name = _model->getComponent<WISCO_ElasticFoundationForce>(contact_name).
-				getConnectee<WISCO_ContactMesh>("target_mesh").getName();
-			std::string mesh2_name = _model->getComponent<WISCO_ElasticFoundationForce>(contact_name).
-				getConnectee<WISCO_ContactMesh>("casting_mesh").getName();
-
-			mesh1_vtk->write(aBaseName + "_" + contact_name + "_"+ mesh1_name + 
-				"_dynamic_" + get_dynamic_output_frame(), aDir + "/",
-				_mesh1_vertex_locations[i], mesh1_faces, nTimeStep);
-
-			mesh2_vtk->write(aBaseName + "_" + contact_name + "_" + mesh2_name +
-				"_dynamic_" + get_dynamic_output_frame(), aDir + "/",
-				_mesh2_vertex_locations[i], mesh2_faces, nTimeStep);
+			writeVTKFile(aDir, aBaseName, mesh_name, _contact_force_names, true);
 		}
 	}
 
@@ -595,114 +449,129 @@ int WISCO_ContactAnalysis::printResults(const std::string &aBaseName,const std::
     return(0);
 }
 
-void WISCO_ContactAnalysis::collectMeshOutputs(const std::string& contact_name,
-	std::vector<SimTK::Matrix>& mesh1FaceData, std::vector<std::string>& mesh1FaceDataNames,
-	std::vector<SimTK::Matrix>& mesh1PointData, std::vector<std::string>& mesh1PointDataNames,
-	std::vector<SimTK::Matrix>& mesh2FaceData, std::vector<std::string>& mesh2FaceDataNames,
-	std::vector<SimTK::Matrix>& mesh2PointData, std::vector<std::string>& mesh2PointDataNames)
-{
+void WISCO_ContactAnalysis::writeVTKFile(const std::string& file_path,
+	const std::string& base_name, const std::string& mesh_name, 
+	const std::vector<std::string>& contact_names, bool isDynamic) {
+	
+	//Collect data
+	std::vector<SimTK::Matrix> faceData, pointData;
+	std::vector<std::string> faceDataNames, pointDataNames;
 
-	std::string mesh1_name =  _model->getComponent<WISCO_ElasticFoundationForce>
-		(contact_name).getConnectee<WISCO_ContactMesh>("target_mesh").getName();
+	collectMeshData(mesh_name,contact_names,
+		faceData, faceDataNames, pointData, pointDataNames);
+	
+	//Mesh face connectivity
+	SimTK::PolygonalMesh mesh = _model->getComponent<WISCO_ContactMesh>
+		(mesh_name).getPolygonalMesh();
+	
+	SimTK::Matrix mesh_faces(mesh.getNumFaces(), mesh.getNumVerticesForFace(0));
 
-	std::string mesh2_name = _model->getComponent<WISCO_ElasticFoundationForce>
-		(contact_name).getConnectee<WISCO_ContactMesh>("casting_mesh").getName();
-
-	for (TableReporterVector report : _model->getComponentList<TableReporterVector>()) {
-
-		//Target Mesh
-		std::string target_tri_name = contact_name + "_"+ mesh1_name + "_tri";
- 		if (report.getName().compare(0, target_tri_name.size(), target_tri_name) == 0) {
-			mesh1FaceDataNames.push_back(report.getName());
-			mesh1FaceData.push_back(report.getTable().getMatrix().getAsMatrix());
-		}
-
-		std::string target_ver_name = contact_name + "_" + mesh1_name + "_vertex";
-		if (report.getName().compare(0, target_ver_name.size(), target_ver_name) == 0) {
-			mesh1PointDataNames.push_back(report.getName());
-			mesh1PointData.push_back(report.getTable().getMatrix().getAsMatrix());
-		}
-
-		//Casting Mesh
-		std::string casting_tri_name = contact_name + "_" + mesh2_name + "_tri";
-		if (report.getName().compare(0, casting_tri_name.size(), casting_tri_name) == 0) {
-			mesh2FaceDataNames.push_back(report.getName());
-			mesh2FaceData.push_back(report.getTable().getMatrix().getAsMatrix());
-		}
-
-		std::string casting_ver_name = contact_name + "_" + mesh2_name + "_vertex";
-		if (report.getName().compare(0, casting_ver_name.size(), casting_ver_name) == 0) {
-			mesh2PointDataNames.push_back(report.getName());
-			mesh2PointData.push_back(report.getTable().getMatrix().getAsMatrix());
+	for (int j = 0; j < mesh.getNumFaces(); ++j) {
+		for (int k = 0; k < mesh.getNumVerticesForFace(0); ++k) {
+			mesh_faces(j, k) = mesh.getFaceVertex(j, k);
 		}
 	}
+
+	//Write file
+	WISCO_VTPFileAdapter* mesh_vtp = new WISCO_VTPFileAdapter();
+	mesh_vtp->setDataFormat("binary");
+
+	SimTK::String mesh_output_format =
+		SimTK::String::toLower(get_output_data_mesh_format());
+
+	int nTimeStep = 1;
+
+	if (mesh_output_format == "face" || mesh_output_format == "both") {
+		mesh_vtp->setFaceData(faceDataNames, faceData);
+		nTimeStep = faceData[0].nrow();
+	}
+
+	if (mesh_output_format == "vertex" || mesh_output_format == "both") {
+		mesh_vtp->setPointData(pointDataNames, pointData);
+		nTimeStep = pointData[0].nrow();
+	}
+
+	if (isDynamic) {
+		int mesh_index;
+		contains_string(_contact_mesh_names, mesh_name, mesh_index);
+
+		mesh_vtp->write(base_name + "_" + mesh_name +
+			"_dynamic_" + get_dynamic_output_frame(), file_path + "/",
+			_mesh_vertex_locations[mesh_index], mesh_faces, nTimeStep);
+	}
+	else { //static
+		SimTK::PolygonalMesh poly_mesh = 
+			_model->getComponent<WISCO_ContactMesh>(mesh_name).getPolygonalMesh();
+
+		mesh_vtp->write(base_name + "_" + mesh_name +
+			"_static_" + get_dynamic_output_frame(), file_path + "/",
+			poly_mesh, nTimeStep);	
+	}
+	delete mesh_vtp;
 
 }
 
-void WISCO_ContactAnalysis::collectMeshContactSummary(const std::string& contact_name, 
-	std::vector<SimTK::Vector>& mesh1DoubleData, std::vector<std::string>& mesh1DoubleNames,
-	std::vector<SimTK::Matrix_<SimTK::Vec3>>& mesh1Vec3Data, std::vector<std::string>& mesh1Vec3Names,
-	std::vector<SimTK::Vector>& mesh2DoubleData, std::vector<std::string>& mesh2DoubleNames,
-	std::vector<SimTK::Matrix_<SimTK::Vec3>>& mesh2Vec3Data, std::vector<std::string>& mesh2Vec3Names) {
-	
-	std::string mesh1_name = _model->getComponent<WISCO_ElasticFoundationForce>
-		(contact_name).getConnectee<WISCO_ContactMesh>("target_mesh").getName();
+void WISCO_ContactAnalysis::collectMeshData(const std::string& mesh_name, 
+	const std::vector<std::string>& contact_names,
+	std::vector<SimTK::Matrix>& faceData, std::vector<std::string>& faceDataNames,
+	std::vector<SimTK::Matrix>& pointData, std::vector<std::string>& pointDataNames)
+{
+	//Point and Vertex Data
+	for (TableReporterVector report : _model->getComponentList<TableReporterVector>()) {
+		std::string r_contact_name, r_mesh_name, r_data_type, r_data_name;
+		decomposeReportName(report.getName(),
+			r_contact_name, r_mesh_name, r_data_type, r_data_name);
 
-	std::string mesh2_name = _model->getComponent<WISCO_ElasticFoundationForce>
-		(contact_name).getConnectee<WISCO_ContactMesh>("casting_mesh").getName();
-	
-	std::vector<std::string> double_val_names;
-
-	double_val_names.push_back("_mean_pressure");
-	double_val_names.push_back("_max_pressure");
-	double_val_names.push_back("_mean_proximity");
-	double_val_names.push_back("_max_proximity");
-	double_val_names.push_back("_contact_area");
-
-	std::vector<std::string> vec3_val_names;
-	
-	vec3_val_names.push_back("_cop");
-	vec3_val_names.push_back("_contact_force");
-
-	for (TableReporter report : _model->getComponentList<TableReporter>()) {
+		if (r_mesh_name != mesh_name) continue;
 		
-		//Target Mesh
-		for (int i = 0; i < double_val_names.size(); ++i) {
-			std::string base_name = contact_name + "_" + mesh1_name + double_val_names[i];
-			if (report.getName().compare(0, base_name.size(), base_name) == 0) {
-				mesh1DoubleNames.push_back(report.getName());
-				mesh1DoubleData.push_back(report.getTable().getMatrix().getAsVector());
-				SimTK::Matrix test = report.getTable().getMatrix().getAsMatrix();
-				std::cout << test << std::endl;
+		if (contains_string(contact_names, r_contact_name)) {
+				
+			if (r_data_type == "tri") {
+				faceData.push_back(report.getTable().getMatrix().getAsMatrix());
+				faceDataNames.push_back(r_data_type + r_data_name + r_contact_name);
+				
+				//combine contact forces
+				int data_index;
+				if (contains_string(faceDataNames, r_data_type + r_data_name, data_index)) {
+					faceData[data_index] += report.getTable().getMatrix().getAsMatrix();
+				}
+				else {
+					faceDataNames.push_back(r_data_type + r_data_name);
+					faceData.push_back(report.getTable().getMatrix().getAsMatrix());
+				}
 			}
-		}
-		//Casting Mesh
-		for (int i = 0; i < double_val_names.size(); ++i) {
-			std::string base_name = contact_name + "_" + mesh2_name + double_val_names[i];
-			if (report.getName().compare(0, base_name.size(), base_name) == 0) {
-				mesh2DoubleNames.push_back(report.getName());
-				mesh2DoubleData.push_back(report.getTable().getMatrix().getAsVector());
+			else if (r_data_type == "vertex") {
+				pointData.push_back(report.getTable().getMatrix().getAsMatrix());
+				pointDataNames.push_back(r_data_type + r_data_name + r_contact_name);
+
+				//combine contact forces
+				int data_index;
+				if (contains_string(pointDataNames, r_data_type + r_data_name, data_index)) {
+					pointData[data_index] += report.getTable().getMatrix().getAsMatrix();
+				}
+				else {
+					pointDataNames.push_back(r_data_type+r_data_name);
+					pointData.push_back(report.getTable().getMatrix().getAsMatrix());
+				}
 			}
 		}
 	}
-
-	for (TableReporterVec3 report : _model->getComponentList<TableReporterVec3>()) {
-		//Target Mesh
-		for (int i = 0; i < vec3_val_names.size(); ++i) {
-			std::string base_name = contact_name + "_" + mesh1_name + vec3_val_names[i];
-			if (report.getName().compare(0, base_name.size(), base_name) == 0) {
-				mesh1Vec3Names.push_back(report.getName());
-				mesh1Vec3Data.push_back(report.getTable().getMatrix().getAsMatrix());
-			}
-		}
-		//Casting Mesh
-		for (int i = 0; i < vec3_val_names.size(); ++i) {
-			std::string base_name = contact_name + "_" + mesh2_name + vec3_val_names[i];
-			if (report.getName().compare(0, base_name.size(), base_name) == 0) {
-				mesh2Vec3Names.push_back(report.getName());
-				mesh2Vec3Data.push_back(report.getTable().getMatrix().getAsMatrix());
-			}
-		}
+	
+	//Variable Cartilage Properties
+	if (get_write_variable_property_vtk() == "thickness" || get_write_variable_property_vtk() == "all") {
+		SimTK::Vector face_thickness = _model->getComponent<WISCO_ContactMesh>(mesh_name).getTriangleThickness();
+		faceDataNames.push_back("thickness");
+		faceData.push_back(face_thickness);
+	}
+	if (get_write_variable_property_vtk() == "elastic modulus" || get_write_variable_property_vtk() == "all") {
+		SimTK::Vector face_E = _model->getComponent<WISCO_ContactMesh>(mesh_name).getTriangleElasticModulus();
+		faceDataNames.push_back("elastic modulus");
+		faceData.push_back(face_E);
+	}
+	if (get_write_variable_property_vtk() == "poissons ratio" || get_write_variable_property_vtk() == "all") {
+		SimTK::Vector face_v = _model->getComponent<WISCO_ContactMesh>(mesh_name).getTrianglePoissonsRatio();
+		faceDataNames.push_back("poissons ratio");
+		faceData.push_back(face_v);
 	}
 }
 
@@ -763,54 +632,91 @@ void WISCO_ContactAnalysis::addContactReportsToH5File(
 
 	std::vector<std::string> vector_names;
 
-	vector_names.push_back("tri_pressure");
-	vector_names.push_back("tri_proximity");
-	vector_names.push_back("vertex_pressure");
-	vector_names.push_back("vertex_proximity");
+	vector_names.push_back("pressure");
+	vector_names.push_back("proximity");
 
 	//Create Groups in H5 File
 	h5_adapt.createGroup(group_name + "/" + contact_name);
-
 
 	for (std::string mesh_name : mesh_names) {
 
 		std::string mesh_path = group_name + "/" + contact_name + "/" + mesh_name;
 		h5_adapt.createGroup(mesh_path);
 
-		for (TableReporter report : _model->getComponentList<TableReporter>()) {
-			std::string report_name = report.getName();
+		if (get_h5_medial_lateral_summary()) {
+			h5_adapt.createGroup(mesh_path + "/total");
+			h5_adapt.createGroup(mesh_path + "/medial");
+			h5_adapt.createGroup(mesh_path + "/lateral");
+		}
 
-			for (std::string real_name : real_names) {
-				std::string base_name = contact_name + "_" + mesh_name + "_" + real_name;
-				if (report_name.compare(0, base_name.size(), base_name) == 0) {
-					std::string data_path = mesh_path + "/" + report_name.substr(report_name.find(real_name));
-					h5_adapt.writeDataSet(report.getTable(), data_path);
-				}
+		std::string data_format = SimTK::String::toLower(get_output_data_mesh_format());
+		if (data_format == "face" || data_format == "both") {
+			h5_adapt.createGroup(mesh_path + "/tri");
+		}
+		if (data_format == "vertex" || data_format == "both") {
+			h5_adapt.createGroup(mesh_path + "/vertex");
+		}
+
+		for (TableReporter report : _model->getComponentList<TableReporter>()) {
+			std::string r_contact_name, r_mesh_name, r_data_type, r_data_name;
+			decomposeReportName(report.getName(),
+				r_contact_name, r_mesh_name, r_data_type, r_data_name);
+
+			if (r_contact_name != contact_name) continue; 
+			if (r_mesh_name != mesh_name) continue;
+
+			if (contains_string(real_names, r_data_name)) {
+				std::string data_path = mesh_path + "/" + r_data_type + "/" + r_data_name;
+				h5_adapt.writeDataSet(report.getTable(), data_path);
 			}
 		}
 
 		for (TableReporterVec3 report : _model->getComponentList<TableReporterVec3>()) {
-			std::string report_name = report.getName();
+			std::string r_contact_name, r_mesh_name, r_data_type, r_data_name;
+			decomposeReportName(report.getName(),
+				r_contact_name, r_mesh_name, r_data_type, r_data_name);
+
+			if (r_contact_name != contact_name) continue;
+			if (r_mesh_name != mesh_name) continue;
 			
-			for (std::string vec3_name : vec3_names) {
-				std::string base_name = contact_name + "_" + mesh_name + "_" + vec3_name;
-				if (report_name.compare(0, base_name.size(), base_name) == 0) {
-					std::string data_path = mesh_path + "/" + report_name.substr(report_name.find(vec3_name));
-					h5_adapt.writeDataSetVec3(report.getTable(), data_path);
-				}
+			if (contains_string(vec3_names, r_data_name)) {
+				std::string data_path = mesh_path + "/" + r_data_type + "/" + r_data_name;
+				h5_adapt.writeDataSetVec3(report.getTable(), data_path);
 			}
 		}
 
 		for (TableReporterVector report : _model->getComponentList<TableReporterVector>()) {
-			std::string report_name = report.getName();
-			
-			for (std::string vector_name : vector_names) {
-				std::string base_name = contact_name + "_" + mesh_name + "_" + vector_name;
-				if (report_name.compare(0, base_name.size(), base_name) == 0) {
-					std::string data_path = mesh_path + "/" + report_name.substr(report_name.find(vector_name));
-					h5_adapt.writeDataSetVector(report.getTable(), data_path);
-				}
+			std::string r_contact_name, r_mesh_name, r_data_type, r_data_name;
+			decomposeReportName(report.getName(),
+				r_contact_name, r_mesh_name, r_data_type, r_data_name);
+
+			if (r_contact_name != contact_name) continue;
+			if (r_mesh_name != mesh_name) continue;
+
+			if (contains_string(vector_names, r_data_name)) {
+				std::string data_path = mesh_path + "/" + r_data_type + "/" + r_data_name;
+				h5_adapt.writeDataSetVector(report.getTable(), data_path);
 			}
 		}
 	}
+}
+
+void WISCO_ContactAnalysis::decomposeReportName(const std::string& name,
+	std::string& contact_name, std::string& mesh_name, 
+	std::string& data_type, std::string& data_name) 
+{
+	std::vector<std::string> token = split_string(name,"|");
+	
+	if (token.size() != 4) {
+		contact_name = "";
+		mesh_name = "";
+		data_type = "";
+		data_name = "";
+		return;
+	}
+
+	contact_name = token[0];
+	mesh_name = token[1];
+	data_type = token[2];
+	data_name = token[3];
 }

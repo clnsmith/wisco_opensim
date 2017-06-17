@@ -1,9 +1,8 @@
-#Add all tests
+#Add all toys
 #-------------
-#FILE(GLOB TEST_NAMES RELATIVE "${WISCO_OPENSIM_DIR}/tests" "${WISCO_OPENSIM_DIR}/tests/*")
-FILE(GLOB TEST_NAMES RELATIVE "${CMAKE_CURRENT_LIST_DIR}" "${CMAKE_CURRENT_LIST_DIR}/*")
-FOREACH(test_name ${TEST_NAMES})
-    IF(IS_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/${test_name})
-        add_subdirectory(${test_name})
+FILE(GLOB TOY_NAMES RELATIVE "${CMAKE_CURRENT_LIST_DIR}" "${CMAKE_CURRENT_LIST_DIR}/*")
+FOREACH(toy_name ${TOY_NAMES})
+    IF(IS_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/${toy_name})
+        add_subdirectory(${toy_name})
     ENDIF()
-ENDFOREACH(test_name)
+ENDFOREACH(toy_name)

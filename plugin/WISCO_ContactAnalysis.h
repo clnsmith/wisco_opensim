@@ -56,6 +56,8 @@ protected:
 
     OpenSim_DECLARE_LIST_PROPERTY(contact_names, std::string, 
         "Names of WISCO_ElasticFoundation contacts to be recorded.");
+	OpenSim_DECLARE_PROPERTY(time_interval,double,
+		"Step step for output data. Use 0 to use the input data interval.")
 	OpenSim_DECLARE_PROPERTY(output_pressure, bool,
 		"Output pressure values");
 	OpenSim_DECLARE_PROPERTY(output_proximity, bool,
@@ -78,8 +80,9 @@ protected:
 		"Write .vtk files with meshes moving in space.")
 	OpenSim_DECLARE_PROPERTY(dynamic_output_frame,std::string,
 		"Model reference frame for mesh motion.")
-	OpenSim_DECLARE_PROPERTY(write_variable_property_vtk, bool,
-		"Flag to write .vtk file with variable thickness and material map");
+	OpenSim_DECLARE_PROPERTY(write_variable_property_vtk, std::string,
+		"Add cartilage thickness and material property maps to vtk files."
+		"Options: 'thickness','elastic modulus','poisson ratio' or 'all'");
 
 
 //=============================================================================
@@ -99,37 +102,40 @@ public:
 private:
     void setNull();
     void constructProperties();
+
+
 	int record(const SimTK::State& s);
 	void addContactReportersToModel(WISCO_ElasticFoundationForce& contactForce);
-	void addContactReporter(WISCO_ElasticFoundationForce& contactForce, 
-		const SimTK::String& output_name, const SimTK::String& reporter_type);
-	
-	void collectMeshOutputs(const std::string& contact_name,
-		std::vector<SimTK::Matrix>& mesh1FaceData, std::vector<std::string>& mesh1FaceDataNames,
-		std::vector<SimTK::Matrix>& mesh1PointData, std::vector<std::string>& mesh1PointDataNames,
-		std::vector<SimTK::Matrix>& mesh2FaceData, std::vector<std::string>& mesh2FaceDataNames,
-		std::vector<SimTK::Matrix>& mesh2PointData, std::vector<std::string>& mesh2PointDataNames);
-	void collectMeshContactSummary(const std::string& contact_name,
-		std::vector<SimTK::Vector>& mesh1DoubleData, std::vector<std::string>& mesh1DoubleNames,
-		std::vector<SimTK::Matrix_<SimTK::Vec3>>& mesh1Vec3Data, std::vector<std::string>& mesh1Vec3Names,
-		std::vector<SimTK::Vector>& mesh2DoubleData, std::vector<std::string>& mesh2DoubleNames,
-		std::vector<SimTK::Matrix_<SimTK::Vec3>>& mesh2Vec3Data, std::vector<std::string>& mesh2Vec3Names);
+	void addContactReporter(WISCO_ElasticFoundationForce& contactForce,
+		const std::string& mesh_name, const std::string& mesh_type,
+		const std::string& data_name, const std::string& data_type,
+		const std::string& reporter_type);
 
+	void collectMeshData(const std::string& mesh_name,
+		const std::vector<std::string>& contact_names,
+		std::vector<SimTK::Matrix>& faceData, std::vector<std::string>& faceDataNames,
+		std::vector<SimTK::Matrix>& pointData, std::vector<std::string>& pointDataNames);
 
-
+	void writeVTKFile(const std::string& file_path,
+		const std::string& base_name, const std::string& mesh_name,
+		const std::vector<std::string>& contact_names, bool isDynamic);
 	void writeH5File(const std::string &aBaseName, const std::string &aDir);
 	
 	void addContactReportsToH5File(WISCO_H5FileAdapter h5_adapt, 
 		const std::string& group_name, const std::string& contact_name);
-
+	
+	void decomposeReportName(const std::string& name,
+		std::string& contact_name, std::string& mesh_name,
+		std::string& data_type, std::string& data_name);
 	
 //=============================================================================
 // DATA
 //=============================================================================
 private:
 	std::vector<std::string> _contact_force_names;
-	mutable std::vector<SimTK::Matrix_<SimTK::Vec3>> _mesh1_vertex_locations;
-	mutable std::vector<SimTK::Matrix_<SimTK::Vec3>> _mesh2_vertex_locations;
+	std::vector<std::string> _contact_mesh_names;
+	mutable std::vector<SimTK::Matrix_<SimTK::Vec3>> _mesh_vertex_locations;
+
 //=============================================================================
 };  // END of class WISCO_ContactAnalysis
 

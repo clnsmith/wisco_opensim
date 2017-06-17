@@ -85,7 +85,7 @@
 				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this geometry is attached.).-->
 				<socket_parent_frame_connectee_name>patella_r</socket_parent_frame_connectee_name>
 				<!--Path to mesh geometry file (supports .obj, .stl, .vtp). -->
-				<file_name>ACLC01-R-patella_shift.stl</file_name>
+				<file_name>ACLC01-R-patella-cart_shift.stl</file_name>
 				<!--Local mesh frame to locate mesh in parent body.-->
 				<PhysicalOffsetFrame name="mesh_frame">
 					<!--The geometry used to display the axes of this Frame.-->
@@ -876,7 +876,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -921,7 +921,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -966,7 +966,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1011,7 +1011,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1056,7 +1056,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1101,7 +1101,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1146,7 +1146,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1191,7 +1191,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1236,7 +1236,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1281,7 +1281,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1326,7 +1326,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1360,7 +1360,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>820</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1394,7 +1394,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>820</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1428,7 +1428,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>820</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1462,7 +1462,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>820</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1496,7 +1496,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>820</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1530,7 +1530,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>820</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1564,7 +1564,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>820</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1598,7 +1598,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>820</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1632,7 +1632,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>820</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1666,7 +1666,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>820</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1700,7 +1700,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>820</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1734,7 +1734,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>820</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1768,7 +1768,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>900</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1802,7 +1802,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>900</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1836,7 +1836,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>900</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1870,7 +1870,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>900</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1904,7 +1904,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>900</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1938,7 +1938,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>300</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -1972,7 +1972,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>300</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2006,7 +2006,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>300</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2040,7 +2040,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>300</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2074,7 +2074,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>300</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2108,7 +2108,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>600</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2142,7 +2142,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>600</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2176,7 +2176,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>600</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2210,7 +2210,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>600</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2253,7 +2253,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>3000</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2294,9 +2294,9 @@
 						<default_color>0.90000000000000002 0.90000000000000002 0.90000000000000002</default_color>
 					</GeometryPath>
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
-					<linear_stiffness>30000</linear_stiffness>
+					<linear_stiffness>3000</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2337,9 +2337,9 @@
 						<default_color>0.90000000000000002 0.90000000000000002 0.90000000000000002</default_color>
 					</GeometryPath>
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
-					<linear_stiffness>30000</linear_stiffness>
+					<linear_stiffness>3000</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2380,9 +2380,9 @@
 						<default_color>0.90000000000000002 0.90000000000000002 0.90000000000000002</default_color>
 					</GeometryPath>
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
-					<linear_stiffness>30000</linear_stiffness>
+					<linear_stiffness>3000</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2423,9 +2423,9 @@
 						<default_color>0.90000000000000002 0.90000000000000002 0.90000000000000002</default_color>
 					</GeometryPath>
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
-					<linear_stiffness>30000</linear_stiffness>
+					<linear_stiffness>3000</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2468,7 +2468,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>3000</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2500,7 +2500,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>150</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2532,7 +2532,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>150</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2564,7 +2564,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>150</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2596,7 +2596,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>150</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2628,7 +2628,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>150</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2660,7 +2660,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>150</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2692,7 +2692,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>150</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2724,7 +2724,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>150</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2758,7 +2758,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>150</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2790,7 +2790,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>150</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2822,7 +2822,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>150</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2854,7 +2854,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>150</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2886,7 +2886,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>150</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2918,7 +2918,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>150</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -2963,7 +2963,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3008,7 +3008,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3053,7 +3053,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3098,7 +3098,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3143,7 +3143,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3177,7 +3177,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>440</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3211,7 +3211,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>440</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3245,7 +3245,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>440</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3279,7 +3279,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>440</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3313,7 +3313,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>440</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3356,7 +3356,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3399,7 +3399,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3442,7 +3442,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3485,7 +3485,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3528,7 +3528,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3571,7 +3571,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3614,7 +3614,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3657,7 +3657,7 @@
 					<!--Slope of the linear portion of the force-strain curve of ligament-->
 					<linear_stiffness>500</linear_stiffness>
 					<!--Strain at which ligament force-strain curve transitions fromquadratic to linear. Commonly 0.06 in literature.-->
-					<ligament_transition_strain>0.059999999999999998</ligament_transition_strain>
+					<transition_strain>0.059999999999999998</transition_strain>
 					<!--Options: 'slack_length','reference_strain','reference_force' property to compute slack length.NOTE: other properties will be ignored.-->
 					<defining_length_parameter>reference_strain</defining_length_parameter>
 					<!--Strain of ligament when model is posed a default coordinates.-->
@@ -3671,28 +3671,27 @@
 					<!--Minimum overlap depth between contacting meshes-->
 					<min_proximity>0</min_proximity>
 					<!--Maximum overlap depth between contacting meshes-->
-					<max_proximity>0.10000000000000001</max_proximity>
+					<max_proximity>0.01</max_proximity>
           <elastic_foundation_formulation> linear </elastic_foundation_formulation>
           <!--Level of reporting for debugging purposes (0-silent, 1-simple, 2-detailed)-->
-
 					<verbose>2</verbose>
 					<!--target_mesh Material Properties-->
 					<WISCO_ElasticFoundationForce::ContactParameters name="target_mesh_contact_params">
 						<!--Elastic Modulus-->
-						<elastic_modulus>500000</elastic_modulus>
+						<elastic_modulus>5000000</elastic_modulus>
 						<!--Poissons Ratio-->
-						<poissons_ratio>0.45000000000000001</poissons_ratio>
+						<poissons_ratio>0.45</poissons_ratio>
 						<!--Uniform thickness of elastic layer-->
-						<thickness>0.01</thickness>
+						<thickness>0.003</thickness>
 					</WISCO_ElasticFoundationForce::ContactParameters>
 					<!--casting_mesh Material Properties-->
 					<WISCO_ElasticFoundationForce::ContactParameters name="casting_mesh_contact_params">
 						<!--Elastic Modulus-->
-						<elastic_modulus>500000</elastic_modulus>
+						<elastic_modulus>5000000</elastic_modulus>
 						<!--Poissons Ratio-->
-						<poissons_ratio>0.45000000000000001</poissons_ratio>
+						<poissons_ratio>0.45</poissons_ratio>
 						<!--Uniform thickness of elastic layer-->
-						<thickness>0.01</thickness>
+						<thickness>0.003</thickness>
 					</WISCO_ElasticFoundationForce::ContactParameters>
 				</WISCO_ElasticFoundationForce>
 				<WISCO_ElasticFoundationForce name="PF_contact">
@@ -3703,27 +3702,27 @@
 					<!--Minimum overlap depth between contacting meshes-->
 					<min_proximity>0</min_proximity>
 					<!--Maximum overlap depth between contacting meshes-->
-					<max_proximity>0.1</max_proximity>
+					<max_proximity>0.01</max_proximity>
           <elastic_foundation_formulation> linear </elastic_foundation_formulation>
 					<!--Level of reporting for debugging purposes (0-silent, 1-simple, 2-detailed)-->
 					<verbose>2</verbose>
 					<!--target_mesh Material Properties-->
 					<WISCO_ElasticFoundationForce::ContactParameters name="target_mesh_contact_params">
 						<!--Elastic Modulus-->
-						<elastic_modulus>500000</elastic_modulus>
+						<elastic_modulus>5000000</elastic_modulus>
 						<!--Poissons Ratio-->
-						<poissons_ratio>0.45000000000000001</poissons_ratio>
+						<poissons_ratio>0.45</poissons_ratio>
 						<!--Uniform thickness of elastic layer-->
-						<thickness>0.04</thickness>
+						<thickness>0.004</thickness>
 					</WISCO_ElasticFoundationForce::ContactParameters>
 					<!--casting_mesh Material Properties-->
 					<WISCO_ElasticFoundationForce::ContactParameters name="casting_mesh_contact_params">
 						<!--Elastic Modulus-->
-						<elastic_modulus>500000</elastic_modulus>
+						<elastic_modulus>5000000</elastic_modulus>
 						<!--Poissons Ratio-->
-						<poissons_ratio>0.45000000000000001</poissons_ratio>
+						<poissons_ratio>0.45</poissons_ratio>
 						<!--Uniform thickness of elastic layer-->
-						<thickness>0.04</thickness>
+						<thickness>0.004</thickness>
 					</WISCO_ElasticFoundationForce::ContactParameters>
 				</WISCO_ElasticFoundationForce>
         <BushingForce name="TF_bushing">
@@ -3732,9 +3731,9 @@
 					<!--Path to a Component that satisfies the Socket 'frame2' of type F (description: The second frame participating in this linker.).-->
 					<socket_frame2_connectee_name>../tibia_proximal_r</socket_frame2_connectee_name>
 					<!--Damping parameters resisting angular deviation rate. (Nm/(rad/s))-->
-					<rotational_damping>0.2 0.2 0.2</rotational_damping>
+					<rotational_damping>4.0 4.0 4.0</rotational_damping>
 					<!--Damping parameters resisting relative translational velocity. (N/(m/s))-->
-					<translational_damping>1.0 1.0 1.0</translational_damping>
+					<translational_damping>200.0 200.0 200.0</translational_damping>
 				</BushingForce>
 				<BushingForce name="PF_bushing">
 					<!--Path to a Component that satisfies the Socket 'frame1' of type F (description: The first frame participating in this linker.).-->
@@ -3742,10 +3741,10 @@
 					<!--Path to a Component that satisfies the Socket 'frame2' of type F (description: The second frame participating in this linker.).-->
 					<socket_frame2_connectee_name>../patella_r</socket_frame2_connectee_name>
 					<!--Damping parameters resisting angular deviation rate. (Nm/(rad/s))-->
-					<rotational_damping>0.2 0.2 0.2</rotational_damping>
+					<rotational_damping>4.0 4.0 4.0</rotational_damping>
 					<!--Damping parameters resisting relative translational velocity. (N/(m/s))-->
-					<translational_damping>1.0 1.0 1.0</translational_damping>
-          <translational_stiffness> 0.0 10000.0 0.0 </translational_stiffness>
+					<translational_damping>200.0 200.0 200.0</translational_damping>
+          <translational_stiffness> 0.0 100.0 0.0 </translational_stiffness>
 				</BushingForce>
 
 			</objects>

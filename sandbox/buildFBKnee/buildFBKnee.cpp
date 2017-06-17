@@ -17,7 +17,7 @@ int main()
         // Set Input Files 
 		static const std::string femur_cart_file{ "./inputs/geometry/ACLC01-R-femur-cart.stl" };
         static const std::string tibia_cart_file{ "./inputs/geometry/ACLC01-R-tibia-cart.stl" };
-		static const std::string patella_cart_file{ "./inputs/geometry/ACLC01-R-patella.stl" };
+		static const std::string patella_cart_file{ "./inputs/geometry/ACLC01-R-patella-cart_shift.stl" };
 		
 		static const std::string model_file{ "./inputs/JKRLfbkid_ligs.osim" };
 		static const std::string out_file{"./fbknee.osim"};
@@ -28,7 +28,8 @@ int main()
 		LoadOpenSimLibrary(plugin_file, true);
 
 		//Load Model 
-		Model model = Model(model_file,true);
+		Model model = Model(model_file);
+		model.initSystem();
 
 		// Add Contact Meshes
 		Body& femur = model.updComponent<Body>("femur_distal_r");
@@ -46,7 +47,7 @@ int main()
 		// Add WISCO_ElasticFoundationForce
 		double E = 5000000.0;
 		double v = 0.45;
-		double h = 0.01;
+		double h = 0.003;
 
         WISCO_ElasticFoundationForce::ContactParameters* femurContactParams = 
 			new WISCO_ElasticFoundationForce::ContactParameters(E, v, h);
@@ -62,14 +63,14 @@ int main()
 			new WISCO_ElasticFoundationForce(*femurMesh,*femurContactParams,*tibiaMesh, *tibiaContactParams,2);
 		TFcontact->setName("TF_contact");
 		TFcontact->set_min_proximity(0.0);
-		TFcontact->set_max_proximity(0.1);
+		TFcontact->set_max_proximity(0.01);
 		TFcontact->set_elastic_foundation_formulation("linear");
 		
 		WISCO_ElasticFoundationForce* PFcontact =
 			new WISCO_ElasticFoundationForce(*femurMesh, *femurContactParams, *patellaMesh, *patellaContactParams, 2);
 		PFcontact->setName("PF_contact");
 		PFcontact->set_min_proximity(0.0);
-		PFcontact->set_max_proximity(0.1);
+		PFcontact->set_max_proximity(0.01);
 		PFcontact->set_elastic_foundation_formulation("linear");
 
 		model.addForce(TFcontact);
@@ -89,8 +90,8 @@ int main()
 
 		//Fix ligament parameters
 		for (WISCO_Ligament& ligament : model.updComponentList<WISCO_Ligament>()) {
-			ligament.set_ligament_transition_strain(0.06);
-			ligament.set_defining_length_parameter("reference_strain");
+			ligament.set_transition_strain(0.06);
+			ligament.set_defining_slack_length_property("reference_strain");
 		}
 
 		// Configure the model.

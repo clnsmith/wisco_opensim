@@ -5,7 +5,7 @@
 #include "OpenSim/Common/Object.h"
 #include "OpenSim/Simulation/SimbodyEngine/Body.h"
 #include "OpenSim/Simulation/Model/ModelComponent.h"
-#include <SimTKsimbody.h>
+#include "SimTKsimbody.h"
 #include <OpenSim/Simulation/Model/PhysicalOffsetFrame.h>
 #include "osimPluginDLL.h"
 #include "coldet.h"
@@ -108,6 +108,8 @@ namespace OpenSim {
 
 		const SimTK::Vector_<SimTK::Vec3>& getVertexLocations() const;
 		const SimTK::Vector_<SimTK::Vec3> getVertexLocationsInGround(const SimTK::State& state) const;
+		const SimTK::Vector_<SimTK::Vec3> getVertexLocationsInFrame(
+			const SimTK::State& state, const std::string& frame_name) const;
 
 		const SimTK::Matrix_<SimTK::Vec3>& WISCO_ContactMesh::getFaceVertexLocations() const;
 		SimTK::Matrix_<SimTK::Vec3> WISCO_ContactMesh::getFaceVertexLocationsInGround(const SimTK::State& state) const;
@@ -168,6 +170,7 @@ namespace OpenSim {
 		SimTK::Vector tri_thickness;
 		SimTK::Vector tri_elastic_modulus;
 		SimTK::Vector tri_poissons_ratio;
+		bool mesh_is_cached;
 
 		//=============================================================================
 	};  // END of class ContactGeometry

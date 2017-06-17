@@ -43,6 +43,7 @@ WISCO_ContactMesh::WISCO_ContactMesh() : ModelComponent()
 {
 	setNull();
 	constructProperties();
+	mesh_is_cached = false;
 }
 
 //_____________________________________________________________________________
@@ -102,7 +103,9 @@ void WISCO_ContactMesh::constructProperties()
 
 void WISCO_ContactMesh::extendFinalizeFromProperties() {
 	Super::extendFinalizeFromProperties();
-	initializeMesh();
+	if (!mesh_is_cached) {
+		initializeMesh();
+	}
 	//computeVariableCartilageThickness();
 }
 /*
@@ -184,18 +187,18 @@ std::string WISCO_ContactMesh::findMeshFile(const std::string& file)
 
 	// Find OpenSim modelDir
 	const Component* rootModel = nullptr;
-	if (!hasParent()) {
+	if (!hasOwner()) {
 		std::cout << "Mesh " << file << " not connected to model..ignoring\n";
 		return file;   // Orphan Mesh not part of a model yet
 	}
-	const Component* parent = &getParent();
+	const Component* parent = &getOwner();
 	while (parent != nullptr) {
 		if (dynamic_cast<const Model*>(parent) != nullptr) {
 			rootModel = parent;
 			break;
 		}
-		if (parent->hasParent())
-			parent = &(parent->getParent()); // traverse up Component tree
+		if (parent->hasOwner())
+			parent = &(parent->getOwner()); // traverse up Component tree
 		else
 			break; // can't traverse up.
 	}
@@ -229,28 +232,37 @@ std::string WISCO_ContactMesh::findMeshFile(const std::string& file)
 	return attempts.back();
 }
 
-void WISCO_ContactMesh::initializeMesh() {
+void WISCO_ContactMesh::initializeMesh()
+{
+	mesh_is_cached = true;
 
 	//Clear mesh in case of multiple calls
-	mesh.clear();
+	//mesh.clear();
 
 	// Initialize Reused Variables
 	double mag;
 	SimTK::Vec3 e1, e2, cross;
 
 	// Load Mesh from file
-	
+
 	std::string file = findMeshFile(get_file_name());
 	mesh.loadFile(file);
 
-	// Compute Mesh Properties
-	//========================
+		
 	tri_center.resize(mesh.getNumFaces());
 	tri_normal.resize(mesh.getNumFaces());
 	tri_area.resize(mesh.getNumFaces());
 	tri_thickness.resize(mesh.getNumFaces());
 	tri_elastic_modulus.resize(mesh.getNumFaces());
 	tri_poissons_ratio.resize(mesh.getNumFaces());
+
+	vertex_locations.resize(mesh.getNumVertices());
+	face_vertex_locations.resize(mesh.getNumFaces(), 3);
+		
+	
+
+	// Compute Mesh Properties
+	//========================
 
 	//setup medial lateral 
 	SimTK::String ml_axis =
@@ -260,6 +272,12 @@ void WISCO_ContactMesh::initializeMesh() {
 	if (ml_axis == "x") ml_ind = 0;
 	else if (ml_axis == "y") ml_ind = 1;
 	else if (ml_axis == "z") ml_ind = 2;
+
+	lat_tri_ind.resize(mesh.getNumFaces());
+	med_tri_ind.resize(mesh.getNumFaces());
+
+	int nLat = 0;
+	int nMed = 0;
 
 	for (int i = 0; i < mesh.getNumFaces(); ++i) {
 
@@ -307,27 +325,26 @@ void WISCO_ContactMesh::initializeMesh() {
 
 		//Determine ML triangles
 		if (tri_center(i)(ml_ind) > 0.0) {
-			int next = lat_tri_ind.size();
-			lat_tri_ind.resizeKeep(next+1);
-			lat_tri_ind(next) = i;
+
+			lat_tri_ind(nLat) = i;
+			nLat++;
 		}
 
 		if (tri_center(i)(ml_ind) < 0.0) {
-			int next = med_tri_ind.size();
-			med_tri_ind.resizeKeep(next+1);
-			med_tri_ind(next) = i;
+			med_tri_ind(nMed) = i;
+			nMed++;
 		}
 	}
-
+	lat_tri_ind.resizeKeep(nLat);
+	med_tri_ind.resizeKeep(nMed);
 	//Vertex Locations
-	vertex_locations.resize(mesh.getNumVertices());
 
 	for (int i = 0; i < mesh.getNumVertices(); ++i) {
 		vertex_locations(i) = mesh.getVertexPosition(i);
 	}
 
 	//Face Vertex Locations
-	face_vertex_locations.resize(mesh.getNumFaces(), 3);
+	
 
     for (int i = 0; i < mesh.getNumFaces(); ++i) {
 		for (int j = 0; j < 3; ++j) {
@@ -338,10 +355,12 @@ void WISCO_ContactMesh::initializeMesh() {
 
 	//Vertex Connectivity
 	int max_ver_nTri = 20;
+	
 	SimTK::Matrix ver_tri_ind(mesh.getNumVertices(), max_ver_nTri);
 	SimTK::Vector ver_nTri(mesh.getNumVertices());
 	ver_tri_ind.setToZero();
 	ver_nTri.setToZero();
+	
 
 	for (int i = 0; i < mesh.getNumFaces(); ++i) {
 		for (int j = 0; j < 3; ++j) {
@@ -358,11 +377,11 @@ void WISCO_ContactMesh::initializeMesh() {
 
 	int max_nNeighbors = 20; // Will increase automatically if necessary
 
-	tri_neighbors.resize(mesh.getNumFaces(), max_nNeighbors);
-	tri_neighbors.setToZero();
-	nTriNeighbors.resize(mesh.getNumFaces());
-	nTriNeighbors.setToZero();
-
+		tri_neighbors.resize(mesh.getNumFaces(), max_nNeighbors);
+		tri_neighbors.setToZero();
+		nTriNeighbors.resize(mesh.getNumFaces());
+		nTriNeighbors.setToZero();
+	
 	for (int i = 0; i < mesh.getNumFaces(); ++i) {
 		for (int j = 0; j < 3; ++j) {
 
@@ -560,6 +579,27 @@ const SimTK::Matrix_<SimTK::Vec3>& WISCO_ContactMesh::getFaceVertexLocations() c
 	return face_vertex_locations;
 }
 
+const SimTK::Vector_<SimTK::Vec3> WISCO_ContactMesh::getVertexLocationsInFrame(
+	const SimTK::State& state, const std::string& frame_name) const
+{
+	getModel().realizePosition(state);
+
+	SimTK::Vector_<SimTK::Vec3> vertices = getVertexLocationsInGround(state);
+
+	SimTK::Transform bodyInGround = getModel().getComponent<Frame>
+		(frame_name).getTransformInGround(state);
+
+	SimTK:: Vector_<SimTK::Vec3> verticesInFrame(vertices.size());
+
+	for (int i = 0; i < vertices.nrow(); ++i) {
+
+		verticesInFrame(i) = bodyInGround.shiftBaseStationToFrame(vertices(i));
+
+	}
+
+	return verticesInFrame;
+}
+
 SimTK::Matrix_<SimTK::Vec3> WISCO_ContactMesh::getFaceVertexLocationsInGround(const SimTK::State& state) const
 {
 	getModel().realizePosition(state);
@@ -574,6 +614,7 @@ SimTK::Matrix_<SimTK::Vec3> WISCO_ContactMesh::getFaceVertexLocationsInGround(co
 
 	return verLocInGround;
 }
+
 
 SimTK::Vector WISCO_ContactMesh::getNeighborTris(int tri, int& nNeighborTri) const
 {

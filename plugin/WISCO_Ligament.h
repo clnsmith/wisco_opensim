@@ -88,12 +88,12 @@ public:
 		"The set of points defining the path of the ligament");
 	OpenSim_DECLARE_PROPERTY(linear_stiffness, double,
 		"Slope of the linear portion of the force-strain curve of ligament");
-	OpenSim_DECLARE_PROPERTY(ligament_transition_strain, double,
+	OpenSim_DECLARE_PROPERTY(transition_strain, double,
 		"Strain at which ligament force-strain curve transitions from" 
 		"quadratic to linear. Commonly 0.06 in literature.");
 	OpenSim_DECLARE_PROPERTY(normalized_damping_coefficient, double,
 		"Coefficient for normalized damping of ligament");
-	OpenSim_DECLARE_PROPERTY(defining_length_parameter, std::string,
+	OpenSim_DECLARE_PROPERTY(defining_slack_length_property, std::string,
 		"Options: 'slack_length','reference_strain','reference_force' property to compute slack length."
 		"NOTE: other properties will be ignored.");
 	OpenSim_DECLARE_OPTIONAL_PROPERTY(reference_strain, double,
@@ -109,7 +109,11 @@ public:
 public:
 	// Default Constructor
 	WISCO_Ligament();
-
+	WISCO_Ligament(PhysicalFrame& frame1, SimTK::Vec3 point1,
+		PhysicalFrame& frame2, SimTK::Vec3 point2);
+	WISCO_Ligament(PhysicalFrame& frame1, SimTK::Vec3 point1,
+		PhysicalFrame& frame2, SimTK::Vec3 point2,
+		double linear_stiffness, double reference_strain);
 	//--------------------------------------------------------------------------
 	// GET
 	//--------------------------------------------------------------------------
@@ -122,7 +126,6 @@ public:
 	// computed variables
 	const double& getTension(const SimTK::State& s) const;
 
-
 	//--------------------------------------------------------------------------
 	// COMPUTATIONS
 	//--------------------------------------------------------------------------
@@ -130,7 +133,7 @@ public:
 	virtual void computeForce(const SimTK::State& s, 
 							  SimTK::Vector_<SimTK::SpatialVec>& bodyForces, 
 							  SimTK::Vector& generalizedForces) const;
-
+	double computePotentialEnergy(const SimTK::State& state) const override;
 	//--------------------------------------------------------------------------
 	// SCALE
 	//--------------------------------------------------------------------------
@@ -141,15 +144,16 @@ public:
 	//-----------------------------------------------------------------------------
 	// REPORTING
 	//-----------------------------------------------------------------------------
-	/** 
-	 * Provide name(s) of the quantities (column labels) of the force value(s) to be reported
-	 */
 	virtual OpenSim::Array<std::string> getRecordLabels() const ;
-	/**
-	*  Provide the value(s) to be reported that correspond to the labels
-	*/
 	virtual OpenSim::Array<double> getRecordValues(const SimTK::State& state) const ;
 
+	void equilibriateSlackLengthProperties(const SimTK::State& state);
+	
+	double computeReferenceLength(SimTK::State state) const;
+	double computeSlackLength(const SimTK::State& state, SimTK::String property_name, double property_value) const;
+	double computeReferenceStrain(const SimTK::State& state, SimTK::String property_name, double property_value) const;
+	double computeReferenceForce(const SimTK::State& state, SimTK::String property_name, double property_value) const;
+	void printPropertiesToConsole();
 
 protected:
 	/** Override this method if you would like to calculate a color for use
@@ -175,6 +179,7 @@ protected:
 	void extendAddToSystem(SimTK::MultibodySystem& system) const override;
 	void extendRealizeDynamics(const SimTK::State& state) const override;
     void extendInitStateFromProperties(SimTK::State &state) const override;
+	void extendSetPropertiesFromState(const SimTK::State & 	state) override;
     
 private:
 	void setNull();

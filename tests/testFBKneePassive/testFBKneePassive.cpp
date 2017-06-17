@@ -22,7 +22,7 @@ int main()
 
 		//Load Model
 		static const std::string model_file{ "../inputs/fbknee/fbknee_knee_only.osim" };
-		Model model(model_file,false);
+		Model model(model_file);
 		
 		//=====================================================================
 		// Configure the model
@@ -34,14 +34,13 @@ int main()
 		//Prescribe knee flexion
 		/*double times[7] = { 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0 };
 		double flex_ang[7] = { 0, 0, 0, SimTK::Pi/4, SimTK::Pi/2,SimTK::Pi/4, 0 };
-
-
+		
 		SimmSpline flexion_func = SimmSpline(7, times, flex_ang, "flexion_func");
 
 		knee.upd_coordinates(0).setDefaultIsPrescribed(true);
 		knee.upd_coordinates(0).setPrescribedFunction(flexion_func);
 		*/
-
+		
 		knee.upd_coordinates(0).setDefaultLocked(true);
 
 		SimTK::State& state = model.initSystem();
