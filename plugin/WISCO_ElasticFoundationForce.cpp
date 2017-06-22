@@ -235,12 +235,14 @@ void WISCO_ElasticFoundationForce::extendRealizeReport(const State & state)	cons
 	}*/
 	
 	if (get_verbose() > 0) {
-		std::cout << std::endl;
-		std::cout << "Time: " << state.getTime() << std::endl;
-		std::cout << getName() << " casting_mesh Active Triangles: ";
-		std::cout << getCacheVariableValue<int>(state, "casting_mesh_n_active_tri");
-		std::cout << "/" << getConnectee<WISCO_ContactMesh>("casting_mesh").getNumFaces() << std::endl;
-		std::cout << std::endl;
+		if (get_appliesForce()) {
+			std::cout << std::endl;
+			std::cout << "Time: " << state.getTime() << std::endl;
+			std::cout << getName() << " casting_mesh Active Triangles: ";
+			std::cout << getCacheVariableValue<int>(state, "casting_mesh_n_active_tri");
+			std::cout << "/" << getConnectee<WISCO_ContactMesh>("casting_mesh").getNumFaces() << std::endl;
+			std::cout << std::endl;
+		}
 	}
 }
 
@@ -380,30 +382,31 @@ void WISCO_ElasticFoundationForce::meshCollision(
         Vec3 normal = tri_norC_ground(i);
         
         Vec3 center_in_mT = MeshCtoMeshT.shiftBaseStationToFrame(center);
-
+		
         //If triangle was in contact in previous timestep, recheck same contact triangle and neighbors
-        if (meshC_target_tri(i) >= 0) {
-			
-            //Check same triangle as previous time step
-            Vec3 vertex0 = meshT_ver_loc_ground(meshC_target_tri(i),0);
-            Vec3 vertex1 = meshT_ver_loc_ground(meshC_target_tri(i), 1);
-            Vec3 vertex2 = meshT_ver_loc_ground(meshC_target_tri(i), 2);
-			
-            if (rayIntersectTriTest(center, -normal, vertex0, vertex1, vertex2, contact_pnt_ground, depth))
-            {
-                if (verifyTriContact(tri_norT_ground(meshC_target_tri(i)), tri_norC_ground(i), depth)) {
-                    meshC_tri_proximity(i) = depth;
-                    meshC_tri_pressure(i) = computeTriPressure(
+		if (meshC_target_tri(i) >= 0) {
+
+			//Check same triangle as previous time step
+			Vec3 vertex0 = meshT_ver_loc_ground(meshC_target_tri(i), 0);
+			Vec3 vertex1 = meshT_ver_loc_ground(meshC_target_tri(i), 1);
+			Vec3 vertex2 = meshT_ver_loc_ground(meshC_target_tri(i), 2);
+
+			if (rayIntersectTriTest(center, -normal, vertex0, vertex1, vertex2, contact_pnt_ground, depth))
+			{
+				if (verifyTriContact(tri_norT_ground(meshC_target_tri(i)), tri_norC_ground(i), depth)) {
+					meshC_tri_proximity(i) = depth;
+					meshC_tri_pressure(i) = computeTriPressure(
 						i, meshC_target_tri(i), depth, flipMeshes);
 
-                    force += computeForceVector(meshC_tri_pressure(i), tri_areaC(i), -normal);
-                    moment += computeMomentVector(meshC_tri_pressure(i), tri_areaC(i), -normal, tri_cenC(i));
+					force += computeForceVector(meshC_tri_pressure(i), tri_areaC(i), -normal);
+					moment += computeMomentVector(meshC_tri_pressure(i), tri_areaC(i), -normal, tri_cenC(i));
 
-                    meshC_nActiveTri++;
-                    same++;
-                    continue;
-                }
-            }
+					meshC_nActiveTri++;
+					same++;
+					continue;
+				}
+			}
+		
             
             //Check neighboring triangles
             int nNeighborTri;
@@ -452,7 +455,7 @@ void WISCO_ElasticFoundationForce::meshCollision(
             mT->getCollidingTriangles(triT, triC);
 
 			// Compute Proximity
-			float cnt_point[3];
+			/*float cnt_point[3];
 			mT->getCollisionPoint(cnt_point, false);
 
 			for (int j = 0; j < 3; ++j) {
@@ -460,7 +463,12 @@ void WISCO_ElasticFoundationForce::meshCollision(
 			}
 
 			depth = computeTriProximity(contact_pnt_ground, tri_cenC_ground(i));
+			*/
+			Vec3 vertex0 = meshT_ver_loc_ground(triT, 0);
+			Vec3 vertex1 = meshT_ver_loc_ground(triT, 1);
+			Vec3 vertex2 = meshT_ver_loc_ground(triT, 2);
 
+			rayIntersectTriTest(center, -normal, vertex0, vertex1, vertex2, contact_pnt_ground, depth);
 			//Verify Collision
 			if (verifyTriContact(tri_norT_ground(triT), tri_norC_ground(i),depth))
 			{
@@ -500,7 +508,9 @@ void WISCO_ElasticFoundationForce::meshCollision(
 		Vector_<SimTK::Vec3> tri_norC = castingMesh.getTriangleNormals();
 
 		for (int i = 0; i < castingMesh.getNumFaces(); ++i) {
-			Vec3 prs_force = computeForceVector(meshC_tri_pressure(i), tri_areaC(i), -tri_norC(i));
+			//Vec3 prs_force = computeForceVector(meshC_tri_pressure(i), tri_areaC(i), -tri_norC(i));
+			
+			Vec3 prs_force = computeForceVector(meshC_tri_pressure(i), tri_areaC(i), -tri_norC_ground(i));
 			applyForceToPoint(state, frameC, tri_cenC(i), prs_force, bodyForces);
 			
 			Vec3 point_in_mT = MeshCtoMeshT.shiftBaseStationToFrame(tri_cenC(i));
@@ -726,7 +736,7 @@ double WISCO_ElasticFoundationForce::computeTriPressure(
 	if (get_use_lumped_contact_model()) {
 		double E = (ET + EC) / 2;
 		double v = (vT + vC) / 2;
-		double h = (hT + hC) / 2;
+		double h = (hT + hC);
 
 		double K = (1 - v)*E / ((1 + v)*(1 - 2 * v));
 
@@ -852,8 +862,15 @@ Vec3 WISCO_ElasticFoundationForce::computeMomentVector(double pressure, double a
 
 Transform WISCO_ElasticFoundationForce::getTransformCastingToTargetMesh(const State& state) const
 {
-    const PhysicalFrame& frameT = getConnectee<WISCO_ContactMesh>("target_mesh").get_mesh_frame();
-    const PhysicalFrame& frameC = getConnectee<WISCO_ContactMesh>("casting_mesh").get_mesh_frame();
+	
+	const PhysicalFrame& frameT = (!getModelingOption(state, "flip_meshes")) ?
+		getConnectee<WISCO_ContactMesh>("target_mesh").get_mesh_frame() :
+		getConnectee<WISCO_ContactMesh>("casting_mesh").get_mesh_frame();
+
+	const PhysicalFrame& frameC = (!getModelingOption(state, "flip_meshes")) ?
+		getConnectee<WISCO_ContactMesh>("casting_mesh").get_mesh_frame() :
+		getConnectee<WISCO_ContactMesh>("target_mesh").get_mesh_frame();
+	
 
 	return frameC.findTransformBetween(state,frameT);
 
@@ -1227,13 +1244,13 @@ void WISCO_ElasticFoundationForce::computeContactStats(
 		Vec3 med_contact_force(0.0);
 
 		for (int i = 0; i < nMed; ++i) {
-			med_contact_force += computeForceVector(med_pressure(i), med_area(i), med_normal(i));
+			med_contact_force += computeForceVector(med_pressure(i), med_area(i), -med_normal(i));
 		}
 
 		Vec3 lat_contact_force(0.0);
 
 		for (int i = 0; i < nLat; ++i) {
-			lat_contact_force += computeForceVector(lat_pressure(i), lat_area(i), lat_normal(i));
+			lat_contact_force += computeForceVector(lat_pressure(i), lat_area(i), -lat_normal(i));
 		}
 
 		//Save to cache variables

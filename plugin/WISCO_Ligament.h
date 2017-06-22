@@ -102,6 +102,13 @@ public:
 		"Force in ligament when model is in reference pose.")
 	OpenSim_DECLARE_OPTIONAL_PROPERTY(slack_length, double,
 		"Length at which ligament begins developing tension");
+//=============================================================================
+// OUTPUTS
+//=============================================================================
+	
+	OpenSim_DECLARE_LIST_OUTPUT(dynamic_quantities, double, getDynamicQuantities, SimTK::Stage::Dynamics);
+	
+
 
 //=============================================================================
 // METHODS
@@ -114,6 +121,35 @@ public:
 	WISCO_Ligament(PhysicalFrame& frame1, SimTK::Vec3 point1,
 		PhysicalFrame& frame2, SimTK::Vec3 point2,
 		double linear_stiffness, double reference_strain);
+	
+	//-------------------------------------------------------------------------
+	//Outputs
+	//-------------------------------------------------------------------------
+	double getDynamicQuantities(const SimTK::State& state,
+		const std::string& channel) const {
+		if (channel == "force_spring") {
+			return getCacheVariableValue<double>(state, "force_spring");
+		}
+		else if (channel == "force_damping") {
+			return getCacheVariableValue<double>(state, "force_damping");
+		}
+		else if (channel == "force_total") {
+			return getCacheVariableValue<double>(state, "force_total");
+		}
+		else if (channel == "length") {
+			return getCacheVariableValue<double>(state, "length");
+		}
+		else if (channel == "lengthening_speed") {
+			return getCacheVariableValue<double>(state, "lengthening_speed");
+		}
+		else if (channel == "strain") {
+			return getCacheVariableValue<double>(state, "strain");
+		}
+		else if (channel == "strain_rate") {
+			return getCacheVariableValue<double>(state, "strain_rate");
+		}
+	}
+	
 	//--------------------------------------------------------------------------
 	// GET
 	//--------------------------------------------------------------------------

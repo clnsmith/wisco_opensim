@@ -29,6 +29,8 @@
 #include "WISCO_ContactMesh.h"
 #include "WISCO_ContactAnalysis.h"
 #include "WISCO_ElasticFoundationForce.h"
+#include "WISCO_IdealMuscle.h"
+
 //#include "WISCO_VTKFileAdapter.h"
 //#include "WISCO_H5FileAdapter.h"
 
@@ -48,7 +50,8 @@ OSIMPLUGIN_API void RegisterTypes_osimPlugin()
     Object::registerType(WISCO_ContactMesh());
     Object::registerType(WISCO_ElasticFoundationForce());
     Object::registerType(WISCO_ElasticFoundationForce::ContactParameters());
-	Object::registerType(WISCO_ContactAnalysis());
+	Object::registerType(WISCO_ContactAnalysis()); 
+	Object::registerType(WISCO_IdealMuscle());
     //DataAdapter::registerDataAdapter(".postview",WISCO_PostViewDataFileAdapter());
     //DataAdapter::registerDataAdapter(".kine", WISCO_PostViewKineFileAdapter());
     //DataAdapter::registerDataAdapter(".k", WISCO_KeywordFileAdapter());

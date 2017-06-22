@@ -72,8 +72,14 @@ protected:
 		"Write summary statistics of contact to .h5 file.")
 	OpenSim_DECLARE_PROPERTY(h5_medial_lateral_summary, bool,
 		"Write medial-lateral regional summary statistics to .h5 file")
-	OpenSim_DECLARE_PROPERTY(h5_write_states_data, bool,
+	OpenSim_DECLARE_PROPERTY(h5_states_data, bool,
 		"Write states data to .h5 file")
+	OpenSim_DECLARE_PROPERTY(h5_kinematics_data, bool,
+			"Write kinematics data to .h5 file")
+	OpenSim_DECLARE_PROPERTY(h5_muscle_data,bool,
+		"Write muscle analysis data to .h5 file")
+	OpenSim_DECLARE_PROPERTY(h5_ligament_data, bool,
+		"Write WISCO_ligament data to h5 file")
 	OpenSim_DECLARE_PROPERTY(write_static_vtk_files, bool,
 		"Write .vtk files with meshes fixed in space (in local frame).")
 	OpenSim_DECLARE_PROPERTY(write_dynamic_vtk_files,bool,
@@ -121,7 +127,7 @@ private:
 		const std::vector<std::string>& contact_names, bool isDynamic);
 	void writeH5File(const std::string &aBaseName, const std::string &aDir);
 	
-	void addContactReportsToH5File(WISCO_H5FileAdapter h5_adapt, 
+	void addContactReportsToH5File(WISCO_H5FileAdapter& h5_adapt, 
 		const std::string& group_name, const std::string& contact_name);
 	
 	void decomposeReportName(const std::string& name,

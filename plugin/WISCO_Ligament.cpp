@@ -138,6 +138,18 @@ void WISCO_Ligament::extendFinalizeFromProperties()
 
 	GeometryPath& path = upd_GeometryPath();
 	path.setDefaultColor(DefaultLigamentColor);
+
+	//Add channels to output list
+	auto& dyn_quan = updOutput("dynamic_quantities");
+	dyn_quan.addChannel("force_spring");
+	dyn_quan.addChannel("force_damping");
+	dyn_quan.addChannel("force_total");
+	dyn_quan.addChannel("length");
+	dyn_quan.addChannel("lengthening_speed");
+	dyn_quan.addChannel("strain");
+	dyn_quan.addChannel("strain_rate");
+
+	
 }
 
 void WISCO_Ligament::extendRealizeDynamics(const SimTK::State& state) const {
@@ -165,7 +177,7 @@ void WISCO_Ligament::extendAddToSystem(SimTK::MultibodySystem& system) const
 	addCacheVariable<double>("force_damping", 0.0, SimTK::Stage::Dynamics);
 	addCacheVariable<double>("force_total", 0.0, SimTK::Stage::Dynamics);
 	addCacheVariable<double>("length", 0.0, SimTK::Stage::Dynamics);
-	addCacheVariable<double>("lengthing_speed", 0.0, SimTK::Stage::Dynamics);
+	addCacheVariable<double>("lengthening_speed", 0.0, SimTK::Stage::Dynamics);
 	addCacheVariable<double>("strain", 0.0, SimTK::Stage::Dynamics);
 	addCacheVariable<double>("strain_rate", 0.0, SimTK::Stage::Dynamics);
 }
@@ -455,21 +467,21 @@ void WISCO_Ligament::computeForce(const SimTK::State& s,
     double slackLength = getCacheVariableValue<double>(s, "slack_length");
 
 	double length = path.getLength(s);
-	double lengthing_speed = path.getLengtheningSpeed(s);
+	double lengthening_speed = path.getLengtheningSpeed(s);
 
 	if (length <= slackLength){
 		setCacheVariableValue<double>(s,"force_spring", 0.0);
 		setCacheVariableValue<double>(s,"force_damping", 0.0);
 		setCacheVariableValue<double>(s,"force_total", 0.0);
 		setCacheVariableValue<double>(s,"length", length);
-		setCacheVariableValue<double>(s,"lengthing_speed", lengthing_speed);
+		setCacheVariableValue<double>(s,"lengthening_speed", lengthening_speed);
 		setCacheVariableValue<double>(s, "strain", 0.0);
 		setCacheVariableValue<double>(s,"strain_rate", 0.0);
 		return;
 	}
 
 	double strain = (length - slackLength)/slackLength;
-	double strain_rate = lengthing_speed /slackLength;
+	double strain_rate = lengthening_speed /slackLength;
 	
 	// evaluate force
     double force_spring = 0.0;
@@ -507,7 +519,7 @@ void WISCO_Ligament::computeForce(const SimTK::State& s,
 	setCacheVariableValue<double>(s,"force_damping", force_damping);
 	setCacheVariableValue<double>(s,"force_total", force_total);
 	setCacheVariableValue<double>(s,"length", length);
-	setCacheVariableValue<double>(s,"lengthing_speed", lengthing_speed);
+	setCacheVariableValue<double>(s,"lengthening_speed", lengthening_speed);
 	setCacheVariableValue<double>(s,"strain", strain);
 	setCacheVariableValue<double>(s,"strain_rate", strain_rate);
 
@@ -579,7 +591,7 @@ SimTK::Vec3 WISCO_Ligament::computePathColor(const SimTK::State& state) const {
 		values.append(getCacheVariableValue<double>(s, "force_damping"));
 		values.append(getCacheVariableValue<double>(s, "force_total"));
 		values.append(getCacheVariableValue<double>(s, "length"));
-		values.append(getCacheVariableValue<double>(s, "lengthing_speed"));
+		values.append(getCacheVariableValue<double>(s, "lengthening_speed"));
 		values.append(getCacheVariableValue<double>(s, "strain"));
 		values.append(getCacheVariableValue<double>(s, "strain_rate"));
 		return values;

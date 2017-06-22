@@ -34,6 +34,12 @@
 #include "hdf5_hl.h"
 #include "WISCO_ElasticFoundationForce.h"
 #include "WISCO_HelperFunctions.h"
+#include "WISCO_LigamentReporter.h"
+#include <OpenSim/Analyses/ForceReporter.h>
+#include <OpenSim\Analyses\StatesReporter.h>
+#include <OpenSim/Analyses/MuscleAnalysis.h>
+#include <OpenSim/Analyses/Kinematics.h>
+#include <OpenSim\Common\STOFileAdapter.h>
 using namespace OpenSim;
 
 
@@ -66,6 +72,7 @@ WISCO_ContactAnalysis::WISCO_ContactAnalysis(Model *aModel) :
 void WISCO_ContactAnalysis::setNull()
 {
     //setName("WISCO_ContactAnalysis");
+	setAuthors("Colin Smith");
 
 }
 //_____________________________________________________________________________
@@ -86,7 +93,10 @@ void WISCO_ContactAnalysis::constructProperties()
 	constructProperty_h5_summary_contact_data(true);
 	constructProperty_h5_medial_lateral_summary(true);
 	constructProperty_write_h5_file(true);
-	constructProperty_h5_write_states_data(true);
+	constructProperty_h5_states_data(true);
+	constructProperty_h5_kinematics_data(true);
+	constructProperty_h5_muscle_data(true);
+	constructProperty_h5_ligament_data(true);
 	constructProperty_write_static_vtk_files(true);
 	constructProperty_write_dynamic_vtk_files(true);
 	constructProperty_dynamic_output_frame("ground");
@@ -138,16 +148,32 @@ int WISCO_ContactAnalysis::begin(SimTK::State& s)
 	if (get_contact_names(0) == "all") {
 		for (const WISCO_ElasticFoundationForce& contactForce : _model->getComponentList<WISCO_ElasticFoundationForce>()) {
 			_contact_force_names.push_back(contactForce.getName());
-			_contact_mesh_names.push_back(contactForce.getConnectee<WISCO_ContactMesh>("casting_mesh").getName());
-			_contact_mesh_names.push_back(contactForce.getConnectee<WISCO_ContactMesh>("target_mesh").getName());
+
+			std::string casting_mesh_name = contactForce.getConnectee<WISCO_ContactMesh>("casting_mesh").getName();
+			std::string target_mesh_name = contactForce.getConnectee<WISCO_ContactMesh>("target_mesh").getName();
+
+			if (!contains_string(_contact_mesh_names, casting_mesh_name)) {
+				_contact_mesh_names.push_back(casting_mesh_name);
+			}
+			if (!contains_string(_contact_mesh_names, target_mesh_name)) {
+				_contact_mesh_names.push_back(target_mesh_name);
+			}
 		}
 	}
 	else {
 		for (int i = 0; i < getProperty_contact_names().size(); ++i) {
 			const WISCO_ElasticFoundationForce& contactForce = _model->getComponent<WISCO_ElasticFoundationForce>(get_contact_names(i));
 			_contact_force_names.push_back(contactForce.getName());
-			_contact_mesh_names.push_back(contactForce.getConnectee<WISCO_ContactMesh>("casting_mesh").getName());
-			_contact_mesh_names.push_back(contactForce.getConnectee<WISCO_ContactMesh>("target_mesh").getName());
+			
+			std::string casting_mesh_name = contactForce.getConnectee<WISCO_ContactMesh>("casting_mesh").getName();
+			std::string target_mesh_name = contactForce.getConnectee<WISCO_ContactMesh>("target_mesh").getName();
+
+			if (!contains_string(_contact_mesh_names, casting_mesh_name)) {
+				_contact_mesh_names.push_back(casting_mesh_name);
+			}
+			if (!contains_string(_contact_mesh_names, target_mesh_name)) {
+				_contact_mesh_names.push_back(target_mesh_name);
+			}
 		}
 	}
 
@@ -160,14 +186,44 @@ int WISCO_ContactAnalysis::begin(SimTK::State& s)
 		addContactReportersToModel(contactForce);
 	}
 
-	//States Reporter
-	StatesTrajectoryReporter* states_reporter = new StatesTrajectoryReporter();
-	states_reporter->setName("states_reporter");
-	states_reporter->set_report_time_interval(0);
-	_model->addComponent(states_reporter);
+	//States	
+	if (get_h5_states_data() || get_h5_muscle_data()) {
+		StatesReporter* states_rep = new StatesReporter();
+		states_rep->setName("states_analysis");
+		states_rep->setStepInterval(getStepInterval());
+		states_rep->setPrintResultFiles(false);
+		//states_rep->setInDegrees(true);
+		_model->addAnalysis(states_rep);
+	}
 
-	//SimTK::State new_state = _model->initSystem();
+	//Kinematics
+	if(get_h5_kinematics_data()){
+		Kinematics* kin_rep = new Kinematics();
+		kin_rep->setName("kinematics_analysis");
+		kin_rep->setStepInterval(getStepInterval());
+		kin_rep->setPrintResultFiles(false);
+		//kin_rep->setInDegrees(true);
+		_model->addAnalysis(kin_rep);
+	}
+
+	//Muscle
+	if (get_h5_muscle_data()) {
+		MuscleAnalysis* msl_rep = new MuscleAnalysis();
+		msl_rep->setName("muscle_analysis");
+		msl_rep->setStepInterval(getStepInterval());
+		msl_rep->setComputeMoments(false);
+		msl_rep->setPrintResultFiles(false);
+		_model->addAnalysis(msl_rep);
+	}
+	//Ligament
+	if (get_h5_ligament_data()) {
+		WISCO_LigamentReporter* lig_rep = new WISCO_LigamentReporter();
+		lig_rep->setName("ligament_reporter");
+		_model->addComponent(lig_rep);
+	}
+
 	s = _model->initSystem();
+
 	//Setup WISCO_ElasticFoundationForces in model for contact analysis
 	for (int i = 0; i < _contact_force_names.size(); ++i) {
 
@@ -207,10 +263,10 @@ int WISCO_ContactAnalysis::begin(SimTK::State& s)
 
 
 	//Repose state
-	s.setQ(initial_Q);
-	s.setU(initial_U);
+	//s.setQ(initial_Q);
+	//s.setU(initial_U);
 
-	record(s);
+	//record(s);
 	return(0);
 }
 
@@ -386,7 +442,7 @@ void WISCO_ContactAnalysis::addContactReporter(
 	if (reporter_type == "vector") {
 		TableReporterVector* mesh1_reporter = new TableReporterVector();
 		mesh1_reporter->setName(reporter_name);
-		mesh1_reporter->set_report_time_interval(time_interval);
+		mesh1_reporter->set_report_time_interval(0);
 		mesh1_reporter->addToReport(contactForce.getOutput(output_name));
 		_model->addComponent(mesh1_reporter);
 	}
@@ -394,7 +450,7 @@ void WISCO_ContactAnalysis::addContactReporter(
 	if (reporter_type == "real") {
 		TableReporter* mesh1_reporter = new TableReporter();
 		mesh1_reporter->setName(reporter_name);
-		mesh1_reporter->set_report_time_interval(time_interval);
+		mesh1_reporter->set_report_time_interval(0);
 		mesh1_reporter->addToReport(contactForce.getOutput(output_name));
 		_model->addComponent(mesh1_reporter);
 	}
@@ -402,7 +458,7 @@ void WISCO_ContactAnalysis::addContactReporter(
 	if (reporter_type == "vec3") {
 		TableReporterVec3* mesh1_reporter = new TableReporterVec3();
 		mesh1_reporter->setName(reporter_name);
-		mesh1_reporter->set_report_time_interval(time_interval);
+		mesh1_reporter->set_report_time_interval(0);
 		mesh1_reporter->addToReport(contactForce.getOutput(output_name));
 		_model->addComponent(mesh1_reporter);
 	}
@@ -584,9 +640,49 @@ void WISCO_ContactAnalysis::writeH5File(
 	h5_adapter.open(h5_file);
 
 	//Write States Data
-	if (get_h5_write_states_data()) {
-		TimeSeriesTable states_table = _model->getComponent<StatesTrajectoryReporter>("states_reporter").getStates().exportToTable(*_model);
+	if (get_h5_states_data()) {
+		//TimeSeriesTable states_table = _model->getComponent<StatesTrajectoryReporter>("states_reporter").getStates().exportToTable(*_model);
+		//h5_adapter.writeStatesDataSet(states_table);
+		
+		StatesReporter& states_analysis = dynamic_cast<StatesReporter&>(_model->updAnalysisSet().get("states_analysis"));
+		const TimeSeriesTable& states_table = states_analysis.getStatesStorage().getAsTimeSeriesTable();
 		h5_adapter.writeStatesDataSet(states_table);
+	}
+
+	if (get_h5_kinematics_data()) {
+		Kinematics& kin_analysis = dynamic_cast<Kinematics&>(_model->updAnalysisSet().get("kinematics_analysis"));
+		TimeSeriesTable& pos_table = kin_analysis.getPositionStorage()->getAsTimeSeriesTable();
+		TimeSeriesTable& vel_table = kin_analysis.getVelocityStorage()->getAsTimeSeriesTable();
+		TimeSeriesTable& acc_table = kin_analysis.getAccelerationStorage()->getAsTimeSeriesTable();
+		//_model->getSimbodyEngine().convertRadiansToDegrees(pos_table);
+		//_model->getSimbodyEngine().convertRadiansToDegrees(vel_table);
+		//_model->getSimbodyEngine().convertRadiansToDegrees(acc_table);
+		h5_adapter.writeKinematicsDataSet(pos_table, vel_table, acc_table);
+	}
+
+	//Write Muscle Data
+	if (get_h5_muscle_data()) {
+		StatesReporter& states_analysis = dynamic_cast<StatesReporter&>(_model->updAnalysisSet().get("states_analysis"));
+		const TimeSeriesTable& states_table = states_analysis.getStatesStorage().getAsTimeSeriesTable();
+		
+		MuscleAnalysis& msl_analysis = dynamic_cast<MuscleAnalysis&>(_model->updAnalysisSet().get("muscle_analysis"));				
+		const TimeSeriesTable& force_table = msl_analysis.getForceStorage()->getAsTimeSeriesTable();
+
+		std::vector<std::string> msl_names = force_table.getColumnLabels();
+
+		std::vector<SimTK::Matrix> msl_vec;
+		msl_vec.push_back(force_table.getMatrix().getAsMatrix());
+
+		std::vector<std::string> param_names;
+		param_names.push_back("force");
+
+		h5_adapter.writeMuscleDataSet(msl_vec, msl_names, param_names, states_table);
+	}
+
+	//Write Ligament Data
+	if (get_h5_ligament_data()) {
+		TimeSeriesTable lig_table = _model->getComponent<WISCO_LigamentReporter>("ligament_reporter").getTableReporter().getTable();
+		h5_adapter.writeLigamentDataSet(lig_table);
 	}
 
 	//Write Contact Data
@@ -606,7 +702,7 @@ void WISCO_ContactAnalysis::writeH5File(
 }
 
 void WISCO_ContactAnalysis::addContactReportsToH5File(
-	WISCO_H5FileAdapter h5_adapt, 	const std::string& group_name, 
+	WISCO_H5FileAdapter& h5_adapt, 	const std::string& group_name, 
 	const std::string& contact_name) 
 {
 	std::vector<std::string> mesh_names;

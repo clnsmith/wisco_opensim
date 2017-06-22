@@ -2,7 +2,7 @@
 <OpenSimDocument Version="30516">
 	<Model name="FBKnee">
 		<defaults>
-			<Millard2012EquilibriumMuscle name="default">
+			<WISCO_IdealMuscle name="default">
 				<!--The set of points defining the path of the actuator.-->
 				<GeometryPath>
 					<!--Default appearance attributes for this GeometryPath-->
@@ -33,7 +33,7 @@
 				<activation_time_constant>0.01</activation_time_constant>
 				<!--Deactivation time constant, in seconds-->
 				<deactivation_time_constant>0.029999999999999999</deactivation_time_constant>
-			</Millard2012EquilibriumMuscle>
+			</WISCO_IdealMuscle>
 		</defaults>
 		<!--List of components that this component owns and serializes.-->
 		<components>
@@ -6400,7 +6400,7 @@
 		<!--Forces in the model (includes Actuators).-->
 		<ForceSet>
 			<objects>
-				<Millard2012EquilibriumMuscle name="addbrev_r">
+				<WISCO_IdealMuscle name="addbrev_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -6434,8 +6434,8 @@
 					<tendon_slack_length>0.035999999999999997</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.106465084372</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="addlong_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="addlong_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -6469,8 +6469,8 @@
 					<tendon_slack_length>0.13</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.123569311041</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="addmagProx_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="addmagProx_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -6504,8 +6504,8 @@
 					<tendon_slack_length>0.042999999999999997</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.38728856101800002</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="addmagMid_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="addmagMid_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -6539,8 +6539,8 @@
 					<tendon_slack_length>0.048000000000000001</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.25673793296800002</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="addmagDist_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="addmagDist_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -6574,8 +6574,8 @@
 					<tendon_slack_length>0.089999999999999997</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.24120450262599999</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="addmagIsch_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="addmagIsch_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -6609,8 +6609,8 @@
 					<tendon_slack_length>0.221</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.20734511513699999</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="bflh_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="bflh_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -6644,8 +6644,8 @@
 					<tendon_slack_length>0.32200000000000001</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.20210912738100001</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="bfsh_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="bfsh_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -6679,8 +6679,8 @@
 					<tendon_slack_length>0.104</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.21519909677099999</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="edl_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="edl_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -6738,8 +6738,8 @@
 					<tendon_slack_length>0.36730000000000002</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.189019157991</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="ehl_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="ehl_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -6809,8 +6809,8 @@
 					<tendon_slack_length>0.33150000000000002</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.16475908138799999</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="fdl_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="fdl_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -6880,8 +6880,8 @@
 					<tendon_slack_length>0.37769999999999998</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.238062909972</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="fhl_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="fhl_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -6945,8 +6945,8 @@
 					<tendon_slack_length>0.35599999999999998</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.294786110662</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="gaslat_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="gaslat_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -6993,8 +6993,8 @@
 					<pennation_angle_at_optimal>0.21013764194000001</pennation_angle_at_optimal>
 					<!--passive muscle strain at maximum isometric muscle force-->
 					<FmaxMuscleStrain>2</FmaxMuscleStrain>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="gasmed_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="gasmed_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7041,8 +7041,8 @@
 					<pennation_angle_at_optimal>0.172438530097</pennation_angle_at_optimal>
 					<!--passive muscle strain at maximum isometric muscle force-->
 					<FmaxMuscleStrain>2</FmaxMuscleStrain>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="gem_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="gem_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7076,8 +7076,8 @@
 					<tendon_slack_length>0.039</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="glmax1_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="glmax1_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7134,8 +7134,8 @@
 					<tendon_slack_length>0.050000000000000003</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.38292523788799998</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="glmax2_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="glmax2_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7192,8 +7192,8 @@
 					<tendon_slack_length>0.073300000000000004</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.38292523788799998</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="glmax3_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="glmax3_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7250,8 +7250,8 @@
 					<tendon_slack_length>0.070199999999999999</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.38292523788799998</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="glmed1_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="glmed1_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7285,8 +7285,8 @@
 					<tendon_slack_length>0.056500000000000002</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.35726889788299998</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="glmed2_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="glmed2_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7320,8 +7320,8 @@
 					<tendon_slack_length>0.066000000000000003</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.35726889788299998</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="glmed3_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="glmed3_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7355,8 +7355,8 @@
 					<tendon_slack_length>0.045999999999999999</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.35726889788299998</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="glmin1_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="glmin1_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7390,8 +7390,8 @@
 					<tendon_slack_length>0.016</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.17453292519899999</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="glmin2_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="glmin2_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7425,8 +7425,8 @@
 					<tendon_slack_length>0.025999999999999999</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="glmin3_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="glmin3_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7460,8 +7460,8 @@
 					<tendon_slack_length>0.050999999999999997</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.01745329252</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="grac_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="grac_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7512,8 +7512,8 @@
 					<tendon_slack_length>0.16900000000000001</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.14241886696299999</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="iliacus_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="iliacus_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7570,8 +7570,8 @@
 					<tendon_slack_length>0.094</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.24940755010999999</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="pect_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="pect_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7616,8 +7616,8 @@
 					<tendon_slack_length>0.033000000000000002</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="perbrev_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="perbrev_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7669,8 +7669,8 @@
 					<tendon_slack_length>0.14810000000000001</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.20001473227899999</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="perlong_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="perlong_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7734,8 +7734,8 @@
 					<tendon_slack_length>0.33300000000000002</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.245742358681</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="pertert_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="pertert_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7775,8 +7775,8 @@
 					<tendon_slack_length>0.10000000000000001</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.22689280275900001</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="piri_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="piri_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7816,8 +7816,8 @@
 					<tendon_slack_length>0.115</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.17453292519899999</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="psoas_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="psoas_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7874,8 +7874,8 @@
 					<tendon_slack_length>0.097000000000000003</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.18605209826300001</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="quadfem_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="quadfem_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7909,8 +7909,8 @@
 					<tendon_slack_length>0.024</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="recfem_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="recfem_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -7961,8 +7961,8 @@
 					<pennation_angle_at_optimal>0.24312436480300001</pennation_angle_at_optimal>
 					<!--passive muscle strain at maximum isometric muscle force-->
 					<FmaxMuscleStrain>2</FmaxMuscleStrain>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="sart_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="sart_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -8014,8 +8014,8 @@
 					<tendon_slack_length>0.11</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.023212879052</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="semimem_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="semimem_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -8049,8 +8049,8 @@
 					<tendon_slack_length>0.378</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.263370184126</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="semiten_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="semiten_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -8090,8 +8090,8 @@
 					<tendon_slack_length>0.245</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.22444934180600001</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="soleus_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="soleus_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -8127,8 +8127,8 @@
 					<pennation_angle_at_optimal>0.49305551368799999</pennation_angle_at_optimal>
 					<!--passive muscle strain at maximum isometric muscle force-->
 					<FmaxMuscleStrain>2</FmaxMuscleStrain>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="tfl_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="tfl_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -8168,8 +8168,8 @@
 					<tendon_slack_length>0.45000000000000001</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.052359877559999997</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="tibant_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="tibant_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -8215,8 +8215,8 @@
 					<tendon_slack_length>0.24099999999999999</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.16685347649099999</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="tibpost_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="tibpost_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -8262,8 +8262,8 @@
 					<tendon_slack_length>0.28179999999999999</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0.23928464044799999</pennation_angle_at_optimal>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="vasint_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="vasint_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -8314,8 +8314,8 @@
 					<pennation_angle_at_optimal>0.079237948040999998</pennation_angle_at_optimal>
 					<!--passive muscle strain at maximum isometric muscle force-->
 					<FmaxMuscleStrain>2</FmaxMuscleStrain>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="vaslat_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="vaslat_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -8366,8 +8366,8 @@
 					<pennation_angle_at_optimal>0.320791516517</pennation_angle_at_optimal>
 					<!--passive muscle strain at maximum isometric muscle force-->
 					<FmaxMuscleStrain>2</FmaxMuscleStrain>
-				</Millard2012EquilibriumMuscle>
-				<Millard2012EquilibriumMuscle name="vasmed_r">
+				</WISCO_IdealMuscle>
+				<WISCO_IdealMuscle name="vasmed_r">
 					<!--The set of points defining the path of the actuator.-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
@@ -8418,7 +8418,7 @@
 					<pennation_angle_at_optimal>0.51679199151599997</pennation_angle_at_optimal>
 					<!--passive muscle strain at maximum isometric muscle force-->
 					<FmaxMuscleStrain>2</FmaxMuscleStrain>
-				</Millard2012EquilibriumMuscle>
+				</WISCO_IdealMuscle>
 				<WISCO_Ligament name="MCLd1">
 					<!--Flag indicating whether the force is applied or not. If true the forceis applied to the MultibodySystem otherwise the force is not applied.NOTE: Prior to OpenSim 4.0, this behavior was controlled by the 'isDisabled' property, where 'true' meant that force was not being applied. Thus, if 'isDisabled' is true, then 'appliesForce` is false.-->
 					<appliesForce>true</appliesForce>
@@ -11569,7 +11569,7 @@
 						<!--Poissons Ratio-->
 						<poissons_ratio>0.45</poissons_ratio>
 						<!--Uniform thickness of elastic layer-->
-						<thickness>0.003</thickness>
+						<thickness>0.004</thickness>
 					</WISCO_ElasticFoundationForce::ContactParameters>
 					<!--casting_mesh Material Properties-->
 					<WISCO_ElasticFoundationForce::ContactParameters name="casting_mesh_contact_params">
@@ -11578,7 +11578,7 @@
 						<!--Poissons Ratio-->
 						<poissons_ratio>0.45</poissons_ratio>
 						<!--Uniform thickness of elastic layer-->
-						<thickness>0.003</thickness>
+						<thickness>0.004</thickness>
 					</WISCO_ElasticFoundationForce::ContactParameters>
 				</WISCO_ElasticFoundationForce>
 				<BushingForce name="TF_bushing">
@@ -11587,9 +11587,9 @@
 					<!--Path to a Component that satisfies the Socket 'frame2' of type F (description: The second frame participating in this linker.).-->
 					<socket_frame2_connectee_name>../tibia_proximal_r</socket_frame2_connectee_name>
 					<!--Damping parameters resisting angular deviation rate. (Nm/(rad/s))-->
-					<rotational_damping>20 20 20</rotational_damping>
+					<rotational_damping>0.1 0.1 0.1</rotational_damping>
 					<!--Damping parameters resisting relative translational velocity. (N/(m/s))-->
-					<translational_damping>1000 1000 1000</translational_damping>
+					<translational_damping>2 2 2</translational_damping>
 				</BushingForce>
 				<BushingForce name="PF_bushing">
 					<!--Path to a Component that satisfies the Socket 'frame1' of type F (description: The first frame participating in this linker.).-->
@@ -11597,9 +11597,9 @@
 					<!--Path to a Component that satisfies the Socket 'frame2' of type F (description: The second frame participating in this linker.).-->
 					<socket_frame2_connectee_name>../patella_r</socket_frame2_connectee_name>
 					<!--Damping parameters resisting angular deviation rate. (Nm/(rad/s))-->
-					<rotational_damping>20 20 20</rotational_damping>
+					<rotational_damping>0.1 0.1 0.1</rotational_damping>
 					<!--Damping parameters resisting relative translational velocity. (N/(m/s))-->
-					<translational_damping>1000 1000 1000</translational_damping>
+					<translational_damping>0.50 0.50 0.50</translational_damping>
 				</BushingForce>
 			</objects>
 			<groups>

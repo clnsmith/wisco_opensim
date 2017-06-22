@@ -13,16 +13,50 @@ classdef WISCO_Muscle_Analysis
         time
         nMuscles
         names
-        force
+        data
     end
     methods
         function obj = WISCO_Muscle_Analysis(file)
-            [pathstr,name,ext] = fileparts(file);
+        %==================================================================
+        %CLASS CONSTRUCTER
+        %------------------------------------------------------------------
+        %file : full path to .h5 or .sto file to read and analyze 
+        %(include extension)
+        %==================================================================
+            if (exist(file,'file') ~=2)
+                fprintf('File: %s',file);
+                error('File does not exist!')                
+            end
         
-            if(strcmp('.sto',ext))
+            [pathstr,name,ext] = fileparts(file);
+            obj.file = file;
+            
+            if(strcmp('.h5',ext))
+                obj.time = h5read(file,'/time');
+                
+                info = h5info(file,'/Muscles');
+                
+                obj.nMuscles = length(info.Groups);
+                
+                obj.names = cell(obj.nMuscles,1);
+                
+                for i = 1:obj.nMuscles
+                    label = strsplit(info.Groups(i).Name,'/');
+                    obj.names{i} = label{3};
+                    
+                    nDataSet = length(info.Groups(i).Datasets);
+                    
+                    for j = 1:nDataSet 
+                        param = info.Groups(i).Datasets(j).Name;
+                        data_set_name = ['/Muscles/' obj.names{i} '/' param];
+                        obj.data.(obj.names{i}).(param) = h5read(file,data_set_name);
+                    end
+                end
+                
+            elseif(strcmp('.sto',ext))
                             
             
-                obj.file = file;
+            
 
                 %Read ForceReporter.sto file
                 %---------------------------
@@ -55,23 +89,23 @@ classdef WISCO_Muscle_Analysis
         end
         
         function plot_muscle_param(obj,muscle_names,param_name)
+        %==================================================================
+        % PLOT_MUSCLE_PARAM
+        %------------------------------------------------------------------
+        %
+        %
+        %==================================================================
+            figure('name',[muscle_names{:} ' : ' param_name])
+            
             if strcmp(muscle_names{1},'all')
                 muscle_names = obj.names;
             end
             
             nMsl = length(muscle_names);
             
-            fig_name = ['Muscle ' param_name ': '];
-            for i = 1:nMsl
-                fig_name = [fig_name muscle_names{i} ' '];
-            end
-            
-            figure('name',fig_name)
             hold on;
-            for i = 1:nMsl
-                ind = strcmp(obj.names,muscle_names{i});
-                frc = obj.(param_name)(:,ind);                       
-                plot(obj.time,frc,'LineWidth',2);                
+            for i = 1:nMsl                   
+                plot(obj.time,obj.data.(muscle_names{i}).(param_name),'LineWidth',2);                
             end
             xlabel('time [s]')
             ylabel(param_name)

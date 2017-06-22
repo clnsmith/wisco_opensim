@@ -8,34 +8,76 @@
 %==========================================================================
 classdef WISCO_ElasticFoundationForce_Analysis
     properties
-        sto_file;
-        raw;
+        sto_file
+        raw
         
-        time;
-        frame_number;
-        nFrames;
-        force;
-        cop;
+        time
+        frame_number
+        nFrames
+        data
+        nForces
+        force_names
         
     end
     methods
         function obj = WISCO_ElasticFoundationForce_Analysis(file)
+        %==================================================================
+        %CLASS CONSTRUCTER
+        %------------------------------------------------------------------
+        %file : full path to .h5 or .sto file to read and analyze 
+        %(include extension)
+        %==================================================================
+        
+            %Read ForceReporter.sto file
+            %---------------------------
+            if (exist(file,'file') ~=2)
+                fprintf('File: %s',file);
+                error('File does not exist!')                
+            end
             [pathstr,name,ext] = fileparts(file);
             
-            if (strcmp(ext,'h5'))
+            if (strcmp(ext,'.h5'))
+                obj.time = h5read(file,'/time');
                 
-            end
-            
-            
-            if (strcmp(ext,'.sto'))
+                info = h5info(file,'/WISCO_ElasticFoundationForce');
+                
+                obj.nForces = length(info.Groups);
+                
+                obj.force_names = cell(obj.nForces,1);
+                
+                for i = 1:obj.nForces
+                    label = strsplit(info.Groups(i).Name,'/');
+                    obj.force_names{i} = label{3};
+                    
+                    nMesh = length(info.Groups(i).Groups);
+                    
+                    for j = 1:nMesh
+                        label = strsplit(info.Groups(i).Groups(j).Name,'/');
+                        mesh_name = label{4};
+                        
+                        nType = length(info.Groups(i).Groups(j).Groups);
+                        
+                        for k = 1:nType
+                            label = strsplit(info.Groups(i).Groups(j).Groups(k).Name,'/');
+                            type_name = label{5};
+                            
+                            nParam = length(info.Groups(i).Groups(j).Groups(k).Datasets);
+                                                       
+                            for l = 1:nParam
+                                param_name = info.Groups(i).Groups(j).Groups(k).Datasets(l).Name;
+                                                                
+                                data_set_name = ['/WISCO_ElasticFoundationForce/' obj.force_names{i} '/' mesh_name '/' type_name '/' param_name];
+                                obj.data.(obj.force_names{i}).(mesh_name).(type_name).(param_name) = h5read(file,data_set_name);
+                            end
+                        end
+                    end
+                end
+                        
+                        
+            elseif (strcmp(ext,'.sto'))
                 obj.sto_file = file;
 
-                %Read ForceReporter.sto file
-                %---------------------------
-                if (exist(file,'file') ~=2)
-                    fprintf('File: %s',file);
-                    error('File does not exist!')                
-                end
+ 
 
                 [data,labels,header] = read_opensim_sto(file);
                 obj.raw.data = data;

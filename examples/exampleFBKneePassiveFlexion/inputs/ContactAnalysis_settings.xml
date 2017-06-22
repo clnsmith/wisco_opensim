@@ -12,7 +12,7 @@
 		<!--Initial time for the simulation.-->
 		<initial_time>       0.0 </initial_time>
 		<!--Final time for the simulation.-->
-		<final_time>       1.0 </final_time>
+		<final_time>      5.0 </final_time>
 		<AnalysisSet name="Analyses">
 			<objects>
 				<WISCO_ContactAnalysis name="ContactAnalysis">
@@ -26,7 +26,7 @@
 					    specifically, the interval (a positive integer) specifies how many
 					    successful integration steps should be taken before results are
 					    recorded again.-->
-					<step_interval> 25 </step_interval>
+					<step_interval> 1 </step_interval>
 					<!--Flag (true or false) indicating whether the results are in degrees or
 					    not.-->
               <in_degrees> true </in_degrees>
@@ -35,11 +35,14 @@
               <output_pressure> true </output_pressure>
               <output_proximity> true </output_proximity>
               <output_data_mesh_format> both </output_data_mesh_format>
-              <write_h5_file> false </write_h5_file>
-              <h5_write_states_data> false </h5_write_states_data>
+              <write_h5_file> true </write_h5_file>
+              <h5_states_data> true </h5_states_data>
+              <h5_kinematics_data> true </h5_kinematics_data>
+              <h5_ligament_data> true </h5_ligament_data>
+              <h5_muscle_data> true </h5_muscle_data>
               <h5_raw_contact_data> true </h5_raw_contact_data>
-              <h5_summary_contact_data> false </h5_summary_contact_data>
-              <h5_medial_lateral_summary> false </h5_medial_lateral_summary>
+              <h5_summary_contact_data> true </h5_summary_contact_data>
+              <h5_medial_lateral_summary> true </h5_medial_lateral_summary>
               <write_static_vtk_files> false </write_static_vtk_files>
               <write_dynamic_vtk_files> true </write_dynamic_vtk_files>
               <dynamic_output_frame> ground </dynamic_output_frame>
