@@ -20,15 +20,15 @@ int main()
 			model.setName("knee_contact");
 			//model.setGravity(SimTK::Vec3(0, 0, -9.80665));
 			model.setUseVisualizer(true);
-			/*
+
 			static const std::string femur_cart_file{ "../shared/fbknee/geometry/ACLC01-R-femur-cart.stl" };
 			static const std::string tibia_cart_file{ "../shared/fbknee/geometry/ACLC01-R-tibia-cart.stl" };
 			static const std::string patella_cart_file{ "../shared/fbknee/geometry/ACLC01-R-patella-cart_shift.stl" };
-			*/
+            /*
 			static const std::string femur_cart_file{ "C:/github/wisco_opensim/source/tests/shared/fbknee/Geometry/ACLC01-R-femur-cart-coarse.stl" };
 			static const std::string tibia_cart_file{ "C:/github/wisco_opensim/source/tests/shared/fbknee/Geometry/ACLC01-R-tibia-cart-coarse.stl" };
 			static const std::string patella_cart_file{ "C:/github/wisco_opensim/source/tests/shared/fbknee/Geometry/ACLC01-R-patella-cart_shift-coarse.stl" };
-
+            */
 			Body* femur = new Body("femur_distal_r", 1.0, Vec3(0), SimTK::Inertia(0.01));
 			Body* tibia = new Body("tibia_proximal_r", 1.0, Vec3(0), SimTK::Inertia(0.01));
 			Body* patella = new Body("patella_r", 1.0, Vec3(0), SimTK::Inertia(0.01));
@@ -77,7 +77,7 @@ int main()
 			model.addForce(PFcontact);
 
 			//Add Prescribed Joint
-			
+
 			/*SpatialTransform spat_trans = SpatialTransform();
 			spat_trans[0].setCoordinateNames(OpenSim::Array<std::string>("trans1", 1, 1));
 			spat_trans[0].setFunction(LinearFunction());
@@ -93,14 +93,14 @@ int main()
 			spat_trans[5].setFunction(LinearFunction());
 
 			CustomJoint* tf_joint = new CustomJoint("tf_joint", *femur, *tibia, spat_trans);
-			CustomJoint* pf_joint = new CustomJoint("pf_joint", *femur, *patella, spat_trans);*/			
-			
+			CustomJoint* pf_joint = new CustomJoint("pf_joint", *femur, *patella, spat_trans);*/
+
 			FreeJoint* tf_joint = new FreeJoint("tf_joint", *femur, Vec3(0), Vec3(0), *tibia, Vec3(0), Vec3(0));
-			FreeJoint* pf_joint = new FreeJoint("pf_joint", *femur, Vec3(0), Vec3(0), *patella, Vec3(0), Vec3(0));			
+			FreeJoint* pf_joint = new FreeJoint("pf_joint", *femur, Vec3(0), Vec3(0), *patella, Vec3(0), Vec3(0));
 
 			WeldJoint* ground_knee = new WeldJoint("ground_to_knee", model.getGround(), *femur);
 			model.addComponent(ground_knee);
-			
+
 			LinearFunction tf_func = LinearFunction(0.02, 0.0);
 			LinearFunction pf_func = LinearFunction(-0.02, 0.053);
 
@@ -145,7 +145,7 @@ int main()
 			static const std::string out_mot_file{ "./results/kneeContact.mot" };
 			manager.getStateStorage().print(out_mot_file);
 		}
-	
+
 		//Perform ContactAnalysis
 		static const std::string settings_file{ "./inputs/ContactAnalysis_settings.xml" };
 

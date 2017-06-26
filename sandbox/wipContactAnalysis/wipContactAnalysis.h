@@ -23,7 +23,7 @@
 #define OPENSIM_BUILD_CONTACT_BALL_FLOOR_H_
 
 
-#include <OpenSim\OpenSim.h>
+#include <OpenSim/OpenSim.h>
 
 namespace OpenSim {
 

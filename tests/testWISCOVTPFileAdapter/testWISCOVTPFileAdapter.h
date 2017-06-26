@@ -23,7 +23,7 @@
 #define OPENSIM_VTP_MAIN_H_
 
 
-#include <OpenSim\OpenSim.h>
+#include <OpenSim/OpenSim.h>
 
 namespace OpenSim {
 

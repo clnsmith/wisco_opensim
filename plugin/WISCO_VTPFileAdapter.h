@@ -22,7 +22,7 @@
 #ifndef OPENSIM_VTP_FILE_ADAPTER_H_
 #define OPENSIM_VTP_FILE_ADAPTER_H_
 
-#include "OpenSim\Common\FileAdapter.h"
+#include "OpenSim/Common/FileAdapter.h"
 #include "SimTKmath.h"
 #include "osimPluginDLL.h"
 
@@ -31,7 +31,7 @@ namespace OpenSim {
     class OSIMPLUGIN_API WISCO_VTPFileAdapter : public FileAdapter {
     //class WISCO_VTPFileAdapter : public FileAdapter {
     public:
-               
+
        WISCO_VTPFileAdapter();
        WISCO_VTPFileAdapter(const WISCO_VTPFileAdapter&) = default;
        WISCO_VTPFileAdapter(WISCO_VTPFileAdapter&&) = default;
@@ -40,23 +40,23 @@ namespace OpenSim {
        ~WISCO_VTPFileAdapter() = default;
 
        WISCO_VTPFileAdapter* clone() const override;
-	   
-	   
+
+
 	   /**
 	   @param[in] vertices
 			A matrix [nVertices x nTimeSteps] containing Vec3 with the locations
-			of the contact mesh vertices in space. 
+			of the contact mesh vertices in space.
 
 		@param[in] faces
-			A matrix [nFaces x nVerticesPerFace] 
-	   
-	   
+			A matrix [nFaces x nVerticesPerFace]
+
+
 	   */
 	   void write(const std::string& fileName, const std::string& filePath,
 		   const SimTK::Matrix_<SimTK::Vec3>& vertices, const SimTK::Matrix& faces,
 		   const int nTimeSteps) const;
 
-	   void write(const std::string& fileName, const std::string& filePath, 
+	   void write(const std::string& fileName, const std::string& filePath,
 		   const SimTK::PolygonalMesh& mesh, const int nTimeSteps) const;
 
 
@@ -65,7 +65,7 @@ namespace OpenSim {
 			Cannot include spaces
 
 	   @param[in] aFaceData
-			A vector [nDataField] of SimTK::Matrix [nTimeStep x nFaces] 
+			A vector [nDataField] of SimTK::Matrix [nTimeStep x nFaces]
 			containing data values for each face in the contact mesh
 	   @param[in] aFaceDataTypes
 			Options:
@@ -83,7 +83,7 @@ namespace OpenSim {
 	   {
 		   _pointDataNames = aPointDataNames;
 		   _pointData = aPointData;
-		  
+
 	   };
 
 	   void setDataFormat(SimTK::String format) {
@@ -92,7 +92,7 @@ namespace OpenSim {
 
     protected:
         OutputTables extendRead(const std::string& fileName) const override;
-        
+
         void extendWrite(const InputTables& tables, const std::string& fileName) const override;
     private:
 		bool isLittleEndian() const;

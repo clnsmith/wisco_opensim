@@ -22,12 +22,12 @@
 #ifndef OPENSIM_H5_FILE_ADAPTER_H_
 #define OPENSIM_H5_FILE_ADAPTER_H_
 
-#include "OpenSim\Common\FileAdapter.h"
+#include "OpenSim/Common/FileAdapter.h"
 #include "SimTKmath.h"
 #include "H5Cpp.h"
 #include "hdf5_hl.h"
 #include "osimPluginDLL.h"
-#include "OpenSim\Common\TimeSeriesTable.h"
+#include "OpenSim/Common/TimeSeriesTable.h"
 
 namespace OpenSim {
 
@@ -42,8 +42,8 @@ namespace OpenSim {
        ~WISCO_H5FileAdapter() = default;
 
        WISCO_H5FileAdapter* clone() const override;
-	   
-	   
+
+
 	   void open(const std::string& file_name);
 	   void close();
 
@@ -51,16 +51,16 @@ namespace OpenSim {
 	   void writeDataSet(const TimeSeriesTable& table, const std::string group_path);
 	   void writeDataSetVec3(const TimeSeriesTableVec3& table, const std::string group_path);
 	   void writeDataSetVector(const TimeSeriesTable& table, const std::string group_path);
-	   void WISCO_H5FileAdapter::writeDataSetSimTKVector(const SimTK::Vector& data_vector, const std::string dataset_path);
+	   void writeDataSetSimTKVector(const SimTK::Vector& data_vector, const std::string dataset_path);
 	   void writeTimeDataSet(const TimeSeriesTable& table);
 	   void writeStatesDataSet(const TimeSeriesTable& table);
 	   void writeKinematicsDataSet(const TimeSeriesTable& pos_table, const TimeSeriesTable& vel_table, const TimeSeriesTable& acc_table);
-	   void writeMuscleDataSet(std::vector<SimTK::Matrix>& msl_table, std::vector<std::string> msl_names, 
+	   void writeMuscleDataSet(std::vector<SimTK::Matrix>& msl_table, std::vector<std::string> msl_names,
 		   std::vector<std::string> param_names, const TimeSeriesTable& states_table);
 	   void writeLigamentDataSet(const TimeSeriesTable& table);
     protected:
         OutputTables extendRead(const std::string& fileName) const override;
-        
+
         void extendWrite(const InputTables& tables, const std::string& fileName) const override;
     private:
 
