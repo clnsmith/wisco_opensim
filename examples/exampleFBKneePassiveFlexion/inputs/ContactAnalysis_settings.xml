@@ -12,7 +12,7 @@
 		<!--Initial time for the simulation.-->
 		<initial_time>       0.0 </initial_time>
 		<!--Final time for the simulation.-->
-		<final_time>      5.0 </final_time>
+		<final_time>      0.05 </final_time>
 		<AnalysisSet name="Analyses">
 			<objects>
 				<WISCO_ContactAnalysis name="ContactAnalysis">
@@ -31,7 +31,6 @@
 					    not.-->
               <in_degrees> true </in_degrees>
     					<contact_names> all </contact_names>
-              <time_interval> 0 </time_interval>
               <output_pressure> true </output_pressure>
               <output_proximity> true </output_proximity>
               <output_data_mesh_format> both </output_data_mesh_format>

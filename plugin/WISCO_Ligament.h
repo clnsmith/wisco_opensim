@@ -102,6 +102,7 @@ public:
 		"Force in ligament when model is in reference pose.")
 	OpenSim_DECLARE_OPTIONAL_PROPERTY(slack_length, double,
 		"Length at which ligament begins developing tension");
+
 //=============================================================================
 // OUTPUTS
 //=============================================================================

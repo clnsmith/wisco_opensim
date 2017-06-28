@@ -51,12 +51,14 @@ namespace OpenSim {
 	   void writeDataSet(const TimeSeriesTable& table, const std::string group_path);
 	   void writeDataSetVec3(const TimeSeriesTableVec3& table, const std::string group_path);
 	   void writeDataSetVector(const TimeSeriesTable& table, const std::string group_path);
-	   void WISCO_H5FileAdapter::writeDataSetSimTKVector(const SimTK::Vector& data_vector, const std::string dataset_path);
+	   void writeDataSetSimTKVector(const SimTK::Vector& data_vector, const std::string dataset_path);
+	   void WISCO_H5FileAdapter::writeDataSetSimTKVectorVec3(const SimTK::Vector_<SimTK::Vec3>& data_vector, const std::string dataset_path);
+	   void writeDataSetSimTKMatrixColumns(const SimTK::Matrix& data, std::vector<std::string> column_dataset_paths);
+	   void writeDataSetSimTKMatrixVec3Columns(const SimTK::Matrix_<SimTK::Vec3>& data, std::vector<std::string> column_dataset_paths);
 	   void writeTimeDataSet(const TimeSeriesTable& table);
 	   void writeStatesDataSet(const TimeSeriesTable& table);
-	   void writeKinematicsDataSet(const TimeSeriesTable& pos_table, const TimeSeriesTable& vel_table, const TimeSeriesTable& acc_table);
-	   void writeMuscleDataSet(std::vector<SimTK::Matrix>& msl_table, std::vector<std::string> msl_names, 
-		   std::vector<std::string> param_names, const TimeSeriesTable& states_table);
+	   void writeCoordinatesDataSet(const TimeSeriesTable& table);
+	   void writeMuscleDataSet(const TimeSeriesTable& table);
 	   void writeLigamentDataSet(const TimeSeriesTable& table);
     protected:
         OutputTables extendRead(const std::string& fileName) const override;

@@ -132,35 +132,35 @@ void WISCO_ElasticFoundationForce::extendAddToSystem(MultibodySystem& system) co
 	addCacheVariable<Vector>("casting_mesh_contacting_tri",
 		casting_mesh_def_vec, Stage::LowestRuntime);
 
-	addCacheVariable<Vector>("target_mesh_tri_pressure",
+	addCacheVariable<Vector>("target_mesh.tri.pressure",
 		target_mesh_def_vec, Stage::Dynamics);
-	addCacheVariable<Vector>("casting_mesh_tri_pressure",
+	addCacheVariable<Vector>("casting_mesh.tri.pressure",
 		casting_mesh_def_vec, Stage::Dynamics);
 
-	addCacheVariable<Vector>("target_mesh_tri_proximity",
-		target_mesh_def_vec, Stage::LowestRuntime);
-	addCacheVariable<Vector>("casting_mesh_tri_proximity",
-		casting_mesh_def_vec, Stage::LowestRuntime);
+	addCacheVariable<Vector>("target_mesh.tri.proximity",
+		target_mesh_def_vec, Stage::Dynamics);
+	addCacheVariable<Vector>("casting_mesh.tri.proximity",
+		casting_mesh_def_vec, Stage::Dynamics);
 
 	addCacheVariable<int>("target_mesh_n_active_tri",
-		0, Stage::LowestRuntime);
+		0, Stage::Dynamics);
 	addCacheVariable<int>("casting_mesh_n_active_tri",
-		0, Stage::LowestRuntime);
+		0, Stage::Dynamics);
 
 	Vector target_vertex_def_vec(target_mesh_nVertex);
 	Vector casting_vertex_def_vec(casting_mesh_nVertex);
 	target_vertex_def_vec = 0;
 	casting_vertex_def_vec = 0;
 
-	addCacheVariable<Vector>("target_mesh_vertex_pressure",
-		target_vertex_def_vec, Stage::LowestRuntime);
-	addCacheVariable<Vector>("casting_mesh_vertex_pressure",
-		casting_vertex_def_vec, Stage::LowestRuntime);
+	addCacheVariable<Vector>("target_mesh.vertex.pressure",
+		target_vertex_def_vec, Stage::Dynamics);
+	addCacheVariable<Vector>("casting_mesh.vertex.pressure",
+		casting_vertex_def_vec, Stage::Dynamics);
 
-	addCacheVariable<Vector>("target_mesh_vertex_proximity",
-		target_vertex_def_vec, Stage::LowestRuntime);
-	addCacheVariable<Vector>("casting_mesh_vertex_proximity",
-		casting_vertex_def_vec, Stage::LowestRuntime);
+	addCacheVariable<Vector>("target_mesh.vertex.proximity",
+		target_vertex_def_vec, Stage::Dynamics);
+	addCacheVariable<Vector>("casting_mesh.vertex.proximity",
+		casting_vertex_def_vec, Stage::Dynamics);
 
 	addCacheVariable<Vec3>("force", Vec3(0), Stage::Dynamics);
 	addCacheVariable<Vec3>("torque", Vec3(0), Stage::Dynamics);
@@ -176,22 +176,22 @@ void WISCO_ElasticFoundationForce::extendAddToSystem(MultibodySystem& system) co
 	vec3_names.push_back("contact_force");
 
 	for (std::string name : double_names) {
-		addCacheVariable<double>("target_mesh_total_" + name, 0.0, Stage::Dynamics);
-		addCacheVariable<double>("casting_mesh_total_" + name, 0.0, Stage::Dynamics);
+		addCacheVariable<double>("target_mesh.total." + name, 0.0, Stage::Dynamics);
+		addCacheVariable<double>("casting_mesh.total." + name, 0.0, Stage::Dynamics);
 		
-		addCacheVariable<double>("target_mesh_medial_" + name, 0.0, Stage::Dynamics);
-		addCacheVariable<double>("casting_mesh_medial_" + name, 0.0, Stage::Dynamics);
-		addCacheVariable<double>("target_mesh_lateral_" + name, 0.0, Stage::Dynamics);
-		addCacheVariable<double>("casting_mesh_lateral_" + name, 0.0, Stage::Dynamics);
+		addCacheVariable<double>("target_mesh.medial." + name, 0.0, Stage::Dynamics);
+		addCacheVariable<double>("casting_mesh.medial." + name, 0.0, Stage::Dynamics);
+		addCacheVariable<double>("target_mesh.lateral." + name, 0.0, Stage::Dynamics);
+		addCacheVariable<double>("casting_mesh.lateral." + name, 0.0, Stage::Dynamics);
 	}
 
 	for (std::string name : vec3_names) {
-		addCacheVariable<SimTK::Vec3>("target_mesh_total_" + name, Vec3(0.0), Stage::Dynamics);
-		addCacheVariable<SimTK::Vec3>("casting_mesh_total_" + name, Vec3(0.0), Stage::Dynamics);
-		addCacheVariable<SimTK::Vec3>("target_mesh_medial_" + name, Vec3(0.0), Stage::Dynamics);
-		addCacheVariable<SimTK::Vec3>("casting_mesh_medial_" + name, Vec3(0.0), Stage::Dynamics);
-		addCacheVariable<SimTK::Vec3>("target_mesh_lateral_" + name, Vec3(0.0), Stage::Dynamics);
-		addCacheVariable<SimTK::Vec3>("casting_mesh_lateral_" + name, Vec3(0.0), Stage::Dynamics);
+		addCacheVariable<SimTK::Vec3>("target_mesh.total." + name, Vec3(0.0), Stage::Dynamics);
+		addCacheVariable<SimTK::Vec3>("casting_mesh.total." + name, Vec3(0.0), Stage::Dynamics);
+		addCacheVariable<SimTK::Vec3>("target_mesh.medial." + name, Vec3(0.0), Stage::Dynamics);
+		addCacheVariable<SimTK::Vec3>("casting_mesh.medial." + name, Vec3(0.0), Stage::Dynamics);
+		addCacheVariable<SimTK::Vec3>("target_mesh.lateral." + name, Vec3(0.0), Stage::Dynamics);
+		addCacheVariable<SimTK::Vec3>("casting_mesh.lateral." + name, Vec3(0.0), Stage::Dynamics);
 	}
 
 	//Modeling Options
@@ -200,6 +200,83 @@ void WISCO_ElasticFoundationForce::extendAddToSystem(MultibodySystem& system) co
 	addModelingOption("interpolate_vertex_data", 1);
 	addModelingOption("contact_stats", 1);
 	addModelingOption("contact_stats_medial_lateral", 1);
+}
+
+void WISCO_ElasticFoundationForce::extendFinalizeFromProperties()
+{
+	Super::extendFinalizeFromProperties();
+
+	_mesh_data_names.clear();
+	_region_names.clear();
+	_stat_names.clear();
+	_stat_names_vec3.clear();
+
+	//Mesh Data
+	_mesh_data_names.push_back("pressure");
+	_mesh_data_names.push_back("proximity");
+
+	//Contact Stats
+	_region_names.push_back("medial");
+	_region_names.push_back("lateral");
+
+	_stat_names.push_back("mean_pressure");
+	_stat_names.push_back("max_pressure");
+	_stat_names.push_back("mean_proximity");
+	_stat_names.push_back("max_proximity");
+	_stat_names.push_back("contact_area");
+
+	_stat_names_vec3.push_back("cop");
+	_stat_names_vec3.push_back("contact_force");
+
+	//Add channels to output list
+	auto& Ctri_data = updOutput("casting_tri_data");
+	auto& Ttri_data = updOutput("target_tri_data");
+
+	for (std::string mesh_data : _mesh_data_names) {
+		Ctri_data.addChannel("casting_mesh.tri." + mesh_data);
+		Ttri_data.addChannel("target_mesh.tri." + mesh_data);
+	}
+
+	auto& Cver_data = updOutput("casting_vertex_data");
+	auto& Tver_data = updOutput("target_vertex_data");
+
+	for (std::string mesh_data : _mesh_data_names) {
+		Cver_data.addChannel("casting_mesh.vertex." + mesh_data);
+		Tver_data.addChannel("target_mesh.vertex." + mesh_data);
+	}
+
+	auto& Ccnt_tot_stat = updOutput("casting_contact_stats_total");
+	auto& Tcnt_tot_stat = updOutput("target_contact_stats_total");
+
+	auto& Ccnt_tot_stat_vec3 = updOutput("casting_contact_stats_total_vec3");
+	auto& Tcnt_tot_stat_vec3 = updOutput("target_contact_stats_total_vec3");
+
+	auto& Ccnt_ml_stat = updOutput("casting_contact_stats_medial_lateral");
+	auto& Tcnt_ml_stat = updOutput("target_contact_stats_medial_lateral");
+
+	auto& Ccnt_ml_stat_vec3 = updOutput("casting_contact_stats_medial_lateral_vec3");
+	auto& Tcnt_ml_stat_vec3 = updOutput("target_contact_stats_medial_lateral_vec3");
+
+	for (std::string stat : _stat_names) {
+		
+		Ccnt_tot_stat.addChannel("casting_mesh.total." + stat);
+		Tcnt_tot_stat.addChannel("target_mesh.total." + stat);
+
+		Ccnt_ml_stat.addChannel("casting_mesh.medial." + stat);
+		Ccnt_ml_stat.addChannel("casting_mesh.lateral." + stat);
+		Tcnt_ml_stat.addChannel("target_mesh.medial." + stat);
+		Tcnt_ml_stat.addChannel("target_mesh.lateral." + stat);
+	}
+	for (std::string stat_vec3 : _stat_names_vec3) {
+		Ccnt_tot_stat_vec3.addChannel("casting_mesh.total." + stat_vec3);
+		Tcnt_tot_stat_vec3.addChannel("target_mesh.total." + stat_vec3);
+
+		Ccnt_ml_stat_vec3.addChannel("casting_mesh.medial." + stat_vec3);
+		Tcnt_ml_stat_vec3.addChannel("target_mesh.medial." + stat_vec3);
+		Ccnt_ml_stat_vec3.addChannel("casting_mesh.lateral." + stat_vec3);
+		Tcnt_ml_stat_vec3.addChannel("target_mesh.lateral." + stat_vec3);
+	}
+
 }
 
 void WISCO_ElasticFoundationForce::extendInitStateFromProperties(State & state)	const
@@ -306,17 +383,17 @@ void WISCO_ElasticFoundationForce::meshCollision(
 
 	if (!flipMeshes) {
 		meshC_tri_pressure = updCacheVariableValue<Vector>
-			(state, "casting_mesh_tri_pressure");
+			(state, "casting_mesh.tri.pressure");
 
 		meshC_tri_proximity = updCacheVariableValue<Vector>
-			(state, "casting_mesh_tri_proximity");
+			(state, "casting_mesh.tri.proximity");
 	}
 	else {
 		meshC_tri_pressure = updCacheVariableValue<Vector>
-			(state, "target_mesh_tri_pressure");
+			(state, "target_mesh.tri.pressure");
 
 		meshC_tri_proximity = updCacheVariableValue<Vector>
-			(state, "target_mesh_tri_proximity");
+			(state, "target_mesh.tri.proximity");
 	}
 
     meshC_tri_pressure = 0;
@@ -534,15 +611,15 @@ void WISCO_ElasticFoundationForce::meshCollision(
     //Store Contact Info
 	//-------------------------------------------------------------------------
 	if (!flipMeshes) {
-		setCacheVariableValue(state, "casting_mesh_tri_pressure", meshC_tri_pressure);
-		setCacheVariableValue(state, "casting_mesh_tri_proximity", meshC_tri_proximity);
+		setCacheVariableValue(state, "casting_mesh.tri.pressure", meshC_tri_pressure);
+		setCacheVariableValue(state, "casting_mesh.tri.proximity", meshC_tri_proximity);
 		setCacheVariableValue<Vector>(state, "casting_mesh_contacting_tri", meshC_target_tri);
 		setCacheVariableValue<int>(state, "casting_mesh_n_active_tri", meshC_nActiveTri);
 		getConnectee<WISCO_ContactMesh>("target_mesh").markCacheVariableValid(state, "coldet_model");
 	}
 	else {
-		setCacheVariableValue(state, "target_mesh_tri_pressure", meshC_tri_pressure);
-		setCacheVariableValue(state, "target_mesh_tri_proximity", meshC_tri_proximity);
+		setCacheVariableValue(state, "target_mesh.tri.pressure", meshC_tri_pressure);
+		setCacheVariableValue(state, "target_mesh.tri.proximity", meshC_tri_proximity);
 		setCacheVariableValue<Vector>(state, "target_mesh_contacting_tri", meshC_target_tri);
 		setCacheVariableValue<int>(state, "target_mesh_n_active_tri", meshC_nActiveTri);
 		getConnectee<WISCO_ContactMesh>("casting_mesh").markCacheVariableValid(state, "coldet_model");
@@ -909,15 +986,15 @@ void WISCO_ElasticFoundationForce::computeVertexValues(const SimTK::State& state
 
 	if (!flipMeshes) {
 		setCacheVariableValue<Vector>
-			(state, "casting_mesh_vertex_pressure",vertex_pressure);
+			(state, "casting_mesh.vertex.pressure",vertex_pressure);
 		setCacheVariableValue<Vector>
-			(state, "casting_mesh_vertex_proximity", vertex_proximity);
+			(state, "casting_mesh.vertex.proximity", vertex_proximity);
 	}
 	else {	
 		setCacheVariableValue<Vector>
-			(state, "target_mesh_vertex_pressure", vertex_pressure);
+			(state, "target_mesh.vertex.pressure", vertex_pressure);
 		setCacheVariableValue<Vector>
-			(state, "target_mesh_vertex_proximity", vertex_proximity);
+			(state, "target_mesh.vertex.proximity", vertex_proximity);
 	}
 }
 
@@ -1094,24 +1171,24 @@ void WISCO_ElasticFoundationForce::computeContactStats(
 
 	//Save contact stats as cache variable
 	if (flipMeshes) {
-		setCacheVariableValue(state, "target_mesh_total_mean_pressure", mean_pressure);		
-		setCacheVariableValue(state, "target_mesh_total_mean_proximity", mean_proximity);
-		setCacheVariableValue(state, "target_mesh_total_max_pressure", max_pressure);
-		setCacheVariableValue(state, "target_mesh_total_max_proximity", max_proximity);
-		setCacheVariableValue(state, "target_mesh_total_contact_area", contact_area);
-		setCacheVariableValue(state, "target_mesh_total_cop", COP);
-		setCacheVariableValue(state, "target_mesh_total_contact_force", contact_force);
+		setCacheVariableValue(state, "target_mesh.total.mean_pressure", mean_pressure);		
+		setCacheVariableValue(state, "target_mesh.total.mean_proximity", mean_proximity);
+		setCacheVariableValue(state, "target_mesh.total.max_pressure", max_pressure);
+		setCacheVariableValue(state, "target_mesh.total.max_proximity", max_proximity);
+		setCacheVariableValue(state, "target_mesh.total.contact_area", contact_area);
+		setCacheVariableValue(state, "target_mesh.total.cop", COP);
+		setCacheVariableValue(state, "target_mesh.total.contact_force", contact_force);
 		
 		
 	}
 	else {
-		setCacheVariableValue(state, "casting_mesh_total_mean_pressure", mean_pressure);
-		setCacheVariableValue(state, "casting_mesh_total_mean_proximity", mean_proximity);
-		setCacheVariableValue(state, "casting_mesh_total_max_pressure", max_pressure);
-		setCacheVariableValue(state, "casting_mesh_total_max_proximity", max_proximity);
-		setCacheVariableValue(state, "casting_mesh_total_contact_area", contact_area);
-		setCacheVariableValue(state, "casting_mesh_total_cop", COP);
-		setCacheVariableValue(state, "casting_mesh_total_contact_force", contact_force);
+		setCacheVariableValue(state, "casting_mesh.total.mean_pressure", mean_pressure);
+		setCacheVariableValue(state, "casting_mesh.total.mean_proximity", mean_proximity);
+		setCacheVariableValue(state, "casting_mesh.total.max_pressure", max_pressure);
+		setCacheVariableValue(state, "casting_mesh.total.max_proximity", max_proximity);
+		setCacheVariableValue(state, "casting_mesh.total.contact_area", contact_area);
+		setCacheVariableValue(state, "casting_mesh.total.cop", COP);
+		setCacheVariableValue(state, "casting_mesh.total.contact_force", contact_force);
 	}
 	//Compute Medial-Lateral Stats
 	//----------------------------
@@ -1120,25 +1197,28 @@ void WISCO_ElasticFoundationForce::computeContactStats(
 		Vector med_ind = mesh.getMedialTriangleIndices();
 		Vector lat_ind = mesh.getLateralTriangleIndices();
 
-		Vector med_pressure(med_ind.size());
-		Vector med_proximity(med_ind.size());
+		int nMedTri = mesh.getNumMedialTriangles();
+		int nLatTri = mesh.getNumLateralTriangles();
 
-		Vector lat_pressure(lat_ind.size());
-		Vector lat_proximity(lat_ind.size());
+		Vector med_pressure(nMedTri);
+		Vector med_proximity(nMedTri);
 
-		Vector med_area(med_ind.size());
-		Vector lat_area(lat_ind.size());
+		Vector lat_pressure(nLatTri);
+		Vector lat_proximity(nLatTri);
 
-		Vector_<Vec3> med_normal(med_ind.size());
-		Vector_<Vec3> lat_normal(lat_ind.size());
+		Vector med_area(nMedTri);
+		Vector lat_area(nLatTri);
 
-		Vector med_tri_cenX(med_ind.size());
-		Vector med_tri_cenY(med_ind.size());
-		Vector med_tri_cenZ(med_ind.size());
+		Vector_<Vec3> med_normal(nMedTri);
+		Vector_<Vec3> lat_normal(nLatTri);
 
-		Vector lat_tri_cenX(lat_ind.size());
-		Vector lat_tri_cenY(lat_ind.size());
-		Vector lat_tri_cenZ(lat_ind.size());
+		Vector med_tri_cenX(nMedTri);
+		Vector med_tri_cenY(nMedTri);
+		Vector med_tri_cenZ(nMedTri);
+
+		Vector lat_tri_cenX(nLatTri);
+		Vector lat_tri_cenY(nLatTri);
+		Vector lat_tri_cenZ(nLatTri);
 
 		int nMed = 0, nLat = 0;
 		int nMedActive = 0, nLatActive = 0;
@@ -1208,36 +1288,47 @@ void WISCO_ElasticFoundationForce::computeContactStats(
 		Vector med_Den = med_pressure.elementwiseMultiply(med_area);
 		double med_DenVal = med_Den.sum();
 
-		Vector med_xNum = med_Num.elementwiseMultiply(med_tri_cenX);
-		double med_xNumVal = med_xNum.sum() * 1000;
-		double med_COPx = med_xNumVal / med_DenVal;
+		double med_COPx, med_COPy, med_COPz;
+		if (med_DenVal == 0) {
+			med_COPx = med_COPy = med_COPz = -1;
+		}
+		else {
+			Vector med_xNum = med_Num.elementwiseMultiply(med_tri_cenX);
+			double med_xNumVal = med_xNum.sum() * 1000;
+			med_COPx = med_xNumVal / med_DenVal;
 
-		Vector med_yNum = med_Num.elementwiseMultiply(med_tri_cenY);
-		double med_yNumVal = med_yNum.sum() * 1000;
-		double med_COPy = med_yNumVal / med_DenVal;
+			Vector med_yNum = med_Num.elementwiseMultiply(med_tri_cenY);
+			double med_yNumVal = med_yNum.sum() * 1000;
+			med_COPy = med_yNumVal / med_DenVal;
 
-		Vector med_zNum = med_Num.elementwiseMultiply(med_tri_cenZ);
-		double med_zNumVal = med_zNum.sum() * 1000;
-		double med_COPz = med_zNumVal / med_DenVal;
-
+			Vector med_zNum = med_Num.elementwiseMultiply(med_tri_cenZ);
+			double med_zNumVal = med_zNum.sum() * 1000;
+			med_COPz = med_zNumVal / med_DenVal;
+		}
 		Vec3 med_COP(med_COPx, med_COPy, med_COPz);
 
 		Vector lat_Num = lat_pressure.elementwiseMultiply(lat_area);
 		Vector lat_Den = lat_pressure.elementwiseMultiply(lat_area);
 		double lat_DenVal = lat_Den.sum();
+		
+		double lat_COPx, lat_COPy, lat_COPz;
+		if (lat_DenVal == 0) {
+			lat_COPx = lat_COPy = lat_COPz = -1;
+		}
+		else {
+			Vector lat_xNum = lat_Num.elementwiseMultiply(lat_tri_cenX);
+			double lat_xNumVal = lat_xNum.sum() * 1000;
+			lat_COPx = lat_xNumVal / lat_DenVal;
 
-		Vector lat_xNum = lat_Num.elementwiseMultiply(lat_tri_cenX);
-		double lat_xNumVal = lat_xNum.sum() * 1000;
-		double lat_COPx = lat_xNumVal / lat_DenVal;
+			Vector lat_yNum = lat_Num.elementwiseMultiply(lat_tri_cenY);
+			double lat_yNumVal = lat_yNum.sum() * 1000;
+			lat_COPy = lat_yNumVal / lat_DenVal;
 
-		Vector lat_yNum = lat_Num.elementwiseMultiply(lat_tri_cenY);
-		double lat_yNumVal = lat_yNum.sum() * 1000;
-		double lat_COPy = lat_yNumVal / lat_DenVal;
+			Vector lat_zNum = lat_Num.elementwiseMultiply(lat_tri_cenZ);
+			double lat_zNumVal = lat_zNum.sum() * 1000;
+			lat_COPz = lat_zNumVal / lat_DenVal;
 
-		Vector lat_zNum = lat_Num.elementwiseMultiply(lat_tri_cenZ);
-		double lat_zNumVal = lat_zNum.sum() * 1000;
-		double lat_COPz = lat_zNumVal / lat_DenVal;
-
+		}
 		Vec3 lat_COP(lat_COPx, lat_COPy, lat_COPz);
 
 		//contact force
@@ -1255,39 +1346,39 @@ void WISCO_ElasticFoundationForce::computeContactStats(
 
 		//Save to cache variables
 		if (flipMeshes) {
-			setCacheVariableValue(state, "target_mesh_medial_mean_pressure", med_mean_pressure);
-			setCacheVariableValue(state, "target_mesh_medial_mean_proximity", med_mean_proximity);
-			setCacheVariableValue(state, "target_mesh_medial_max_pressure", med_max_pressure);
-			setCacheVariableValue(state, "target_mesh_medial_max_proximity", med_max_proximity);
-			setCacheVariableValue(state, "target_mesh_medial_contact_area", med_contact_area);
-			setCacheVariableValue(state, "target_mesh_medial_cop", med_COP);
-			setCacheVariableValue(state, "target_mesh_medial_contact_force", med_contact_force);
+			setCacheVariableValue(state, "target_mesh.medial.mean_pressure", med_mean_pressure);
+			setCacheVariableValue(state, "target_mesh.medial.mean_proximity", med_mean_proximity);
+			setCacheVariableValue(state, "target_mesh.medial.max_pressure", med_max_pressure);
+			setCacheVariableValue(state, "target_mesh.medial.max_proximity", med_max_proximity);
+			setCacheVariableValue(state, "target_mesh.medial.contact_area", med_contact_area);
+			setCacheVariableValue(state, "target_mesh.medial.cop", med_COP);
+			setCacheVariableValue(state, "target_mesh.medial.contact_force", med_contact_force);
 
-			setCacheVariableValue(state, "target_mesh_lateral_mean_pressure", lat_mean_pressure);
-			setCacheVariableValue(state, "target_mesh_lateral_mean_proximity", lat_mean_proximity);
-			setCacheVariableValue(state, "target_mesh_lateral_max_pressure", lat_max_pressure);
-			setCacheVariableValue(state, "target_mesh_lateral_max_proximity", lat_max_proximity);
-			setCacheVariableValue(state, "target_mesh_lateral_contact_area", lat_contact_area);
-			setCacheVariableValue(state, "target_mesh_lateral_cop", lat_COP);
-			setCacheVariableValue(state, "target_mesh_lateral_contact_force", lat_contact_force);
+			setCacheVariableValue(state, "target_mesh.lateral.mean_pressure", lat_mean_pressure);
+			setCacheVariableValue(state, "target_mesh.lateral.mean_proximity", lat_mean_proximity);
+			setCacheVariableValue(state, "target_mesh.lateral.max_pressure", lat_max_pressure);
+			setCacheVariableValue(state, "target_mesh.lateral.max_proximity", lat_max_proximity);
+			setCacheVariableValue(state, "target_mesh.lateral.contact_area", lat_contact_area);
+			setCacheVariableValue(state, "target_mesh.lateral.cop", lat_COP);
+			setCacheVariableValue(state, "target_mesh.lateral.contact_force", lat_contact_force);
 
 		}
 		else {
-			setCacheVariableValue(state, "casting_mesh_medial_mean_pressure", med_mean_pressure);
-			setCacheVariableValue(state, "casting_mesh_medial_mean_proximity", med_mean_proximity);
-			setCacheVariableValue(state, "casting_mesh_medial_max_pressure", med_max_pressure);
-			setCacheVariableValue(state, "casting_mesh_medial_max_proximity", med_max_proximity);
-			setCacheVariableValue(state, "casting_mesh_medial_contact_area", med_contact_area);
-			setCacheVariableValue(state, "casting_mesh_medial_cop", med_COP);
-			setCacheVariableValue(state, "casting_mesh_medial_contact_force", med_contact_force);
+			setCacheVariableValue(state, "casting_mesh.medial.mean_pressure", med_mean_pressure);
+			setCacheVariableValue(state, "casting_mesh.medial.mean_proximity", med_mean_proximity);
+			setCacheVariableValue(state, "casting_mesh.medial.max_pressure", med_max_pressure);
+			setCacheVariableValue(state, "casting_mesh.medial.max_proximity", med_max_proximity);
+			setCacheVariableValue(state, "casting_mesh.medial.contact_area", med_contact_area);
+			setCacheVariableValue(state, "casting_mesh.medial.cop", med_COP);
+			setCacheVariableValue(state, "casting_mesh.medial.contact_force", med_contact_force);
 
-			setCacheVariableValue(state, "casting_mesh_lateral_mean_pressure", lat_mean_pressure);
-			setCacheVariableValue(state, "casting_mesh_lateral_mean_proximity", lat_mean_proximity);
-			setCacheVariableValue(state, "casting_mesh_lateral_max_pressure", lat_max_pressure);
-			setCacheVariableValue(state, "casting_mesh_lateral_max_proximity", lat_max_proximity);
-			setCacheVariableValue(state, "casting_mesh_lateral_contact_area", lat_contact_area);
-			setCacheVariableValue(state, "casting_mesh_lateral_cop", lat_COP);
-			setCacheVariableValue(state, "casting_mesh_lateral_contact_force", lat_contact_force);
+			setCacheVariableValue(state, "casting_mesh.lateral.mean_pressure", lat_mean_pressure);
+			setCacheVariableValue(state, "casting_mesh.lateral.mean_proximity", lat_mean_proximity);
+			setCacheVariableValue(state, "casting_mesh.lateral.max_pressure", lat_max_pressure);
+			setCacheVariableValue(state, "casting_mesh.lateral.max_proximity", lat_max_proximity);
+			setCacheVariableValue(state, "casting_mesh.lateral.contact_area", lat_contact_area);
+			setCacheVariableValue(state, "casting_mesh.lateral.cop", lat_COP);
+			setCacheVariableValue(state, "casting_mesh.lateral.contact_force", lat_contact_force);
 		}
 	}
 }

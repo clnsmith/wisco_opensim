@@ -335,8 +335,10 @@ void WISCO_ContactMesh::initializeMesh()
 			nMed++;
 		}
 	}
-	lat_tri_ind.resizeKeep(nLat);
-	med_tri_ind.resizeKeep(nMed);
+
+	_n_medial_tri = nMed;
+	_n_lateral_tri = nLat;
+
 	//Vertex Locations
 
 	for (int i = 0; i < mesh.getNumVertices(); ++i) {
