@@ -28,6 +28,7 @@
 #include "WISCO_ContactMesh.h"
 #include "osimPluginDLL.h"
 
+
 namespace OpenSim {
 
 	/**
@@ -67,65 +68,27 @@ namespace OpenSim {
 		//==============================================================================
 		// OUTPUTS
 		//==============================================================================
-		OpenSim_DECLARE_OUTPUT(target_mesh_tri_pressure, SimTK::Vector, getTargetMeshTriPressure, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_tri_pressure, SimTK::Vector, getCastingMeshTriPressure, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_tri_proximity, SimTK::Vector, getTargetMeshTriProximity, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_tri_proximity, SimTK::Vector, getCastingMeshTriProximity, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_vertex_pressure, SimTK::Vector, getTargetMeshVertexPressure, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_vertex_pressure, SimTK::Vector, getCastingMeshVertexPressure, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_vertex_proximity, SimTK::Vector, getTargetMeshVertexProximity, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_vertex_proximity, SimTK::Vector, getCastingMeshVertexProximity, SimTK::Stage::Dynamics)
 		OpenSim_DECLARE_OUTPUT(target_mesh_n_active_tri, int, getTargetMeshActiveTri, SimTK::Stage::Dynamics)
 		OpenSim_DECLARE_OUTPUT(casting_mesh_n_active_tri, int, getCastingMeshActiveTri, SimTK::Stage::Dynamics)
-
-		OpenSim_DECLARE_OUTPUT(casting_mesh_total_mean_pressure, double, getCastingMeshMeanPressure, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_total_mean_proximity, double, getCastingMeshMeanProximity, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_total_max_pressure, double, getCastingMeshMaxPressure, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_total_max_proximity, double, getCastingMeshMaxProximity, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_total_contact_area, double, getCastingMeshContactArea, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_total_cop, SimTK::Vec3, getCastingMeshCOP, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_total_contact_force, SimTK::Vec3, getCastingMeshContactForce, SimTK::Stage::Dynamics)
-
-		OpenSim_DECLARE_OUTPUT(target_mesh_total_mean_pressure, double, getTargetMeshMeanPressure, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_total_mean_proximity, double, getTargetMeshMeanProximity, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_total_max_pressure, double, getTargetMeshMaxPressure, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_total_max_proximity, double, getTargetMeshMaxProximity, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_total_contact_area, double, getTargetMeshContactArea, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_total_cop, SimTK::Vec3, getTargetMeshCOP, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_total_contact_force, SimTK::Vec3, getTargetMeshContactForce, SimTK::Stage::Dynamics)
-
-		OpenSim_DECLARE_OUTPUT(casting_mesh_medial_mean_pressure, double, getCastingMeshMeanPressureMedial, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_medial_mean_proximity, double, getCastingMeshMeanProximityMedial, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_medial_max_pressure, double, getCastingMeshMaxPressureMedial, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_medial_max_proximity, double, getCastingMeshMaxProximityMedial, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_medial_contact_area, double, getCastingMeshContactAreaMedial, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_medial_cop, SimTK::Vec3, getCastingMeshCOPMedial, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_medial_contact_force, SimTK::Vec3, getCastingMeshContactForceMedial, SimTK::Stage::Dynamics)
-
-		OpenSim_DECLARE_OUTPUT(target_mesh_medial_mean_pressure, double, getTargetMeshMeanPressureMedial, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_medial_mean_proximity, double, getTargetMeshMeanProximityMedial, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_medial_max_pressure, double, getTargetMeshMaxPressureMedial, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_medial_max_proximity, double, getTargetMeshMaxProximityMedial, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_medial_contact_area, double, getTargetMeshContactAreaMedial, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_medial_cop, SimTK::Vec3, getTargetMeshCOPMedial, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_medial_contact_force, SimTK::Vec3, getTargetMeshContactForceMedial, SimTK::Stage::Dynamics)
-
-		OpenSim_DECLARE_OUTPUT(casting_mesh_lateral_mean_pressure, double, getCastingMeshMeanPressureLateral, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_lateral_mean_proximity, double, getCastingMeshMeanProximityLateral, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_lateral_max_pressure, double, getCastingMeshMaxPressureLateral, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_lateral_max_proximity, double, getCastingMeshMaxProximityLateral, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_lateral_contact_area, double, getCastingMeshContactAreaLateral, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_lateral_cop, SimTK::Vec3, getCastingMeshCOPLateral, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(casting_mesh_lateral_contact_force, SimTK::Vec3, getCastingMeshContactForceLateral, SimTK::Stage::Dynamics)
-
-		OpenSim_DECLARE_OUTPUT(target_mesh_lateral_mean_pressure, double, getTargetMeshMeanPressureLateral, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_lateral_mean_proximity, double, getTargetMeshMeanProximityLateral, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_lateral_max_pressure, double, getTargetMeshMaxPressureLateral, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_lateral_max_proximity, double, getTargetMeshMaxProximityLateral, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_lateral_contact_area, double, getTargetMeshContactAreaLateral, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_lateral_cop, SimTK::Vec3, getTargetMeshCOPLateral, SimTK::Stage::Dynamics)
-		OpenSim_DECLARE_OUTPUT(target_mesh_lateral_contact_force, SimTK::Vec3, getTargetMeshContactForceLateral, SimTK::Stage::Dynamics)
 		
+		OpenSim_DECLARE_LIST_OUTPUT(casting_tri_data, SimTK::Vector, getTriData, SimTK::Stage::Dynamics)
+		OpenSim_DECLARE_LIST_OUTPUT(target_tri_data, SimTK::Vector, getTriData, SimTK::Stage::Dynamics)
+
+		OpenSim_DECLARE_LIST_OUTPUT(casting_vertex_data, SimTK::Vector, getVertexData, SimTK::Stage::Dynamics)
+		OpenSim_DECLARE_LIST_OUTPUT(target_vertex_data, SimTK::Vector, getVertexData, SimTK::Stage::Dynamics)
+
+		OpenSim_DECLARE_LIST_OUTPUT(casting_contact_stats_total, double, getContactStatsTotal, SimTK::Stage::Dynamics)
+		OpenSim_DECLARE_LIST_OUTPUT(target_contact_stats_total, double, getContactStatsTotal, SimTK::Stage::Dynamics)
+
+		OpenSim_DECLARE_LIST_OUTPUT(casting_contact_stats_total_vec3, SimTK::Vec3, getContactStatsTotalVec3, SimTK::Stage::Dynamics)
+		OpenSim_DECLARE_LIST_OUTPUT(target_contact_stats_total_vec3, SimTK::Vec3, getContactStatsTotalVec3, SimTK::Stage::Dynamics)
+
+		OpenSim_DECLARE_LIST_OUTPUT(casting_contact_stats_medial_lateral, double, getContactStatsMedialLateral,SimTK::Stage::Dynamics)
+		OpenSim_DECLARE_LIST_OUTPUT(target_contact_stats_medial_lateral, double, getContactStatsMedialLateral, SimTK::Stage::Dynamics)
+
+		OpenSim_DECLARE_LIST_OUTPUT(casting_contact_stats_medial_lateral_vec3, SimTK::Vec3, getContactStatsMedialLateralVec3, SimTK::Stage::Dynamics)
+		OpenSim_DECLARE_LIST_OUTPUT(target_contact_stats_medial_lateral_vec3, SimTK::Vec3, getContactStatsMedialLateralVec3, SimTK::Stage::Dynamics)
+
 		//==============================================================================
 		// PUBLIC METHODS
 		//==============================================================================
@@ -150,176 +113,98 @@ namespace OpenSim {
 		/*-----------------------------------------------------------------
 		Output Methods
 		-----------------------------------------------------------------*/
-		//Face
+		//Mesh Data
 		//----
-		SimTK::Vector getTargetMeshTriPressure(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vector>(state, "target_mesh_tri_pressure");}
+		SimTK::Vector getTriData(const SimTK::State& state,
+			const std::string& channel) const {
+				return getCacheVariableValue<SimTK::Vector>(state, channel);
+		}
 
-		SimTK::Vector getCastingMeshTriPressure(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vector>(state, "casting_mesh_tri_pressure");}
-
-		SimTK::Vector getTargetMeshTriProximity(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vector>(state, "target_mesh_tri_proximity");}
-
-		SimTK::Vector getCastingMeshTriProximity(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vector>(state, "casting_mesh_tri_proximity");}
-		//Vertex
-		//------
-		SimTK::Vector getTargetMeshVertexPressure(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vector>(state, "target_mesh_vertex_pressure");}
-
-		SimTK::Vector getCastingMeshVertexPressure(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vector>(state, "casting_mesh_vertex_pressure");}
-
-		SimTK::Vector getTargetMeshVertexProximity(const SimTK::State& state) const	{
-			return getCacheVariableValue<SimTK::Vector>(state, "target_mesh_vertex_proximity");}
-
-		SimTK::Vector getCastingMeshVertexProximity(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vector>(state, "casting_mesh_vertex_proximity");}
+		SimTK::Vector getVertexData(const SimTK::State& state,
+			const std::string& channel) const {
+			return getCacheVariableValue<SimTK::Vector>(state, channel);
+		}
 
 		int getTargetMeshActiveTri(const SimTK::State& state) const {
-			return getCacheVariableValue<int>(state, "target_mesh_n_active_tri");}
+			return getCacheVariableValue<int>(state, "target_mesh_n_active_tri");
+		}
 
 		int getCastingMeshActiveTri(const SimTK::State& state) const {
-			return getCacheVariableValue<int>(state, "casting_mesh_n_active_tri");}
+			return getCacheVariableValue<int>(state, "casting_mesh_n_active_tri");
+		}
 
 		//Contact Stats
 		//-------------
+		double getContactStatsTotal(const SimTK::State& state,
+			const std::string& channel) const {
 
-		//Total
-		double getTargetMeshMeanPressure(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "target_mesh_total_mean_pressure");
-		}
-		double getTargetMeshMeanProximity(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "target_mesh_total_mean_proximity");
-		}
-		double getTargetMeshMaxPressure(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "target_mesh_total_max_pressure");
-		}
-		double getTargetMeshMaxProximity(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "target_mesh_total_max_proximity");
-		}
-		double getTargetMeshContactArea(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "target_mesh_total_contact_area");
-		}
-		SimTK::Vec3 getTargetMeshCOP(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vec3>(state, "target_mesh_total_cop");
-		}
-		SimTK::Vec3 getTargetMeshContactForce(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vec3>(state, "target_mesh_total_contact_force");
+			for (std::string stat : _stat_names) {
+
+				if (channel == "casting_mesh.total." + stat) {
+					return getCacheVariableValue<double>(state, "casting_mesh.total." + stat);
+				}
+				else if (channel == "target_mesh.total." + stat) {
+					return getCacheVariableValue<double>(state, "target_mesh.total." + stat);
+				}
+			}
 		}
 
-		double getCastingMeshMeanPressure(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "casting_mesh_total_mean_pressure");
-		}
-		double getCastingMeshMeanProximity(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "casting_mesh_total_mean_proximity");
-		}
-		double getCastingMeshMaxPressure(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "casting_mesh_total_max_pressure");
-		}
-		double getCastingMeshMaxProximity(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "casting_mesh_total_max_proximity");
-		}
-		double getCastingMeshContactArea(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "casting_mesh_total_contact_area");
-		}
-		SimTK::Vec3 getCastingMeshCOP(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vec3>(state, "casting_mesh_total_cop");
-		}
-		SimTK::Vec3 getCastingMeshContactForce(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vec3>(state, "casting_mesh_total_contact_force");
+		SimTK::Vec3 getContactStatsTotalVec3(const SimTK::State& state,
+			const std::string& channel) const {
+
+			for (std::string stat_vec3 : _stat_names_vec3) {
+
+				if (channel == "casting_mesh.total." + stat_vec3) {
+					return getCacheVariableValue<SimTK::Vec3>(state, "casting_mesh.total." + stat_vec3);
+				}
+				else if (channel == "target_mesh.total." + stat_vec3) {
+					return getCacheVariableValue<SimTK::Vec3>(state, "target_mesh.total." + stat_vec3);
+				}
+			}
 		}
 
-		//Medial
-		double getTargetMeshMeanPressureMedial(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "target_mesh_medial_mean_pressure");
-		}
-		double getTargetMeshMeanProximityMedial(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "target_mesh_medial_mean_proximity");
-		}
-		double getTargetMeshMaxPressureMedial(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "target_mesh_medial_max_pressure");
-		}
-		double getTargetMeshMaxProximityMedial(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "target_mesh_medial_max_proximity");
-		}
-		double getTargetMeshContactAreaMedial(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "target_mesh_medial_contact_area");
-		}
-		SimTK::Vec3 getTargetMeshCOPMedial(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vec3>(state, "target_mesh_medial_cop");
-		}
-		SimTK::Vec3 getTargetMeshContactForceMedial(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vec3>(state, "target_mesh_medial_contact_force");
+		double getContactStatsMedialLateral(const SimTK::State& state,
+			const std::string& channel) const {
+
+			for (std::string stat : _stat_names) {
+
+				if (channel == "casting_mesh.medial." + stat) {
+					return getCacheVariableValue<double>(state, "casting_mesh.medial." + stat);
+				}
+				else if (channel == "target_mesh.medial." + stat) {
+					return getCacheVariableValue<double>(state, "target_mesh.medial." + stat);
+				}
+				else if (channel == "casting_mesh.lateral." + stat) {
+					return getCacheVariableValue<double>(state, "casting_mesh.lateral." + stat);
+				}
+				else if (channel == "target_mesh.lateral." + stat) {
+					return getCacheVariableValue<double>(state, "target_mesh.lateral." + stat);
+				}
+			}
 		}
 
-		double getCastingMeshMeanPressureMedial(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "casting_mesh_medial_mean_pressure");
-		}
-		double getCastingMeshMeanProximityMedial(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "casting_mesh_medial_mean_proximity");
-		}
-		double getCastingMeshMaxPressureMedial(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "casting_mesh_medial_max_pressure");
-		}
-		double getCastingMeshMaxProximityMedial(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "casting_mesh_medial_max_proximity");
-		}
-		double getCastingMeshContactAreaMedial(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "casting_mesh_medial_contact_area");
-		}
-		SimTK::Vec3 getCastingMeshCOPMedial(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vec3>(state, "casting_mesh_medial_cop");
-		}
-		SimTK::Vec3 getCastingMeshContactForceMedial(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vec3>(state, "casting_mesh_medial_contact_force");
+		SimTK::Vec3 getContactStatsMedialLateralVec3(const SimTK::State& state,
+			const std::string& channel) const {
+
+			for (std::string stat_vec3 : _stat_names_vec3) {
+
+				if (channel == "casting_mesh.medial." + stat_vec3) {
+					return getCacheVariableValue<SimTK::Vec3>(state, "casting_mesh.medial." + stat_vec3);
+				}
+				else if (channel == "target_mesh.medial." + stat_vec3) {
+					return getCacheVariableValue<SimTK::Vec3>(state, "target_mesh.medial." + stat_vec3);
+				}
+				else if (channel == "casting_mesh.lateral." + stat_vec3) {
+					return getCacheVariableValue<SimTK::Vec3>(state, "casting_mesh.lateral." + stat_vec3);
+				}
+				else if (channel == "target_mesh.lateral." + stat_vec3) {
+					return getCacheVariableValue<SimTK::Vec3>(state, "target_mesh.lateral." + stat_vec3);					
+				}
+			}
+			OPENSIM_THROW(Exception, "Output channel " + channel + " was not found.");
 		}
 
-		//Lateral
-		double getTargetMeshMeanPressureLateral(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "target_mesh_lateral_mean_pressure");
-		}
-		double getTargetMeshMeanProximityLateral(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "target_mesh_lateral_mean_proximity");
-		}
-		double getTargetMeshMaxPressureLateral(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "target_mesh_lateral_max_pressure");
-		}
-		double getTargetMeshMaxProximityLateral(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "target_mesh_lateral_max_proximity");
-		}
-		double getTargetMeshContactAreaLateral(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "target_mesh_lateral_contact_area");
-		}
-		SimTK::Vec3 getTargetMeshCOPLateral(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vec3>(state, "target_mesh_lateral_cop");
-		}
-		SimTK::Vec3 getTargetMeshContactForceLateral(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vec3>(state, "target_mesh_lateral_contact_force");
-		}
-
-		double getCastingMeshMeanPressureLateral(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "casting_mesh_lateral_mean_pressure");
-		}
-		double getCastingMeshMeanProximityLateral(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "casting_mesh_lateral_mean_proximity");
-		}
-		double getCastingMeshMaxPressureLateral(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "casting_mesh_lateral_max_pressure");
-		}
-		double getCastingMeshMaxProximityLateral(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "casting_mesh_lateral_max_proximity");
-		}
-		double getCastingMeshContactAreaLateral(const SimTK::State& state) const {
-			return getCacheVariableValue<double>(state, "casting_mesh_lateral_contact_area");
-		}
-		SimTK::Vec3 getCastingMeshCOPLateral(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vec3>(state, "casting_mesh_lateral_cop");
-		}
-		SimTK::Vec3 getCastingMeshContactForceLateral(const SimTK::State& state) const {
-			return getCacheVariableValue<SimTK::Vec3>(state, "casting_mesh_lateral_contact_force");
-		}
+			
 
 		OpenSim::Array<double> getRecordValues(const SimTK::State& s) const;
 		OpenSim::Array<std::string> getRecordLabels() const;
@@ -328,12 +213,25 @@ namespace OpenSim {
 		SimTK::Vector_<SimTK::Vec3> getMeshVerticesInFrame(const SimTK::State& state,
 			const std::string mesh_name, std::string frame_name) const;
 
+		std::vector<std::string> getContactStatNames() {
+			return _stat_names;
+		}
+
+		std::vector<std::string> getContactStatNamesVec3() {
+			return _stat_names_vec3;
+		}
+
+		std::vector<std::string> getMeshDataNames() {
+			return _mesh_data_names;
+		}
+
 	protected:
 
-		/**  ModelComponent interface */
+		void extendFinalizeFromProperties() override;
 		void extendAddToSystem(SimTK::MultibodySystem& system) const override;
 		void extendInitStateFromProperties(SimTK::State & 	state)	const override;
 		void extendRealizeReport(const SimTK::State & state)	const override;
+		
 		/**
 		 * Compute the force.
 		 */
@@ -386,6 +284,12 @@ namespace OpenSim {
 		struct nonlinearContactParams {
 			double h1, h2, k1, k2, dc;
 		};
+
+		std::vector<std::string> _region_names;
+		std::vector<std::string> _stat_names;
+		std::vector<std::string> _stat_names_vec3;
+		std::vector<std::string> _mesh_data_names;
+
 
 		//==============================================================================
 	};  // END of class WISCO_ElasticFoundationForce

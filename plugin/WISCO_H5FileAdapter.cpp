@@ -167,85 +167,91 @@ namespace OpenSim {
 		}
 	}
 
-	void WISCO_H5FileAdapter::writeKinematicsDataSet(
-		const TimeSeriesTable& pos_table, const TimeSeriesTable& vel_table, const TimeSeriesTable& acc_table) {
+	void WISCO_H5FileAdapter::writeCoordinatesDataSet(const TimeSeriesTable& table) {
 
 		std::string group_name = "/Coordinates";
 		_file.createGroup(group_name);
 
-		const SimTK::Matrix& pos_data = pos_table.getMatrix().getAsMatrix();
-		const SimTK::Matrix& vel_data = vel_table.getMatrix().getAsMatrix();
-		const SimTK::Matrix& acc_data = acc_table.getMatrix().getAsMatrix();
+		const SimTK::Matrix& data_matrix = table.getMatrix().getAsMatrix();
 
-		std::vector<std::string> coords = pos_table.getColumnLabels();
+		std::vector<std::string> labels = table.getColumnLabels();
+		std::string coord_name = split_string(labels[0], ".")[0];
 
-		SimTK::Vector coord_pos(pos_data.nrow());
-		SimTK::Vector coord_vel(vel_data.nrow());
-		SimTK::Vector coord_acc(acc_data.nrow());
+		std::string coord_group = group_name + "/" + coord_name;
+		_file.createGroup(coord_group);
 
-		for (int i = 0; i < pos_data.ncol(); ++i) {
-			for (int j = 0; j < pos_data.nrow(); ++j) {
-				coord_pos(j) = pos_data(j, i);
-				coord_vel(j) = vel_data(j, i);
-				coord_acc(j) = acc_data(j, i);
+		int i = 0;
+		for (std::string label : labels) {
+			std::vector<std::string> decomp_label = split_string(label, ".");
+			std::string label_coord = decomp_label[0];
+			std::string param = decomp_label[1];
+
+			if (label_coord == coord_name) {
+				SimTK::Vector data(data_matrix.nrow());
+				for (int j = 0; j < data_matrix.nrow(); ++j) {
+					data(j) = data_matrix(j, i);
+				}
+
+				writeDataSetSimTKVector(data, coord_group + "/" + param);
 			}
+			else {
+				coord_name = label_coord;
+				coord_group = group_name + "/" + coord_name;
+				_file.createGroup(coord_group);
 
-			std::string coord_group = group_name + "/" + coords[i];
-			_file.createGroup(coord_group);
+				SimTK::Vector data(data_matrix.nrow());
+				for (int j = 0; j < data_matrix.nrow(); ++j) {
+					data(j) = data_matrix(j, i);
+				}
 
-			writeDataSetSimTKVector(coord_pos, coord_group + "/" + "position");
-			writeDataSetSimTKVector(coord_vel, coord_group + "/" + "velocity");
-			writeDataSetSimTKVector(coord_acc, coord_group + "/" + "acceleration");
+				writeDataSetSimTKVector(data, coord_group + "/" + param);
+			}
+			++i;
 		}
 	}
 
-	void WISCO_H5FileAdapter::writeMuscleDataSet(
-		std::vector<SimTK::Matrix>& msl_vec, std::vector<std::string> msl_names, 
-		std::vector<std::string> param_names, const TimeSeriesTable& states_table) {
-		writeTimeDataSet(states_table);
+	void WISCO_H5FileAdapter::writeMuscleDataSet(const TimeSeriesTable& table) {
+		writeTimeDataSet(table);
 
-		std::string group_name = "/Muscles";
+		std::string group_name = "/WISCO_IdealMuscle";
 		_file.createGroup(group_name);
 
-		int nParams = param_names.size();
-		int nFrames = msl_vec[0].nrow();
-		int nMsl = msl_vec[0].ncol();
+		const SimTK::Matrix& data_matrix = table.getMatrix().getAsMatrix();
 
-		for (int i = 0; i < nMsl; ++i) {
-			std::string msl_group = group_name + "/" + msl_names[i];
-			_file.createGroup(msl_group);
-			
-			for (int j = 0; j < nParams; ++j) {
-				SimTK::Vector data(nFrames);
-				for (int k = 0; k < nFrames; ++k) {
-					data(k) = msl_vec[j](k,i);
+		std::vector<std::string> labels = table.getColumnLabels();
+		std::string msl_name = split_string(labels[0], ".")[0];
+
+		std::string msl_group = group_name + "/" + msl_name;
+		_file.createGroup(msl_group);
+
+		int i = 0;
+		for (std::string label : labels) {
+			std::vector<std::string> decomp_label = split_string(label, ".");
+			std::string label_msl = decomp_label[0];
+			std::string param = decomp_label[1];
+
+			if (label_msl == msl_name) {
+				SimTK::Vector data(data_matrix.nrow());
+				for (int j = 0; j < data_matrix.nrow(); ++j) {
+					data(j) = data_matrix(j, i);
 				}
-				std::string msl_param_path = msl_group + "/" + param_names[j];
-				writeDataSetSimTKVector(data, msl_param_path);
 
+				writeDataSetSimTKVector(data, msl_group + "/" + param);
 			}
+			else {
+				msl_name = label_msl;
+				msl_group = group_name + "/" + msl_name;
+				_file.createGroup(msl_group);
 
-		}
-
-		std::vector<std::string> states_labels = states_table.getColumnLabels();
-		int nStates = states_labels.size();
-
-		const SimTK::Matrix& states_matrix = states_table.getMatrix().getAsMatrix();
-
-		for (int s = 0; s < nStates; ++s) {
-			std::vector<std::string> decomp_label = split_string(states_labels[s], "/");
-			int index;
-			if (contains_string(msl_names, decomp_label[0], index)) {
-				std::string data_path = group_name + "/" + decomp_label[0] + "/" + decomp_label[1];
-				SimTK::Vector ms_data(nFrames);
-				for (int k = 0; k < nFrames; ++k) {
-					ms_data(k) = states_matrix(s, k);
+				SimTK::Vector data(data_matrix.nrow());
+				for (int j = 0; j < data_matrix.nrow(); ++j) {
+					data(j) = data_matrix(j, i);
 				}
-				writeDataSetSimTKVector(ms_data, data_path);
 
+				writeDataSetSimTKVector(data, msl_group + "/" + param);
 			}
+			++i;
 		}
-
 		
 		
 	}
@@ -314,6 +320,60 @@ namespace OpenSim {
 
 		//Free dynamically allocated memory
 		free(data);
+	}
+
+	void WISCO_H5FileAdapter::writeDataSetSimTKVectorVec3(const SimTK::Vector_<SimTK::Vec3>& data_vector, const std::string dataset_path) {
+		hsize_t dim_data[2];
+		dim_data[0] = data_vector.nrow();
+		dim_data[1] = 3;
+		
+		H5::DataSpace dataspace(2, dim_data, dim_data);
+		H5::PredType datatype(H5::PredType::NATIVE_DOUBLE);
+		H5::DataSet dataset = _file.createDataSet(dataset_path, datatype, dataspace);
+
+		//Allocate space for data
+		double** data = (double**)malloc(dim_data[0] * sizeof(double*));
+		data[0] = (double*)malloc(dim_data[1] * dim_data[0] * sizeof(double));
+		for (int i = 1; i < dim_data[0]; i++) data[i] = data[0] + i*dim_data[1];
+
+		//Set Data Array
+		for (int r = 0; r < dim_data[0]; ++r) {
+			for (int c = 0; c < 3; ++c) {
+				data[r][c] = data_vector(r)(c);
+			}
+		}
+
+		dataset.write(&data[0][0], datatype);
+
+		//Free dynamically allocated memory
+		free(data[0]);
+		free(data);
+	}
+
+	void WISCO_H5FileAdapter::writeDataSetSimTKMatrixColumns(const SimTK::Matrix& data, std::vector<std::string> column_dataset_paths) {
+
+		for (int i = 0; i < data.ncol(); ++i) {
+			std::string path = column_dataset_paths[i];
+
+			SimTK::Vector data_vec(data.nrow());
+			for (int j = 0; j < data.nrow(); ++j) {
+				data_vec(j) = data(j, i);
+			}
+			writeDataSetSimTKVector(data_vec, path);
+		}	
+	}
+
+	void WISCO_H5FileAdapter::writeDataSetSimTKMatrixVec3Columns(const SimTK::Matrix_<SimTK::Vec3>& data, std::vector<std::string> column_dataset_paths) {
+
+		for (int i = 0; i < data.ncol(); ++i) {
+			std::string path = column_dataset_paths[i];
+
+			SimTK::Vector_<SimTK::Vec3> data_vec(data.nrow());
+			for (int j = 0; j < data.nrow(); ++j) {
+				data_vec(j) = data(j, i);
+			}
+			writeDataSetSimTKVectorVec3(data_vec, path);
+		}
 	}
 
 	void WISCO_H5FileAdapter::writeTimeDataSet(const TimeSeriesTable& table) {

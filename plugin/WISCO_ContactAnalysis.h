@@ -111,12 +111,7 @@ private:
 
 
 	int record(const SimTK::State& s);
-	void addContactReportersToModel(WISCO_ElasticFoundationForce& contactForce);
-	void addContactReporter(WISCO_ElasticFoundationForce& contactForce,
-		const std::string& mesh_name, const std::string& mesh_type,
-		const std::string& data_name, const std::string& data_type,
-		const std::string& reporter_type);
-
+	
 	void collectMeshData(const std::string& mesh_name,
 		const std::vector<std::string>& contact_names,
 		std::vector<SimTK::Matrix>& faceData, std::vector<std::string>& faceDataNames,
@@ -134,6 +129,7 @@ private:
 		std::string& contact_name, std::string& mesh_name,
 		std::string& data_type, std::string& data_name);
 	
+	void renameReportLabelsToH5Path(std::vector<std::string>& labels, std::string mesh_path);
 //=============================================================================
 // DATA
 //=============================================================================

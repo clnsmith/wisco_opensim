@@ -124,6 +124,14 @@ namespace OpenSim {
 			return lat_tri_ind;
 		}
 
+		int getNumMedialTriangles() const {
+			return _n_medial_tri;
+		}
+
+		int getNumLateralTriangles() const {
+			return _n_lateral_tri;
+		}
+
 		const SimTK::Vector& getTriangleThickness() const {
 			return tri_thickness;
 		}
@@ -162,6 +170,8 @@ namespace OpenSim {
 		SimTK::Vector tri_area;
 		SimTK::Vector med_tri_ind;
 		SimTK::Vector lat_tri_ind;
+		int _n_medial_tri;
+		int _n_lateral_tri;
 		SimTK::Matrix tri_neighbors;
 		SimTK::Vector nTriNeighbors;
 		SimTK::Vector_<SimTK::Vec3> vertex_locations;

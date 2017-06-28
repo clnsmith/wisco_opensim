@@ -121,14 +121,20 @@ void WISCO_IdealMuscle::constructProperties()
        (forceVelocityLengthCurvePoints, forceVelocityLengthCurveX, 
         forceVelocityLengthCurveY);
     constructProperty_force_velocity_curve(forceVelocityLengthCurve);
+}
+
+void WISCO_IdealMuscle::extendFinalizeFromProperties()
+{
+	Super::extendFinalizeFromProperties();
+
+	//Add channels to output list
+	auto& dyn_quan = updOutput("dynamic_quantities");
+	dyn_quan.addChannel("activation");
+	dyn_quan.addChannel("force");
+
 
 
 }
-
-//-----------------------------------------------------------------------------
-// FORCE
-//-----------------------------------------------------------------------------
-//_____________________________________________________________________________
 
 //==============================================================================
 // CALCULATIONS

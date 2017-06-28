@@ -14,7 +14,7 @@ int main()
 		static const std::string plugin_file{ "../../../install/plugin/WISCO_Plugin" };
 		LoadOpenSimLibrary(plugin_file, true);
 
-		if (false) {
+		if (true) {
 			//Build Model
 			Model model;
 			model.setName("knee_contact");
@@ -129,9 +129,15 @@ int main()
 
 			model.print("./results/knee_contact.osim");
 
-			//Simulate
 			SimTK::State& state = model.initSystem();
 
+			WISCO_ElasticFoundationForce& tf = model.updComponent<WISCO_ElasticFoundationForce>("TF_contact");
+
+			//Simulate
+			state = model.initSystem();
+
+			//model.realizeReport(state);
+			
 			model.updMatterSubsystem().setShowDefaultGeometry(false);
 			SimTK::Visualizer& viz = model.updVisualizer().updSimbodyVisualizer();
 			viz.setBackgroundColor(SimTK::White);
@@ -139,13 +145,16 @@ int main()
 			SimTK::RungeKuttaMersonIntegrator integrator(model.getSystem());
 			integrator.setMaximumStepSize(1.0e-2);
 			Manager manager(model, integrator);
-			manager.setInitialTime(0); manager.setFinalTime(0.5);
+			manager.setInitialTime(0); manager.setFinalTime(0.05);
 			manager.integrate(state);
 
 			static const std::string out_mot_file{ "./results/kneeContact.mot" };
 			manager.getStateStorage().print(out_mot_file);
 		}
-
+		
+		
+		
+	
 		//Perform ContactAnalysis
 		static const std::string settings_file{ "./inputs/ContactAnalysis_settings.xml" };
 

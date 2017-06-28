@@ -67,6 +67,22 @@ public:
     OpenSim_DECLARE_PROPERTY(force_velocity_curve, Function,
         "Function representing force-velocity behavior of muscle fibers");
 
+//=============================================================================
+// Outputs
+//=============================================================================
+	OpenSim_DECLARE_LIST_OUTPUT(dynamic_quantities,double,getDynamicQuantities,SimTK::Stage::Dynamics)
+
+	double getDynamicQuantities(const SimTK::State& state,
+			const std::string& channel) const {
+
+		if (channel == "activation") {
+			return getActivation(state);
+		}
+		else if(channel == "force") {
+			return getTendonForce(state);
+		}
+	}
+
 //==============================================================================
 // PUBLIC METHODS
 //==============================================================================
@@ -113,6 +129,7 @@ protected:
     double computeActuation( const SimTK::State& s ) const override;
     double computeIsometricForce(SimTK::State& s, double activation) const;
     
+	void extendFinalizeFromProperties() override;
 
 private:
     void setNull();
