@@ -32,39 +32,71 @@ FOREACH(external_lib_name ${EXTERNAL_LIB_NAMES})
     continue()
   endif()
 
-  find_library(external_lib_debug "${external_lib_name}_d.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/${external_lib_name}/")
-  find_library(external_lib "${external_lib_name}.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/${external_lib_name}/")
+  find_library(external_lib_debug "${external_lib_name}_d" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/${external_lib_name}/")
+  find_library(external_lib "${external_lib_name}" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/${external_lib_name}/")
 
   if(${external_lib} STREQUAL "external_lib-NOTFOUND")
-      message(FATAL_ERROR "Couldn't find the ${external_lib_name} library")
+      message(WARNING "Couldn't find the ${external_lib_name} library")
   elseif(${external_lib_debug} STREQUAL "external_lib_debug-NOTFOUND")
-      message(FATAL_ERROR "Couldn't find the ${external_lib_name} debug library")
+      message(WARNING "Couldn't find the ${external_lib_name} debug library")
   else()
     message(STATUS "Found ${external_lib_name} at: ${external_lib}")
   endif()
 
-  target_link_libraries(${PLUGIN_NAME} debug ${external_lib_debug} optimized ${external_lib})
+  if(external_lib AND external_lib_debug)
+    set(EXT_LIB optimized ${external_lib} debug ${external_lib_debug})
+  elseif(external_lib)
+    set(EXT_LIB ${external_lib})
+  elseif(external_lib_debug)
+    set(EXT_LIB ${external_lib_debug})
+  endif()
+
+  target_link_libraries(${PLUGIN_NAME} ${EXT_LIB})
 
   unset(external_lib_debug)
   unset(external_lib)
+  unset(EXT_LIB)
 ENDFOREACH(external_lib_name)
 
 # Find Special External Libraries
 #--------------------------------
-
 #HDF5
-find_library(HDF5_hl_cpp_lib_debug "libhdf5_hl_cpp_D.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
-find_library(HDF5_hl_cpp_lib "libhdf5_hl_cpp.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
-target_link_libraries(${PLUGIN_NAME} debug ${HDF5_hl_cpp_lib_debug} optimized ${HDF5_hl_cpp_lib})
+if (WIN32 OR MSVC)
 
-find_library(HDF5_cpp_lib_debug "libhdf5_cpp_D.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
-find_library(HDF5_cpp_lib "libhdf5_cpp.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
-target_link_libraries(${PLUGIN_NAME} debug ${HDF5_cpp_lib_debug} optimized ${HDF5_cpp_lib})
+  find_library(HDF5_hl_cpp_lib_debug "libhdf5_hl_cpp_D.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
+  find_library(HDF5_hl_cpp_lib "libhdf5_hl_cpp.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
+ 
+  find_library(HDF5_cpp_lib_debug "libhdf5_cpp_D.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
+  find_library(HDF5_cpp_lib "libhdf5_cpp.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
 
-find_library(HDF5_lib_debug "libhdf5_D.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
-find_library(HDF5_lib "libhdf5.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
-target_link_libraries(${PLUGIN_NAME} debug ${HDF5_lib_debug} optimized ${HDF5_lib})
+  find_library(HDF5_lib_debug "libhdf5_D.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
+  find_library(HDF5_lib "libhdf5.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
 
+elseif (UNIX)
+  find_library(HDF5_hl_cpp_lib_debug "libhdf5_hl_cpp_D.a" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
+  find_library(HDF5_hl_cpp_lib "libhdf5_hl_cpp.a" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
+
+  find_library(HDF5_cpp_lib_debug "libhdf5_cpp_D.a" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
+  find_library(HDF5_cpp_lib "libhdf5_cpp.a" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
+
+  find_library(HDF5_lib_debug "libhdf5_D.a" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
+  find_library(HDF5_lib "libhdf5.a" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
+
+endif()
+
+
+
+ if(HDF5_lib AND HDF5_lib_debug)
+   set(HDF5_LIBRARIES optimized ${HDF5_hl_cpp_lib} ${HDF5_cpp_lib} ${HDF5_lib} debug ${HDF5_hl_cpp_lib_debug} ${HDF5_cpp_lib_debug} ${HDF5_lib_debug})
+ elseif(HDF5_lib)
+   set(HDF5_LIBRARIES ${HDF5_hl_cpp_lib} ${HDF5_cpp_lib} ${HDF5_lib} )
+ elseif(HDF5_lib_debug)
+   set(HDF5_LIBRARIES ${HDF5_hl_cpp_lib_debug} ${HDF5_cpp_lib_debug} ${HDF5_lib_debug})
+ else()
+   message(SEND_ERROR "No HDF5_lib found!")
+ endif()
+
+target_link_libraries(${PLUGIN_NAME} ${HDF5_LIBRARIES})
 
 set_target_properties(
     ${PLUGIN_NAME} PROPERTIES

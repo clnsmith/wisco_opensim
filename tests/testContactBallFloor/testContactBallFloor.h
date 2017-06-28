@@ -23,7 +23,7 @@
 #define OPENSIM_TEST_CONTACT_BALL_FLOOR_H_
 
 
-#include <OpenSim\OpenSim.h>
+#include <OpenSim/OpenSim.h>
 
 namespace OpenSim {
 
@@ -42,13 +42,13 @@ inline void simulate(Model& model, SimTK::State& state, bool saveStatesFile){
             //Draw Line
             auto line = new SimTK::DecorativeLine(SimTK::Vec3(0),SimTK::Vec3(1.0));
             line->setLineThickness(5.0);
-            
+
             //auto brick = new SimTK::DecorativeBrick();
 
             auto trans = new SimTK::Transform(SimTK::Vec3(0));
             auto ind = model.getBodySet()[0].getMobilizedBodyIndex();
             viz.addDecoration(ind, *trans, *line);
-            
+
 			SimTK::DecorativeText help("Press any key to start a new simulation; "
 				"ESC to quit.");
 			help.setIsScreenText(true);
@@ -58,7 +58,7 @@ inline void simulate(Model& model, SimTK::State& state, bool saveStatesFile){
 			viz.drawFrameNow(state);
 			std::cout << "A visualizer window has opened." << std::endl;
 
- 
+
 		}
 
 		// Simulate until the user presses ESC (or enters 'q' if visualization has

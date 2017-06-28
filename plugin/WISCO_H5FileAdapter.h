@@ -22,12 +22,12 @@
 #ifndef OPENSIM_H5_FILE_ADAPTER_H_
 #define OPENSIM_H5_FILE_ADAPTER_H_
 
-#include "OpenSim\Common\FileAdapter.h"
+#include "OpenSim/Common/FileAdapter.h"
 #include "SimTKmath.h"
 #include "H5Cpp.h"
 #include "hdf5_hl.h"
 #include "osimPluginDLL.h"
-#include "OpenSim\Common\TimeSeriesTable.h"
+#include "OpenSim/Common/TimeSeriesTable.h"
 
 namespace OpenSim {
 
@@ -42,8 +42,8 @@ namespace OpenSim {
        ~WISCO_H5FileAdapter() = default;
 
        WISCO_H5FileAdapter* clone() const override;
-	   
-	   
+
+
 	   void open(const std::string& file_name);
 	   void close();
 
@@ -52,7 +52,7 @@ namespace OpenSim {
 	   void writeDataSetVec3(const TimeSeriesTableVec3& table, const std::string group_path);
 	   void writeDataSetVector(const TimeSeriesTable& table, const std::string group_path);
 	   void writeDataSetSimTKVector(const SimTK::Vector& data_vector, const std::string dataset_path);
-	   void WISCO_H5FileAdapter::writeDataSetSimTKVectorVec3(const SimTK::Vector_<SimTK::Vec3>& data_vector, const std::string dataset_path);
+	   void writeDataSetSimTKVectorVec3(const SimTK::Vector_<SimTK::Vec3>& data_vector, const std::string dataset_path);
 	   void writeDataSetSimTKMatrixColumns(const SimTK::Matrix& data, std::vector<std::string> column_dataset_paths);
 	   void writeDataSetSimTKMatrixVec3Columns(const SimTK::Matrix_<SimTK::Vec3>& data, std::vector<std::string> column_dataset_paths);
 	   void writeTimeDataSet(const TimeSeriesTable& table);
@@ -62,7 +62,7 @@ namespace OpenSim {
 	   void writeLigamentDataSet(const TimeSeriesTable& table);
     protected:
         OutputTables extendRead(const std::string& fileName) const override;
-        
+
         void extendWrite(const InputTables& tables, const std::string& fileName) const override;
     private:
 

@@ -34,7 +34,7 @@
 #include "coldet.h"
 #include "WISCO_ContactMesh.h"
 #include <cctype>
-#include <OpenSim\Common\Lmdif.h>
+#include <OpenSim/Common/Lmdif.h>
 //#include "OpenSim/OpenSim.h"
 //==============================================================================
 // USING
@@ -45,7 +45,7 @@ using namespace SimTK;
 //==============================================================================
 // CONSTRUCTOR(S) AND DESTRUCTOR
 //==============================================================================
-// Uses default (compiler-generated) destructor, copy constructor, copy 
+// Uses default (compiler-generated) destructor, copy constructor, copy
 // assignment operator.
 
 //_____________________________________________________________________________
@@ -61,8 +61,8 @@ WISCO_ElasticFoundationForce::WISCO_ElasticFoundationForce() : Force()
 
 
 /**
- * Convenience Constructor 
- * 
+ * Convenience Constructor
+ *
  */
 
 OpenSim::WISCO_ElasticFoundationForce::WISCO_ElasticFoundationForce(
@@ -90,7 +90,7 @@ void WISCO_ElasticFoundationForce::setNull()
 }
 
 void WISCO_ElasticFoundationForce::constructProperties()
-{   
+{
 	constructProperty_min_proximity(0.00);
 	constructProperty_max_proximity(0.02);
 	constructProperty_elastic_foundation_formulation("nonlinear");
@@ -126,7 +126,7 @@ void WISCO_ElasticFoundationForce::extendAddToSystem(MultibodySystem& system) co
 	target_mesh_def_vec = 0;
 	casting_mesh_def_vec = 0;
 
-	
+
 	addCacheVariable<Vector>("target_mesh_contacting_tri",
 		target_mesh_def_vec, Stage::LowestRuntime);
 	addCacheVariable<Vector>("casting_mesh_contacting_tri",
@@ -178,7 +178,7 @@ void WISCO_ElasticFoundationForce::extendAddToSystem(MultibodySystem& system) co
 	for (std::string name : double_names) {
 		addCacheVariable<double>("target_mesh.total." + name, 0.0, Stage::Dynamics);
 		addCacheVariable<double>("casting_mesh.total." + name, 0.0, Stage::Dynamics);
-		
+
 		addCacheVariable<double>("target_mesh.medial." + name, 0.0, Stage::Dynamics);
 		addCacheVariable<double>("casting_mesh.medial." + name, 0.0, Stage::Dynamics);
 		addCacheVariable<double>("target_mesh.lateral." + name, 0.0, Stage::Dynamics);
@@ -282,7 +282,7 @@ void WISCO_ElasticFoundationForce::extendFinalizeFromProperties()
 void WISCO_ElasticFoundationForce::extendInitStateFromProperties(State & state)	const
 {
     Super::extendInitStateFromProperties(state);
-    
+
     int casting_mesh_nTri = getSocket<WISCO_ContactMesh>("casting_mesh").getConnectee().getNumFaces();
     Vector casting_default_vec(casting_mesh_nTri);
     casting_default_vec = -1;
@@ -310,7 +310,7 @@ void WISCO_ElasticFoundationForce::extendRealizeReport(const State & state)	cons
 			computeContactStats(state, true);
 		}
 	}*/
-	
+
 	if (get_verbose() > 0) {
 		if (get_appliesForce()) {
 			std::cout << std::endl;
@@ -342,20 +342,20 @@ void WISCO_ElasticFoundationForce::computeForce(const State& state,
 }
 
 void WISCO_ElasticFoundationForce::meshCollision(
-	const State& state, Vector_<SpatialVec>& bodyForces, 
+	const State& state, Vector_<SpatialVec>& bodyForces,
 	bool applyContactForces, bool flipMeshes) const
 {
-	/* 
+	/*
 	Convience for variable naming:
 	T = target mesh
-	C = casting mesh	
+	C = casting mesh
 	*/
-	
+
 	// Get Mesh Properties
     double min_proximity = get_min_proximity();
 	double max_proximity = get_max_proximity();
 
-	const WISCO_ContactMesh& targetMesh = (!flipMeshes) ? 
+	const WISCO_ContactMesh& targetMesh = (!flipMeshes) ?
 		getConnectee<WISCO_ContactMesh>("target_mesh") :
 		getConnectee<WISCO_ContactMesh>("casting_mesh");
 
@@ -373,10 +373,10 @@ void WISCO_ElasticFoundationForce::meshCollision(
 
     Vector tri_areaC = castingMesh.getTriangleAreas();
 
-    // Get Mesh Transforms 
+    // Get Mesh Transforms
     Transform GtoMeshT = targetMesh.getTransformGroundToMesh(state);
     Transform MeshCtoMeshT = getTransformCastingToTargetMesh(state);
-	
+
     //Reset depth arrays
 	Vector meshC_tri_pressure;
 	Vector meshC_tri_proximity;
@@ -399,10 +399,10 @@ void WISCO_ElasticFoundationForce::meshCollision(
     meshC_tri_pressure = 0;
 	meshC_tri_proximity = 0;
 
-	
+
 	//Collision Detection
 	//-------------------------------------------------------------------------
-    
+
 	//Get the collision object from mesh and set transform in ground
 	CollisionModel3D* mT;
 
@@ -416,7 +416,7 @@ void WISCO_ElasticFoundationForce::meshCollision(
 	}
 
 	auto coldet_transform = ~GtoMeshT.toMat44();
-    
+
 	float meshC_transform[16];
 	int count = 0;
 	for (int i = 0; i < 4; i++) {
@@ -426,7 +426,7 @@ void WISCO_ElasticFoundationForce::meshCollision(
 		}
 	}
 	mT->setTransform(meshC_transform);
-	
+
 	//Initialize contact variables
     int meshC_nActiveTri = 0;
     float origin[3], vector[3];
@@ -443,7 +443,7 @@ void WISCO_ElasticFoundationForce::meshCollision(
 
 	SimTK::Vec3 force(0);
 	SimTK::Vec3 moment(0);
-	
+
 	//Keep track of triangle collision type for debugging
     int same = 0;
     int diff = 0;
@@ -457,9 +457,9 @@ void WISCO_ElasticFoundationForce::meshCollision(
 
         Vec3 center = tri_cenC_ground(i);
         Vec3 normal = tri_norC_ground(i);
-        
+
         Vec3 center_in_mT = MeshCtoMeshT.shiftBaseStationToFrame(center);
-		
+
         //If triangle was in contact in previous timestep, recheck same contact triangle and neighbors
 		if (meshC_target_tri(i) >= 0) {
 
@@ -483,8 +483,8 @@ void WISCO_ElasticFoundationForce::meshCollision(
 					continue;
 				}
 			}
-		
-            
+
+
             //Check neighboring triangles
             int nNeighborTri;
             Vector neighborTri = targetMesh.getNeighborTris(meshC_target_tri(i), nNeighborTri);
@@ -501,25 +501,25 @@ void WISCO_ElasticFoundationForce::meshCollision(
 						meshC_tri_proximity(i) = depth;
 						meshC_tri_pressure(i) = computeTriPressure(
 							i, neighborTri(j), depth, flipMeshes);
-						
+
 						force += computeForceVector(meshC_tri_pressure(i), tri_areaC(i), -normal);
 						moment += computeMomentVector(meshC_tri_pressure(i), tri_areaC(i), -normal, tri_cenC(i));
-						
+
 						meshC_target_tri(i) = neighborTri(j);
 
 						meshC_nActiveTri++;
 						neighbor++;
 
-						contact_detected = true;						
-                        break; 
+						contact_detected = true;
+                        break;
                     }
                 }
             }
             if (contact_detected)
                 continue;
-                
+
         }
-        
+
         //Go through the OBB hierarchy
         for (int j = 0; j < 3; ++j) {
             origin[j] = tri_cenC_ground(i)(j);
@@ -551,13 +551,13 @@ void WISCO_ElasticFoundationForce::meshCollision(
 			{
 				meshC_target_tri(i) = triT;
 				meshC_tri_proximity(i) = depth;
-				
+
 				//Compute Pressure
 				meshC_tri_pressure(i) = computeTriPressure(i,triT,depth,flipMeshes);
-				
+
 				force += computeForceVector(meshC_tri_pressure(i), tri_areaC(i), -normal);
 				moment += computeMomentVector(meshC_tri_pressure(i), tri_areaC(i), -normal, tri_cenC(i));
-				
+
 				meshC_nActiveTri++;
 				diff++;
 				continue;
@@ -566,14 +566,14 @@ void WISCO_ElasticFoundationForce::meshCollision(
 
         //Else - triangle is not in contact
         meshC_target_tri[i] = -1;
-        
+
     }
 
-	
+
     //Apply Resultant Force and Moment
 	//-------------------------------------------------------------------------
 	if (applyContactForces) {
-		const PhysicalFrame& frameT = (!flipMeshes) ? 
+		const PhysicalFrame& frameT = (!flipMeshes) ?
 			getConnectee<WISCO_ContactMesh>("target_mesh").get_mesh_frame() :
 			getConnectee<WISCO_ContactMesh>("casting_mesh").get_mesh_frame();
 
@@ -586,10 +586,10 @@ void WISCO_ElasticFoundationForce::meshCollision(
 
 		for (int i = 0; i < castingMesh.getNumFaces(); ++i) {
 			//Vec3 prs_force = computeForceVector(meshC_tri_pressure(i), tri_areaC(i), -tri_norC(i));
-			
+
 			Vec3 prs_force = computeForceVector(meshC_tri_pressure(i), tri_areaC(i), -tri_norC_ground(i));
 			applyForceToPoint(state, frameC, tri_cenC(i), prs_force, bodyForces);
-			
+
 			Vec3 point_in_mT = MeshCtoMeshT.shiftBaseStationToFrame(tri_cenC(i));
 			applyForceToPoint(state, frameT, point_in_mT, -prs_force, bodyForces);
 		}
@@ -599,7 +599,7 @@ void WISCO_ElasticFoundationForce::meshCollision(
 		applyTorque(state, frameC, moment, bodyForces);
 
 		Vec3 point_in_mT = MeshCtoMeshT.shiftBaseStationToFrame(Vec3(0));
-		
+
 		applyForceToPoint(state, frameT, point_in_mT, -force, bodyForces);
 		applyTorque(state, frameT, -moment, bodyForces);
 		*/
@@ -607,7 +607,7 @@ void WISCO_ElasticFoundationForce::meshCollision(
 		setCacheVariableValue<SimTK::Vec3>(state, "torque", moment);
 	}
 
-	
+
     //Store Contact Info
 	//-------------------------------------------------------------------------
 	if (!flipMeshes) {
@@ -633,12 +633,12 @@ void WISCO_ElasticFoundationForce::meshCollision(
 	if (getModelingOption(state, "interpolate_vertex_data")) {
 		computeVertexValues(state, castingMesh, meshC_tri_pressure, meshC_tri_proximity, flipMeshes);
 	}
-	
+
 	//Debugging Report to console
 	//---------------------------
 	if (get_verbose() > 1) {
 		std::cout << "Integrator Time: " << state.getTime() << std::endl;
-		
+
 		int width = 10;
 
 		std::cout << std::left << std::setw(width) << std::setfill(' ') << "Same";
@@ -704,7 +704,7 @@ bool WISCO_ElasticFoundationForce::rayIntersectTriTest(Vec3 p, Vec3 d, Vec3 v0, 
     else {		// else there is a line intersection
                 // at this stage we can compute the distance to the intersection point on the line
                 //     point(t) = p + t * d
-                //	where 
+                //	where
                 //		p is a point in the line
                 //		d is a vector that provides the line's direction
                 //		t is the distance
@@ -713,7 +713,7 @@ bool WISCO_ElasticFoundationForce::rayIntersectTriTest(Vec3 p, Vec3 d, Vec3 v0, 
         intersection_pt[1] = p[1] + distance*d[1];
         intersection_pt[2] = p[2] + distance*d[2];
         return(true);
-    }    
+    }
 }
 
 bool WISCO_ElasticFoundationForce::verifyTriContact(Vec3 tri_norT_ground, Vec3 tri_norC_ground, double depth) const
@@ -751,7 +751,7 @@ double WISCO_ElasticFoundationForce::computeTriProximity(Vec3 cnt_pnt_ground, Ve
 }
 
 double WISCO_ElasticFoundationForce::computeTriPressure(
-	int castingTri, int targetTri, double depth, 
+	int castingTri, int targetTri, double depth,
 	bool flipMeshes) const
 {
     //Get Contact Parameters
@@ -764,7 +764,7 @@ double WISCO_ElasticFoundationForce::computeTriPressure(
 		getConnectee<WISCO_ContactMesh>("casting_mesh") :
 		getConnectee<WISCO_ContactMesh>("target_mesh");
 
-	const WISCO_ElasticFoundationForce::ContactParameters& tContactParams = 
+	const WISCO_ElasticFoundationForce::ContactParameters& tContactParams =
 		(!flipMeshes) ?
 		get_target_mesh_contact_params() :
 		get_casting_mesh_contact_params();
@@ -773,16 +773,16 @@ double WISCO_ElasticFoundationForce::computeTriPressure(
 		(!flipMeshes) ?
 		get_casting_mesh_contact_params() :
 		get_target_mesh_contact_params();
-	
+
 	double hT, hC; //thickness
 	double ET, EC; //elastic modulus
 	double vT, vC; //poissons ratio
 
-	if (tContactParams.get_use_variable_thickness()) 
+	if (tContactParams.get_use_variable_thickness())
 		hT = tMesh.getTriangleThickness()(targetTri);
-	else 
+	else
 		hT = tContactParams.get_thickness();
-	
+
 	if (tContactParams.get_use_variable_elastic_modulus())
 		ET = tMesh.getTriangleElasticModulus()(targetTri);
 	else
@@ -841,7 +841,7 @@ double WISCO_ElasticFoundationForce::computeTriPressure(
 
     //nonlinear
     else if (get_elastic_foundation_formulation() == "nonlinear") {
-        
+
 		nonlinearContactParams cp;
 
 		cp.dc = depth;
@@ -870,15 +870,15 @@ double WISCO_ElasticFoundationForce::computeTriPressure(
 		double qtf[1];
 		double wa1[1], wa2[1], wa3[1], wa4[1];
 
-		//initial guess 
+		//initial guess
 		x[0] = linearPressure;
 
-		//Solve nonlinear equation 
+		//Solve nonlinear equation
 		lmdif_C(calcNonlinearPressureResid, nEqn, nVar, x, fvec,
 			ftol, xtol, gtol, maxfev, epsfcn, diag, mode, step_factor,
 			nprint, &info, &num_func_calls, fjac, ldfjac, ipvt, qtf,
 			wa1, wa2, wa3, wa4, (void*)&cp);
-		
+
 		double nonlinearPressure = x[0];
 
 		return nonlinearPressure;
@@ -891,7 +891,7 @@ double WISCO_ElasticFoundationForce::computeTriPressure(
 
 /**
 * A utility function used by computeTriPressure for the function lmdif_C, which
-* is used to solve the nonlinear equation for pressure. 
+* is used to solve the nonlinear equation for pressure.
 *
 * h1(1-exp(-P1/k1))+h2(1-exp(P1/k2))-dc = 0;
 *
@@ -919,7 +919,7 @@ void WISCO_ElasticFoundationForce::calcNonlinearPressureResid(
 
 }
 
-Vec3 WISCO_ElasticFoundationForce::computeForceVector(double pressure, double area, Vec3 normal) const 
+Vec3 WISCO_ElasticFoundationForce::computeForceVector(double pressure, double area, Vec3 normal) const
 {
     Vec3 force;
     force(0) = normal(0) * pressure * area;
@@ -939,7 +939,7 @@ Vec3 WISCO_ElasticFoundationForce::computeMomentVector(double pressure, double a
 
 Transform WISCO_ElasticFoundationForce::getTransformCastingToTargetMesh(const State& state) const
 {
-	
+
 	const PhysicalFrame& frameT = (!getModelingOption(state, "flip_meshes")) ?
 		getConnectee<WISCO_ContactMesh>("target_mesh").get_mesh_frame() :
 		getConnectee<WISCO_ContactMesh>("casting_mesh").get_mesh_frame();
@@ -947,13 +947,13 @@ Transform WISCO_ElasticFoundationForce::getTransformCastingToTargetMesh(const St
 	const PhysicalFrame& frameC = (!getModelingOption(state, "flip_meshes")) ?
 		getConnectee<WISCO_ContactMesh>("casting_mesh").get_mesh_frame() :
 		getConnectee<WISCO_ContactMesh>("target_mesh").get_mesh_frame();
-	
+
 
 	return frameC.findTransformBetween(state,frameT);
 
 }
 
-Vector_<Vec3> WISCO_ElasticFoundationForce::getMeshVerticesInFrame(const State& state, 
+Vector_<Vec3> WISCO_ElasticFoundationForce::getMeshVerticesInFrame(const State& state,
 	const std::string mesh_name, const std::string frame_name) const
 {
 	getModel().realizePosition(state);
@@ -969,13 +969,13 @@ Vector_<Vec3> WISCO_ElasticFoundationForce::getMeshVerticesInFrame(const State& 
 		verticesInFrame(i) =  bodyInGround.shiftBaseStationToFrame(vertices(i));
 
 	}
-	
+
 	return verticesInFrame;
-	
+
 }
 
 void WISCO_ElasticFoundationForce::computeVertexValues(const SimTK::State& state,
-	const WISCO_ContactMesh& mesh, const SimTK::Vector& tri_pressure, 
+	const WISCO_ContactMesh& mesh, const SimTK::Vector& tri_pressure,
 	const SimTK::Vector& tri_proximity, const bool flipMeshes) const
 {
 	//Compute Vertex Data
@@ -990,7 +990,7 @@ void WISCO_ElasticFoundationForce::computeVertexValues(const SimTK::State& state
 		setCacheVariableValue<Vector>
 			(state, "casting_mesh.vertex.proximity", vertex_proximity);
 	}
-	else {	
+	else {
 		setCacheVariableValue<Vector>
 			(state, "target_mesh.vertex.pressure", vertex_pressure);
 		setCacheVariableValue<Vector>
@@ -1002,8 +1002,8 @@ void WISCO_ElasticFoundationForce::computeVertexValues(const SimTK::State& state
 interpolateVertexFromFaceValues
 
 Solve a linear system of equations Ax=b in the least squares sense to determine
-the values of mesh vertice data from mesh face data. To reduce the number of 
-equations that must be solved, only the active (non-zero) faces and their 
+the values of mesh vertice data from mesh face data. To reduce the number of
+equations that must be solved, only the active (non-zero) faces and their
 corresponding vertices are considered.
 
 
@@ -1013,13 +1013,13 @@ x = vector of vertex values
 */
 
 Vector WISCO_ElasticFoundationForce::interpolateVertexFromFaceValues(
-	Vector face_values, PolygonalMesh mesh) const 
+	Vector face_values, PolygonalMesh mesh) const
 {
 	int nFace = mesh.getNumFaces();
 	int nVer = mesh.getNumVertices();
-	
+
 	Vector activeFaceInd;
-	activeFaceInd.resize(nFace); 
+	activeFaceInd.resize(nFace);
 	int ind = 0;
 
 	Vector activeVer;
@@ -1111,10 +1111,10 @@ void WISCO_ElasticFoundationForce::computeContactStats(
 {
 	//Get mesh info
 	Vector tri_area = mesh.getTriangleAreas();
-	
+
 	Vector_<Vec3> tri_normal = mesh.getTriangleNormals();
 	int nTri = mesh.getNumFaces();
-	
+
 	Vector_<Vec3> tri_center = mesh.getTriangleCenters();
 	Vector tri_cenX(nTri);
 	Vector tri_cenY(nTri);
@@ -1125,7 +1125,7 @@ void WISCO_ElasticFoundationForce::computeContactStats(
 		tri_cenY(i) = tri_center(i)(1);
 		tri_cenZ(i) = tri_center(i)(2);
 	}
-	
+
 	//Mean Pressure
 	double mean_pressure = tri_pressure.sum() / nActiveTri;
 	double mean_proximity = tri_proximity.sum() / nActiveTri;
@@ -1147,7 +1147,7 @@ void WISCO_ElasticFoundationForce::computeContactStats(
 	Vector Num = tri_pressure.elementwiseMultiply(tri_area);
 	Vector Den = tri_pressure.elementwiseMultiply(tri_area);
 	double DenVal = Den.sum();
-		
+
 	Vector xNum = Num.elementwiseMultiply(tri_cenX);
 	double xNumVal = xNum.sum() * 1000;
 	double COPx = xNumVal / DenVal;
@@ -1178,8 +1178,8 @@ void WISCO_ElasticFoundationForce::computeContactStats(
 		setCacheVariableValue(state, "target_mesh.total.contact_area", contact_area);
 		setCacheVariableValue(state, "target_mesh.total.cop", COP);
 		setCacheVariableValue(state, "target_mesh.total.contact_force", contact_force);
-		
-		
+
+
 	}
 	else {
 		setCacheVariableValue(state, "casting_mesh.total.mean_pressure", mean_pressure);
@@ -1193,7 +1193,7 @@ void WISCO_ElasticFoundationForce::computeContactStats(
 	//Compute Medial-Lateral Stats
 	//----------------------------
 	if (getModelingOption(state, "contact_stats_medial_lateral")) {
-		
+
 		Vector med_ind = mesh.getMedialTriangleIndices();
 		Vector lat_ind = mesh.getLateralTriangleIndices();
 
@@ -1222,7 +1222,7 @@ void WISCO_ElasticFoundationForce::computeContactStats(
 
 		int nMed = 0, nLat = 0;
 		int nMedActive = 0, nLatActive = 0;
-		
+
 
 		for (int i = 0; i < nTri; ++i) {
 			if (i == med_ind(nMed)) {
@@ -1252,7 +1252,7 @@ void WISCO_ElasticFoundationForce::computeContactStats(
 			}
 		}
 
-		//mean 
+		//mean
 		double med_mean_pressure = med_pressure.sum() / nMedActive;
 		double med_mean_proximity = med_proximity.sum() / nMedActive;
 
@@ -1452,7 +1452,7 @@ OpenSim::Array<double> WISCO_ElasticFoundationForce::getRecordValues(const SimTK
 	vec3_names.push_back("contact_force");
 
 	std::string delim{ "_" };
-	
+
 	for (std::string name : double_names) {
 		values.append(getCacheVariableValue<double>(s, "casting_mesh_total" + delim + name));
 		values.append(getCacheVariableValue<double>(s, "casting_mesh_medial" + delim + name));

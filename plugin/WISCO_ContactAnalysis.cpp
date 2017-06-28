@@ -27,7 +27,7 @@
 //=============================================================================
 #include <OpenSim/Simulation/Model/Model.h>
 #include "WISCO_ContactAnalysis.h"
-#include <OpenSim\Common\Reporter.h>
+#include <OpenSim/Common/Reporter.h>
 #include <OpenSim/Simulation/osimSimulation.h>
 #include "WISCO_VTPFileAdapter.h"
 #include "H5Cpp.h"
@@ -36,10 +36,10 @@
 #include "WISCO_HelperFunctions.h"
 #include "WISCO_LigamentReporter.h"
 #include <OpenSim/Analyses/ForceReporter.h>
-#include <OpenSim\Analyses\StatesReporter.h>
+#include <OpenSim/Analyses/StatesReporter.h>
 #include <OpenSim/Analyses/MuscleAnalysis.h>
 #include <OpenSim/Analyses/Kinematics.h>
-#include <OpenSim\Common\STOFileAdapter.h>
+#include <OpenSim/Common/STOFileAdapter.h>
 #include "WISCO_ElasticFoundationForceReporter.h"
 #include "WISCO_IdealMuscleReporter.h"
 #include "WISCO_CoordinateReporter.h"
@@ -53,7 +53,7 @@ using namespace OpenSim;
 WISCO_ContactAnalysis::WISCO_ContactAnalysis() : Analysis()
 {
 	setNull();
-	constructProperties();	
+	constructProperties();
 }
 
 WISCO_ContactAnalysis::WISCO_ContactAnalysis(Model *aModel) :
@@ -110,7 +110,7 @@ void WISCO_ContactAnalysis::constructProperties()
 
 //_____________________________________________________________________________
 /**
- * Set the model to use when performing analysis. 
+ * Set the model to use when performing analysis.
  */
 
 void WISCO_ContactAnalysis::setModel(Model& aModel)
@@ -167,7 +167,7 @@ int WISCO_ContactAnalysis::begin(SimTK::State& s)
 		for (int i = 0; i < getProperty_contact_names().size(); ++i) {
 			const WISCO_ElasticFoundationForce& contactForce = _model->getComponent<WISCO_ElasticFoundationForce>(get_contact_names(i));
 			_contact_force_names.push_back(contactForce.getName());
-			
+
 			std::string casting_mesh_name = contactForce.getConnectee<WISCO_ContactMesh>("casting_mesh").getName();
 			std::string target_mesh_name = contactForce.getConnectee<WISCO_ContactMesh>("target_mesh").getName();
 
@@ -340,11 +340,11 @@ int WISCO_ContactAnalysis::end(SimTK::State& s)
 int WISCO_ContactAnalysis::record(const SimTK::State& s)
 {
 	_model->realizeReport(s);
-	
+
 	//Store mesh vertex locations
 	if (get_write_dynamic_vtk_files()) {
 		std::string frame = get_dynamic_output_frame();
-		
+
 		for (int i = 0; i < _contact_mesh_names.size(); ++i) {
 
 			//Target Mesh
@@ -360,7 +360,7 @@ int WISCO_ContactAnalysis::record(const SimTK::State& s)
 
 			for (int j = 0; j < nRow; ++j){
 				_mesh_vertex_locations[i](j, nCol) = ver(j);
-			}			
+			}
 		}
 
 	}
@@ -373,7 +373,7 @@ int WISCO_ContactAnalysis::record(const SimTK::State& s)
 //_____________________________________________________________________________
 /**
  * Print results.
- * 
+ *
  * The file names are constructed as
  * aDir + "/" + aBaseName + "_" + ComponentName + aExtension
  *
@@ -394,7 +394,7 @@ int WISCO_ContactAnalysis::printResults(const std::string &aBaseName,const std::
 		if (get_write_static_vtk_files()) {
 			writeVTKFile(aDir, aBaseName, mesh_name, _contact_force_names, false);
 		}
-		
+
 		//Write Dynamic VTK Files
 		if (get_write_dynamic_vtk_files()) {
 			writeVTKFile(aDir, aBaseName, mesh_name, _contact_force_names, true);
@@ -409,20 +409,20 @@ int WISCO_ContactAnalysis::printResults(const std::string &aBaseName,const std::
 }
 
 void WISCO_ContactAnalysis::writeVTKFile(const std::string& file_path,
-	const std::string& base_name, const std::string& mesh_name, 
+	const std::string& base_name, const std::string& mesh_name,
 	const std::vector<std::string>& contact_names, bool isDynamic) {
-	
+
 	//Collect data
 	std::vector<SimTK::Matrix> faceData, pointData;
 	std::vector<std::string> faceDataNames, pointDataNames;
 
 	collectMeshData(mesh_name,contact_names,
 		faceData, faceDataNames, pointData, pointDataNames);
-	
+
 	//Mesh face connectivity
 	SimTK::PolygonalMesh mesh = _model->getComponent<WISCO_ContactMesh>
 		(mesh_name).getPolygonalMesh();
-	
+
 	SimTK::Matrix mesh_faces(mesh.getNumFaces(), mesh.getNumVerticesForFace(0));
 
 	for (int j = 0; j < mesh.getNumFaces(); ++j) {
@@ -459,18 +459,18 @@ void WISCO_ContactAnalysis::writeVTKFile(const std::string& file_path,
 			_mesh_vertex_locations[mesh_index], mesh_faces, nTimeStep);
 	}
 	else { //static
-		SimTK::PolygonalMesh poly_mesh = 
+		SimTK::PolygonalMesh poly_mesh =
 			_model->getComponent<WISCO_ContactMesh>(mesh_name).getPolygonalMesh();
 
 		mesh_vtp->write(base_name + "_" + mesh_name +
 			"_static_" + get_dynamic_output_frame(), file_path + "/",
-			poly_mesh, nTimeStep);	
+			poly_mesh, nTimeStep);
 	}
 	delete mesh_vtp;
 
 }
 
-void WISCO_ContactAnalysis::collectMeshData(const std::string& mesh_name, 
+void WISCO_ContactAnalysis::collectMeshData(const std::string& mesh_name,
 	const std::vector<std::string>& contact_names,
 	std::vector<SimTK::Matrix>& faceData, std::vector<std::string>& faceDataNames,
 	std::vector<SimTK::Matrix>& pointData, std::vector<std::string>& pointDataNames)
@@ -522,7 +522,7 @@ void WISCO_ContactAnalysis::collectMeshData(const std::string& mesh_name,
 			}
 		}
 	}
-	
+
 	//Variable Cartilage Properties
 	if (get_write_variable_property_vtk() == "thickness" || get_write_variable_property_vtk() == "all") {
 		SimTK::Vector face_thickness = _model->getComponent<WISCO_ContactMesh>(mesh_name).getTriangleThickness();
@@ -553,7 +553,7 @@ void WISCO_ContactAnalysis::writeH5File(
 	if (get_h5_states_data()) {
 		//TimeSeriesTable states_table = _model->getComponent<StatesTrajectoryReporter>("states_reporter").getStates().exportToTable(*_model);
 		//h5_adapter.writeStatesDataSet(states_table);
-		
+
 		StatesReporter& states_analysis = dynamic_cast<StatesReporter&>(_model->updAnalysisSet().get("states_analysis"));
 		const TimeSeriesTable& states_table = states_analysis.getStatesStorage().getAsTimeSeriesTable();
 		h5_adapter.writeStatesDataSet(states_table);
@@ -577,14 +577,14 @@ void WISCO_ContactAnalysis::writeH5File(
 	}
 
 	//Write Contact Data
-	
+
 	std::string cnt_group_name{ "/WISCO_ElasticFoundationForce" };
 	h5_adapter.createGroup(cnt_group_name);
 
 	for (int i = 0; i < _contact_force_names.size(); ++i) {
 
 		std::string contact_name = _contact_force_names[i];
-		
+
 		//Write Mesh Contact Data
 		addContactReportsToH5File(h5_adapter, cnt_group_name, contact_name);
 	}
@@ -593,15 +593,15 @@ void WISCO_ContactAnalysis::writeH5File(
 }
 
 void WISCO_ContactAnalysis::addContactReportsToH5File(
-	WISCO_H5FileAdapter& h5_adapt, 	const std::string& group_name, 
-	const std::string& contact_name) 
+	WISCO_H5FileAdapter& h5_adapt, 	const std::string& group_name,
+	const std::string& contact_name)
 {
 	WISCO_ElasticFoundationForce& frc = _model->
 		updComponent<WISCO_ElasticFoundationForce>(contact_name);
 
 	WISCO_ElasticFoundationForceReporter& frc_rep = _model->
 		updComponent<WISCO_ElasticFoundationForceReporter>("contact_reporter");
-	
+
 
 	std::vector<std::string> mesh_names;
 	mesh_names.push_back(frc.getConnectee<WISCO_ContactMesh>("target_mesh").getName());
@@ -664,11 +664,11 @@ void WISCO_ContactAnalysis::addContactReportsToH5File(
 }
 
 void WISCO_ContactAnalysis::decomposeReportName(const std::string& name,
-	std::string& contact_name, std::string& mesh_name, 
-	std::string& data_type, std::string& data_name) 
+	std::string& contact_name, std::string& mesh_name,
+	std::string& data_type, std::string& data_name)
 {
 	std::vector<std::string> token = split_string(name,".");
-	
+
 	if (token.size() != 4) {
 		contact_name = "";
 		mesh_name = "";

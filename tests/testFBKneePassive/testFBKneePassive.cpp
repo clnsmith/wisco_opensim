@@ -10,7 +10,7 @@ using SimTK::Vec3;
 int main()
 {
     try {
-		
+
 		// Timer
         std::clock_t start;
         double duration;
@@ -23,24 +23,24 @@ int main()
 		//Load Model
 		static const std::string model_file{ "../inputs/fbknee/fbknee_knee_only.osim" };
 		Model model(model_file);
-		
+
 		//=====================================================================
 		// Configure the model
 		//=====================================================================
 		model.setUseVisualizer(true);
-		
+
 		Joint& knee = model.updJointSet().get("knee_r");
-					
+
 		//Prescribe knee flexion
 		/*double times[7] = { 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0 };
 		double flex_ang[7] = { 0, 0, 0, SimTK::Pi/4, SimTK::Pi/2,SimTK::Pi/4, 0 };
-		
+
 		SimmSpline flexion_func = SimmSpline(7, times, flex_ang, "flexion_func");
 
 		knee.upd_coordinates(0).setDefaultIsPrescribed(true);
 		knee.upd_coordinates(0).setPrescribedFunction(flexion_func);
 		*/
-		
+
 		knee.upd_coordinates(0).setDefaultLocked(true);
 
 		SimTK::State& state = model.initSystem();
@@ -54,31 +54,31 @@ int main()
 		//=====================================================================
 		// Simulate
 		//=====================================================================
-		
+
 		SimTK::RungeKuttaMersonIntegrator integrator(model.getSystem());
 		//integrator.setMaximumStepSize(1.0e-2);
 		integrator.setAccuracy(0.1);
-		
+
 		/*
 		SimTK::CPodesIntegrator integrator(model.getSystem(), SimTK::CPodes::BDF, SimTK::CPodes::Newton);
 		integrator.setAccuracy(0.01);
 		*/
 		Manager manager(model, integrator);
-		manager.setInitialTime(0); manager.setFinalTime(0.5);
-		manager.integrate(state);
-		
+		state.setTime(0);
+		manager.integrate(state, 0.5);
+
 		// Report Timer Results
 		duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
 		std::cout << "printf: " << duration << '\n';
-		
-		//=====================================================================       
+
+		//=====================================================================
 		//Write Outputs
 		//=====================================================================
 
 		//Motion file
 		static const std::string out_mot_file{ "./fbknee_passive_flex.mot" };
 		manager.getStateStorage().print(out_mot_file);
-		
+
 
 
 		// **********  END CODE  **********

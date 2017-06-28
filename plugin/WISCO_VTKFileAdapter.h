@@ -22,7 +22,7 @@
 #ifndef OPENSIM_VTK_FILE_ADAPTER_H_
 #define OPENSIM_VTK_FILE_ADAPTER_H_
 
-#include "OpenSim\Common\FileAdapter.h"
+#include "OpenSim/Common/FileAdapter.h"
 //#include "OpenSim\OpenSim.h"
 #include "SimTKmath.h"
 #include "osimPluginDLL.h"
@@ -32,7 +32,7 @@ namespace OpenSim {
     class OSIMPLUGIN_API WISCO_VTKFileAdapter : public FileAdapter {
     //class WISCO_VTKFileAdapter : public FileAdapter {
     public:
-               
+
        WISCO_VTKFileAdapter();
        WISCO_VTKFileAdapter(const WISCO_VTKFileAdapter&) = default;
        WISCO_VTKFileAdapter(WISCO_VTKFileAdapter&&) = default;
@@ -41,23 +41,23 @@ namespace OpenSim {
        ~WISCO_VTKFileAdapter() = default;
 
        WISCO_VTKFileAdapter* clone() const override;
-	   
-	   
+
+
 	   /**
 	   @param[in] vertices
 			A matrix [nVertices x nTimeSteps] containing Vec3 with the locations
-			of the contact mesh vertices in space. 
+			of the contact mesh vertices in space.
 
 		@param[in] faces
-			A matrix [nFaces x nVerticesPerFace] 
-	   
-	   
+			A matrix [nFaces x nVerticesPerFace]
+
+
 	   */
 	   void write(const std::string& fileName, const std::string& filePath,
 		   const SimTK::Matrix_<SimTK::Vec3>& vertices, const SimTK::Matrix& faces,
 		   const int nTimeSteps) const;
 
-	   void write(const std::string& fileName, const std::string& filePath, 
+	   void write(const std::string& fileName, const std::string& filePath,
 		   const SimTK::PolygonalMesh& mesh, const int nTimeSteps) const;
 
 
@@ -65,11 +65,11 @@ namespace OpenSim {
 	   @param[in] aFaceDataNames
 
 	   @param[in] aFaceData
-			A vector [nDataField] of SimTK::Matrix [nTimeStep x nFaces] 
+			A vector [nDataField] of SimTK::Matrix [nTimeStep x nFaces]
 			containing data values for each face in the contact mesh
 
 	   */
-	   void setFaceData(std::vector<std::string> aFaceDataNames, std::vector<SimTK::Matrix> aFaceData) 
+	   void setFaceData(std::vector<std::string> aFaceDataNames, std::vector<SimTK::Matrix> aFaceData)
 	   {
 		   faceDataNames = aFaceDataNames;
 		   faceData = aFaceData;
@@ -82,7 +82,7 @@ namespace OpenSim {
 	   };
     protected:
         OutputTables extendRead(const std::string& fileName) const override;
-        
+
         void extendWrite(const InputTables& tables, const std::string& fileName) const override;
     private:
         void write_vertex_positions(std::ofstream& out_stream, const SimTK::Matrix_<SimTK::Vec3>& vertices, int nTimeStep) const;

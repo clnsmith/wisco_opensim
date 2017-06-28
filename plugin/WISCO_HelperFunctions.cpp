@@ -26,24 +26,24 @@
 // INCLUDES
 //=============================================================================
 #include "WISCO_HelperFunctions.h"
-#include <algorithm>;
-#include <vector>;
+#include <algorithm>
+#include <vector>
 
 using namespace OpenSim;
 
 //=============================================================================
 // String Tools
 //=============================================================================
-std::vector<std::string> split_string(std::string s, std::string delimiter) 
+std::vector<std::string> split_string(std::string s, std::string delimiter)
 {
 	std::vector<std::string> split_s;
 
 	size_t pos = 0;
-	
+
 	while ((pos = s.find(delimiter)) != std::string::npos) {
-		
+
 		split_s.push_back(s.substr(0, pos));
-		
+
 		s.erase(0, pos + delimiter.length());
 	}
 	split_s.push_back(s.substr(0, pos));
@@ -52,7 +52,7 @@ std::vector<std::string> split_string(std::string s, std::string delimiter)
 }
 
 
-bool contains_string(std::vector<std::string> s_vector, std::string s) 
+bool contains_string(std::vector<std::string> s_vector, std::string s)
 {
 	int index;
 	return contains_string(s_vector, s, index);

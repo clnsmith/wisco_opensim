@@ -1,5 +1,5 @@
 #ifndef OPENSIM_WISCO_CONTACT_MESH_H_
-#define OPENSIM_WISCO_CONTACT_MESH_H_ 
+#define OPENSIM_WISCO_CONTACT_MESH_H_
 
 // INCLUDE
 #include "OpenSim/Common/Object.h"
@@ -23,7 +23,7 @@ namespace OpenSim {
 	*/
 	class OSIMPLUGIN_API WISCO_ContactMesh : public ModelComponent {
     //class WISCO_ContactMesh : public ModelComponent {
-    
+
 		OpenSim_DECLARE_CONCRETE_OBJECT(WISCO_ContactMesh, ModelComponent)
 
 	public:
@@ -49,10 +49,10 @@ namespace OpenSim {
 			"Minimum thickness of cartilage [m] for variable cartilage thickness");
 		OpenSim_DECLARE_LIST_PROPERTY_SIZE(color, double, 3,
 			"Display Color to apply to the contact geometry.");
-		
-		OpenSim_DECLARE_SOCKET(parent_frame, PhysicalFrame, 
+
+		OpenSim_DECLARE_SOCKET(parent_frame, PhysicalFrame,
 			"The frame to which this geometry is attached.");
-		
+
 		//=============================================================================
 		// METHODS
 		//=============================================================================
@@ -68,11 +68,11 @@ namespace OpenSim {
 		*/
 		WISCO_ContactMesh(const std::string& name, const std::string& mesh_file, const PhysicalFrame& frame);
 
-		WISCO_ContactMesh(const std::string& name, const std::string& mesh_file, const PhysicalFrame& frame, 
+		WISCO_ContactMesh(const std::string& name, const std::string& mesh_file, const PhysicalFrame& frame,
 			const SimTK::Vec3& location, const SimTK::Vec3& orientation);
 
-		WISCO_ContactMesh(const std::string& name, const std::string& mesh_file, const PhysicalFrame& frame, 
-			const SimTK::Vec3& location, const SimTK::Vec3& orientation, 
+		WISCO_ContactMesh(const std::string& name, const std::string& mesh_file, const PhysicalFrame& frame,
+			const SimTK::Vec3& location, const SimTK::Vec3& orientation,
 			const std::string& mesh_back_file, double  min_thickness, double max_thickness);
 
 
@@ -81,8 +81,8 @@ namespace OpenSim {
 		void setDisplayPreference(const int dispPref);
 
 		SimTK::Transform getTransformGroundToMesh(const SimTK::State& state) const;
-		
-		const SimTK::PolygonalMesh& getPolygonalMesh() const 
+
+		const SimTK::PolygonalMesh& getPolygonalMesh() const
 		{
 			return mesh;
 		}
@@ -103,7 +103,7 @@ namespace OpenSim {
 
 		SimTK::Vector_<SimTK::Vec3> getTriangleCentersInGround(const SimTK::State& state) const;
 		SimTK::Vector_<SimTK::Vec3> getTriangleNormalsInGround(const SimTK::State& state) const;
-		
+
 		const SimTK::Vector& getTriangleAreas() const;
 
 		const SimTK::Vector_<SimTK::Vec3>& getVertexLocations() const;
@@ -111,10 +111,10 @@ namespace OpenSim {
 		const SimTK::Vector_<SimTK::Vec3> getVertexLocationsInFrame(
 			const SimTK::State& state, const std::string& frame_name) const;
 
-		const SimTK::Matrix_<SimTK::Vec3>& WISCO_ContactMesh::getFaceVertexLocations() const;
-		SimTK::Matrix_<SimTK::Vec3> WISCO_ContactMesh::getFaceVertexLocationsInGround(const SimTK::State& state) const;
+		const SimTK::Matrix_<SimTK::Vec3>& getFaceVertexLocations() const;
+		SimTK::Matrix_<SimTK::Vec3> getFaceVertexLocationsInGround(const SimTK::State& state) const;
 
-		SimTK::Vector WISCO_ContactMesh::getNeighborTris(int tri, int& nNeighborTri) const;
+		SimTK::Vector getNeighborTris(int tri, int& nNeighborTri) const;
 
 		const SimTK::Vector& getMedialTriangleIndices() const {
 			return med_tri_ind;
@@ -161,7 +161,7 @@ namespace OpenSim {
 		std::string findMeshFile(const std::string& file);
 		CollisionModel3D* initColdetModel(const SimTK::PolygonalMesh& cnt_mesh) const;
 		void computeVariableCartilageThickness();
-		
+
 		// Member Variables
 		SimTK::PolygonalMesh mesh;
 		SimTK::PolygonalMesh mesh_back;
@@ -189,4 +189,4 @@ namespace OpenSim {
 
 } // end of namespace OpenSim
 
-#endif // OPENSIM_WISCO_CONTACT_MESH_H_ 
+#endif // OPENSIM_WISCO_CONTACT_MESH_H_

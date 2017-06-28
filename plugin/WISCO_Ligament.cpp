@@ -2,7 +2,7 @@
  *                             WISCO_Ligament.cpp                                   *
  * ---------------------------------------------------------------------------- *
  * This ligament model was based on the ligament model found in 			    *
- * Blankevoort L and Huiskes R (1991). Ligament-Bone Interaction in a           * 
+ * Blankevoort L and Huiskes R (1991). Ligament-Bone Interaction in a           *
  * Three-Dimensional Model of the Knee. Journal of Biomechanical                *
  * Engineering. 113:263-269.                                                    *
  * 																				*
@@ -10,7 +10,7 @@
  * linear_stiffness: Stiffness representing the slope of the linear portion of  *
  * 				     the force-strain curve. 								    *
  * 																				*
- * ligament_transition_strain: Strain at which the force-strain relationship of	* 
+ * ligament_transition_strain: Strain at which the force-strain relationship of	*
  * 							   the ligament transitions from quadratic to 		*
  *							   linear. Typically defined to be 0.06 in the 		*
  *						 	   literature. 										*
@@ -19,11 +19,11 @@
  * 				     position. The reference position is full extension for the *
  * 				     knee. 														*
  * 																				*
- * reference_length: Length of the ligament when the joint is in the reference 	* 
+ * reference_length: Length of the ligament when the joint is in the reference 	*
  * 				     position. 													*
  * 																				*
- * normalized_damping_coefficient: Coefficient for normalized damping of the 	* 
- * 								 ligament. Be aware, this is not the same as a 	* 
+ * normalized_damping_coefficient: Coefficient for normalized damping of the 	*
+ * 								 ligament. Be aware, this is not the same as a 	*
  * 								 standard damping coefficient.  				*
  * 								 See UWLigament::computeForce in UWLigament.cpp *
  * 								 for the definition of the damping force. 		*
@@ -31,7 +31,7 @@
  *                                                                              *
  * Author(s): Michael Vignos, Colin Smith, Rachel Lenhart, Darryl Thelen        *
  *
- *																			    *	
+ *																			    *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may      *
  * not use this file except in compliance with the License. You may obtain a    *
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0.           *
@@ -67,7 +67,7 @@ using namespace SimTK;
 using namespace OpenSim;
 using SimTK::Vec3;
 
-static const Vec3 DefaultLigamentColor(.9,.9,.9); // mostly white 
+static const Vec3 DefaultLigamentColor(.9,.9,.9); // mostly white
 
 
 //=============================================================================
@@ -83,15 +83,15 @@ WISCO_Ligament::WISCO_Ligament() : Force()
 	setNull();
 }
 WISCO_Ligament::WISCO_Ligament(PhysicalFrame& frame1, Vec3 point1,
-	PhysicalFrame& frame2, Vec3 point2) : WISCO_Ligament() 
+	PhysicalFrame& frame2, Vec3 point2) : WISCO_Ligament()
 {
 	upd_GeometryPath().appendNewPathPoint("p1", frame1, point1);
 	upd_GeometryPath().appendNewPathPoint("p2", frame2, point2);
 }
 
 WISCO_Ligament::WISCO_Ligament(PhysicalFrame& frame1, Vec3 point1,
-	PhysicalFrame& frame2, Vec3 point2, 
-	double linear_stiffness, double reference_strain) : 
+	PhysicalFrame& frame2, Vec3 point2,
+	double linear_stiffness, double reference_strain) :
 	WISCO_Ligament(frame1, point1, frame2, point2)
 {
 	set_linear_stiffness(linear_stiffness);
@@ -149,11 +149,11 @@ void WISCO_Ligament::extendFinalizeFromProperties()
 	dyn_quan.addChannel("strain");
 	dyn_quan.addChannel("strain_rate");
 
-	
+
 }
 
 void WISCO_Ligament::extendRealizeDynamics(const SimTK::State& state) const {
-	Super::extendRealizeDynamics(state); 
+	Super::extendRealizeDynamics(state);
 
 	if (appliesForce(state)) {
 		const SimTK::Vec3 color = computePathColor(state);
@@ -168,9 +168,9 @@ void WISCO_Ligament::extendAddToSystem(SimTK::MultibodySystem& system) const
 
 
     //Slack Length
-    //This is computed after the model is initialized and posed according to 
+    //This is computed after the model is initialized and posed according to
     //the default coordinates, then unalted for the rest of the simulation
-    addCacheVariable<double>("slack_length", 0.0, SimTK::Stage::LowestRuntime); 
+    addCacheVariable<double>("slack_length", 0.0, SimTK::Stage::LowestRuntime);
 	addCacheVariable<double>("reference_length", 0.0, SimTK::Stage::LowestRuntime);
 
 	addCacheVariable<double>("force_spring",0.0, SimTK::Stage::Dynamics);
@@ -184,14 +184,14 @@ void WISCO_Ligament::extendAddToSystem(SimTK::MultibodySystem& system) const
 
 void WISCO_Ligament::extendInitStateFromProperties(SimTK::State &state) const
 {
-    
+
     Super::extendInitStateFromProperties(state);
 	double ref_length = computeReferenceLength(state);
 	setCacheVariableValue<double>(state, "reference_length", ref_length);
 
 	double slack_length;
 	if (get_defining_slack_length_property() == "reference_strain") {
-		slack_length = computeSlackLength(state,"reference_strain",get_reference_strain());		
+		slack_length = computeSlackLength(state,"reference_strain",get_reference_strain());
 	}
 	else if (get_defining_slack_length_property() == "reference_force") {
 		slack_length = computeSlackLength(state, "reference_force",get_reference_force());
@@ -199,7 +199,7 @@ void WISCO_Ligament::extendInitStateFromProperties(SimTK::State &state) const
 	else if (get_defining_slack_length_property() == "slack_length") {
 		slack_length = get_slack_length();
 	}
-	
+
 	setCacheVariableValue<double>(state, "slack_length", slack_length);
 }
 
@@ -233,7 +233,7 @@ void WISCO_Ligament::equilibriateSlackLengthProperties(const SimTK::State& state
 	double linear_stiff = get_linear_stiffness();
 
 	std::string defining_prop = SimTK::String::toLower(upd_defining_slack_length_property());
-	
+
 	if (defining_prop == "reference_strain") {
 		slack_length = computeSlackLength(state, "reference_strain", ref_strain);
 		ref_force = computeReferenceForce(state, "reference_strain", ref_strain);
@@ -241,7 +241,7 @@ void WISCO_Ligament::equilibriateSlackLengthProperties(const SimTK::State& state
 
 	else if (defining_prop == "reference_force") {
 		slack_length = computeSlackLength(state, "reference_force",ref_force);
-		ref_strain = computeReferenceStrain(state, "reference_force", ref_force);	
+		ref_strain = computeReferenceStrain(state, "reference_force", ref_force);
 	}
 
 	else if (defining_prop == "slack_length") {
@@ -262,7 +262,7 @@ double WISCO_Ligament::computeReferenceLength(SimTK::State state) const {
 	if (isCacheVariableValid(state, "reference_length")) {
 		return getCacheVariableValue<double>(state, "reference_length");
 	}
-	
+
 	SimTK::Stage stage = state.getSystemStage();
 
 	if (stage > SimTK::Stage::Instance) {
@@ -285,7 +285,7 @@ double WISCO_Ligament::computeReferenceLength(SimTK::State state) const {
 double WISCO_Ligament::computeSlackLength(const SimTK::State& state, SimTK::String property_name, double property_value) const {
 	double slack_length;
 	double ref_length = computeReferenceLength(state);
-	
+
 	if (property_name.toLower() == "reference_strain") {
 		slack_length = ref_length / (1.0 + property_value);
 	}
@@ -318,7 +318,7 @@ double WISCO_Ligament::computeReferenceStrain(const SimTK::State& state, SimTK::
 	else if (property_name.toLower() == "slack_length") {
 		double ref_strain = ref_length / property_value - 1;
 	}
-	
+
 }
 
 double WISCO_Ligament::computeReferenceForce(const SimTK::State& state, SimTK::String property_name, double property_value) const {
@@ -434,7 +434,7 @@ void WISCO_Ligament::postScale(const SimTK::State& s, const ScaleSet& aScaleSet)
 	}
 }
 
-const double& WISCO_Ligament::getTension(const SimTK::State& s) const
+double WISCO_Ligament::getTension(const SimTK::State& s) const
 {
 	if (get_appliesForce()) {
 		return getCacheVariableValue<double>(s, "force_total");
@@ -454,8 +454,8 @@ double WISCO_Ligament::computeMomentArm(const SimTK::State& s, Coordinate& aCoor
 	return get_GeometryPath().computeMomentArm(s, aCoord);
 }
 
-void WISCO_Ligament::computeForce(const SimTK::State& s, 
-							  SimTK::Vector_<SimTK::SpatialVec>& bodyForces, 
+void WISCO_Ligament::computeForce(const SimTK::State& s,
+							  SimTK::Vector_<SimTK::SpatialVec>& bodyForces,
 							  SimTK::Vector& generalizedForces) const
 {
 	const GeometryPath& path = get_GeometryPath();
@@ -482,7 +482,7 @@ void WISCO_Ligament::computeForce(const SimTK::State& s,
 
 	double strain = (length - slackLength)/slackLength;
 	double strain_rate = lengthening_speed /slackLength;
-	
+
 	// evaluate force
     double force_spring = 0.0;
 
@@ -510,7 +510,7 @@ void WISCO_Ligament::computeForce(const SimTK::State& s,
 
 	// total force
 	double force_total = force_spring + force_damping;
-	
+
 	// make sure the ligament is only acting in tension
 	if (force_total < 0.0)
 		force_total = 0.0;
@@ -528,7 +528,7 @@ void WISCO_Ligament::computeForce(const SimTK::State& s,
 	path.getPointForceDirections(s, &PFDs);
 
 	for (int i=0; i < PFDs.getSize(); i++) {
-		applyForceToPoint(s, PFDs[i]->frame(), PFDs[i]->point(), 
+		applyForceToPoint(s, PFDs[i]->frame(), PFDs[i]->point(),
                           force_total*PFDs[i]->direction(), bodyForces);
 	}
 	for(int i=0; i < PFDs.getSize(); i++)
@@ -539,15 +539,15 @@ double WISCO_Ligament::computePotentialEnergy(const SimTK::State& state) const {
 	double strain = getCacheVariableValue<double>(state, "strain");
 	double lin_stiff = get_linear_stiffness();
 	double trans_strain = get_transition_strain();
-	double slack_len = get_slack_length();	
-	
+	double slack_len = get_slack_length();
+
 	if (strain < trans_strain) {
 		return 1 / 6 * lin_stiff / trans_strain*pow(strain, 3);
 	}
 	else {
 		return 1 / 6 * lin_stiff / trans_strain*pow(trans_strain, 3)+1/2*lin_stiff*strain*(strain-trans_strain);
 	}
-	
+
 }
 
 //------------------------------------------------------------------------------
@@ -562,7 +562,7 @@ SimTK::Vec3 WISCO_Ligament::computePathColor(const SimTK::State& state) const {
 //-----------------------------------------------------------------------------
 	// Reporting
 	//-----------------------------------------------------------------------------
-	/** 
+	/**
 	 * Methods to query a Force for the value actually applied during simulation
 	 * The names of the quantities (column labels) is returned by this first function
 	 * getRecordLabels()
@@ -578,7 +578,7 @@ SimTK::Vec3 WISCO_Ligament::computePathColor(const SimTK::State& state) const {
 		labels.append(getName() + ".strain_rate");
 		return labels;
 	}
-	
+
 	/**
 	 * Given SimTK::State object extract all the values necessary to report forces, application location
 	 * frame, etc. used in conjunction with getRecordLabels and should return same size Array

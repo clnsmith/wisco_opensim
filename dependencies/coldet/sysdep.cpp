@@ -23,7 +23,7 @@
  */
 #include "sysdep.h"
 
-#ifdef GCC
+#ifdef __linux__
 
 #include <sys/time.h>
 

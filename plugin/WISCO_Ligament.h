@@ -4,7 +4,7 @@
  *                             UWLigament.h                                     *
  * ---------------------------------------------------------------------------- *
  * This ligament model was based on the ligament model found in 			    *
- * Blankevoort L and Huiskes R (1991). Ligament-Bone Interaction in a           * 
+ * Blankevoort L and Huiskes R (1991). Ligament-Bone Interaction in a           *
  * Three-Dimensional Model of the Knee. Journal of Biomechanical                *
  * Engineering. 113:263-269.                                                    *
  * 																				*
@@ -12,7 +12,7 @@
  * linear_stiffness: Stiffness representing the slope of the linear portion of  *
  * 				     the force-strain curve. 								    *
  * 																				*
- * ligament_transition_strain: Strain at which the force-strain relationship of	* 
+ * ligament_transition_strain: Strain at which the force-strain relationship of	*
  * 							   the ligament transitions from quadratic to 		*
  *							   linear. Typically defined to be 0.06 in the 		*
  *						 	   literature. 										*
@@ -21,11 +21,11 @@
  * 				     position. The reference position is full extension for the *
  * 				     knee. 														*
  * 																				*
- * reference_length: Length of the ligament when the joint is in the reference 	* 
+ * reference_length: Length of the ligament when the joint is in the reference 	*
  * 				     position. 													*
  * 																				*
- * normalized_damping_coefficient: Coefficient for normalized damping of the 	* 
- * 								 ligament. Be aware, this is not the same as a 	* 
+ * normalized_damping_coefficient: Coefficient for normalized damping of the 	*
+ * 								 ligament. Be aware, this is not the same as a 	*
  * 								 standard damping coefficient.  				*
  * 								 See UWLigament::computeForce in UWLigament.cpp *
  * 								 for the definition of the damping force. 		*
@@ -34,7 +34,7 @@
  * Author(s): Michael Vignos, Colin Smith, Rachel Lenhart, Darryl Thelen        *
  *                                                                              *
  *
- *																			    *	
+ *																			    *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may      *
  * not use this file except in compliance with the License. You may obtain a    *
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0.           *
@@ -50,7 +50,7 @@
 //=============================================================================
 // INCLUDES
 //=============================================================================
-// Headers define the various property types that OpenSim objects can read 
+// Headers define the various property types that OpenSim objects can read
 #include <string>
 #include <OpenSim/Simulation/Model/Force.h>
 #include <OpenSim/Simulation/Model/GeometryPath.h>
@@ -62,7 +62,7 @@
 //=============================================================================
 //=============================================================================
 /*
- * A class template for writing a custom Force plugin. 
+ * A class template for writing a custom Force plugin.
  * Applies a body drag force to a given OpenSim Body at
  * it's center of mass location.
  *
@@ -83,13 +83,13 @@ public:
 //=============================================================================
 // PROPERTIES
 //=============================================================================
-   
-	OpenSim_DECLARE_UNNAMED_PROPERTY(GeometryPath, 
+
+	OpenSim_DECLARE_UNNAMED_PROPERTY(GeometryPath,
 		"The set of points defining the path of the ligament");
 	OpenSim_DECLARE_PROPERTY(linear_stiffness, double,
 		"Slope of the linear portion of the force-strain curve of ligament");
 	OpenSim_DECLARE_PROPERTY(transition_strain, double,
-		"Strain at which ligament force-strain curve transitions from" 
+		"Strain at which ligament force-strain curve transitions from"
 		"quadratic to linear. Commonly 0.06 in literature.");
 	OpenSim_DECLARE_PROPERTY(normalized_damping_coefficient, double,
 		"Coefficient for normalized damping of ligament");
@@ -106,9 +106,9 @@ public:
 //=============================================================================
 // OUTPUTS
 //=============================================================================
-	
+
 	OpenSim_DECLARE_LIST_OUTPUT(dynamic_quantities, double, getDynamicQuantities, SimTK::Stage::Dynamics);
-	
+
 
 
 //=============================================================================
@@ -122,7 +122,7 @@ public:
 	WISCO_Ligament(PhysicalFrame& frame1, SimTK::Vec3 point1,
 		PhysicalFrame& frame2, SimTK::Vec3 point2,
 		double linear_stiffness, double reference_strain);
-	
+
 	//-------------------------------------------------------------------------
 	//Outputs
 	//-------------------------------------------------------------------------
@@ -150,7 +150,7 @@ public:
 			return getCacheVariableValue<double>(state, "strain_rate");
 		}
 	}
-	
+
 	//--------------------------------------------------------------------------
 	// GET
 	//--------------------------------------------------------------------------
@@ -158,17 +158,17 @@ public:
 	virtual bool hasGeometryPath() const { return true;};
 	virtual double getLength(const SimTK::State& s) const;
 	virtual double getLengtheningSpeed(const SimTK::State& s) const;
-	
+
 
 	// computed variables
-	const double& getTension(const SimTK::State& s) const;
+	double getTension(const SimTK::State& s) const;
 
 	//--------------------------------------------------------------------------
 	// COMPUTATIONS
 	//--------------------------------------------------------------------------
 	virtual double computeMomentArm(const SimTK::State& s, Coordinate& aCoord) const;
-	virtual void computeForce(const SimTK::State& s, 
-							  SimTK::Vector_<SimTK::SpatialVec>& bodyForces, 
+	virtual void computeForce(const SimTK::State& s,
+							  SimTK::Vector_<SimTK::SpatialVec>& bodyForces,
 							  SimTK::Vector& generalizedForces) const;
 	double computePotentialEnergy(const SimTK::State& state) const override;
 	//--------------------------------------------------------------------------
@@ -185,7 +185,7 @@ public:
 	virtual OpenSim::Array<double> getRecordValues(const SimTK::State& state) const ;
 
 	void equilibriateSlackLengthProperties(const SimTK::State& state);
-	
+
 	double computeReferenceLength(SimTK::State state) const;
 	double computeSlackLength(const SimTK::State& state, SimTK::String property_name, double property_value) const;
 	double computeReferenceStrain(const SimTK::State& state, SimTK::String property_name, double property_value) const;
@@ -194,19 +194,19 @@ public:
 
 protected:
 	/** Override this method if you would like to calculate a color for use
-    when the Ligament's path is displayed in the visualizer. You do not have 
+    when the Ligament's path is displayed in the visualizer. You do not have
     to invoke the base class ("Super") method, just replace it completely. This
-    method will be invoked during realizeDynamics() so the supplied a state has 
-    already been realized through Stage::Velocity and you can access time, 
-    position, and velocity dependent quantities. You must not attempt to 
-    realize the passed-in \a state any further since we are already in the 
-    middle of realizing here. Return SimTK::Vec3(SimTK::NaN) if you want to 
+    method will be invoked during realizeDynamics() so the supplied a state has
+    already been realized through Stage::Velocity and you can access time,
+    position, and velocity dependent quantities. You must not attempt to
+    realize the passed-in \a state any further since we are already in the
+    middle of realizing here. Return SimTK::Vec3(SimTK::NaN) if you want to
     leave the color unchanged (that's what the base class implementation does).
 
-    @param[in] state    
-        A SimTK::State already realized through Stage::Velocity. Do not 
+    @param[in] state
+        A SimTK::State already realized through Stage::Velocity. Do not
         attempt to realize it any further.
-    @returns 
+    @returns
         The desired color for the path as an RGB vector with each
         component ranging from 0 to 1, or NaN to indicate that the color
         should not be changed. **/
@@ -217,7 +217,7 @@ protected:
 	void extendRealizeDynamics(const SimTK::State& state) const override;
     void extendInitStateFromProperties(SimTK::State &state) const override;
 	void extendSetPropertiesFromState(const SimTK::State & 	state) override;
-    
+
 private:
 	void setNull();
 	void constructProperties();
