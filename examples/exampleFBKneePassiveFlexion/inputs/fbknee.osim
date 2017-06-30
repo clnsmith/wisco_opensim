@@ -11482,19 +11482,19 @@
 									<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame in which this path point is defined.).-->
 									<socket_parent_frame_connectee_name>../../../pelvis</socket_parent_frame_connectee_name>
 									<!--The fixed location of the path point expressed in its parent frame.-->
-									<location>-0.070000000000000007 0.050000000000000003 0.10000000000000001</location>
+									<location>-0.07 0.05 0.1</location>
 								</PathPoint>
 								<PathPoint name="ITB_r-P2">
 									<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame in which this path point is defined.).-->
 									<socket_parent_frame_connectee_name>../../../femur_r</socket_parent_frame_connectee_name>
 									<!--The fixed location of the path point expressed in its parent frame.-->
-									<location>-0.01 -0.0047000000000000002 0.059999999999999998</location>
+									<location>-0.01 -0.0047 0.06</location>
 								</PathPoint>
 								<PathPoint name="ITB_r-P3">
 									<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame in which this path point is defined.).-->
 									<socket_parent_frame_connectee_name>../../../tibia_r</socket_parent_frame_connectee_name>
 									<!--The fixed location of the path point expressed in its parent frame.-->
-									<location>0.010800000000000001 -0.031 0.034599999999999999</location>
+									<location>0.0108 -0.031 0.0346</location>
 								</PathPoint>
 							</objects>
 						</PathPointSet>
@@ -11523,7 +11523,7 @@
 					<!--Maximum overlap depth between contacting meshes-->
 					<max_proximity>0.01</max_proximity>
 					<!--Formulation for depth-pressure relationship: 'linear' or 'nonlinear'-->
-					<elastic_foundation_formulation>linear</elastic_foundation_formulation>
+					<elastic_foundation_formulation>nonlinear</elastic_foundation_formulation>
           <use_lumped_contact_model> true </use_lumped_contact_model>
           <use_smart_backside_contact> false </use_smart_backside_contact>
 					<!--Level of reporting for debugging purposes (0-silent, 1-simple, 2-detailed)-->
@@ -11557,7 +11557,7 @@
 					<!--Maximum overlap depth between contacting meshes-->
 					<max_proximity>0.01</max_proximity>
 					<!--Formulation for depth-pressure relationship: 'linear' or 'nonlinear'-->
-					<elastic_foundation_formulation>linear</elastic_foundation_formulation>
+					<elastic_foundation_formulation>nonlinear</elastic_foundation_formulation>
           <use_lumped_contact_model> true </use_lumped_contact_model>
           <use_smart_backside_contact> false </use_smart_backside_contact>
 					<!--Level of reporting for debugging purposes (0-silent, 1-simple, 2-detailed)-->
@@ -11587,9 +11587,9 @@
 					<!--Path to a Component that satisfies the Socket 'frame2' of type F (description: The second frame participating in this linker.).-->
 					<socket_frame2_connectee_name>../tibia_proximal_r</socket_frame2_connectee_name>
 					<!--Damping parameters resisting angular deviation rate. (Nm/(rad/s))-->
-					<rotational_damping>0.1 0.1 0.1</rotational_damping>
+					<rotational_damping>4.0 5.0 0.1</rotational_damping>
 					<!--Damping parameters resisting relative translational velocity. (N/(m/s))-->
-					<translational_damping>2 2 2</translational_damping>
+					<translational_damping>300.0 300.0 300.0</translational_damping>
 				</BushingForce>
 				<BushingForce name="PF_bushing">
 					<!--Path to a Component that satisfies the Socket 'frame1' of type F (description: The first frame participating in this linker.).-->
@@ -11597,9 +11597,9 @@
 					<!--Path to a Component that satisfies the Socket 'frame2' of type F (description: The second frame participating in this linker.).-->
 					<socket_frame2_connectee_name>../patella_r</socket_frame2_connectee_name>
 					<!--Damping parameters resisting angular deviation rate. (Nm/(rad/s))-->
-					<rotational_damping>0.1 0.1 0.1</rotational_damping>
+					<rotational_damping>2.0 2.0 0.2</rotational_damping>
 					<!--Damping parameters resisting relative translational velocity. (N/(m/s))-->
-					<translational_damping>0.50 0.50 0.50</translational_damping>
+					<translational_damping>50.0 50.0 50.0</translational_damping>
 				</BushingForce>
 			</objects>
 			<groups>

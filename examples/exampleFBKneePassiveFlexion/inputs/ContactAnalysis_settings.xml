@@ -12,7 +12,7 @@
 		<!--Initial time for the simulation.-->
 		<initial_time>       0.0 </initial_time>
 		<!--Final time for the simulation.-->
-		<final_time>      0.05 </final_time>
+		<final_time>      5.0 </final_time>
 		<AnalysisSet name="Analyses">
 			<objects>
 				<WISCO_ContactAnalysis name="ContactAnalysis">
@@ -35,7 +35,7 @@
               <output_proximity> true </output_proximity>
               <output_data_mesh_format> both </output_data_mesh_format>
               <write_h5_file> true </write_h5_file>
-              <h5_states_data> true </h5_states_data>
+              <h5_states_data> false </h5_states_data>
               <h5_kinematics_data> true </h5_kinematics_data>
               <h5_ligament_data> true </h5_ligament_data>
               <h5_muscle_data> true </h5_muscle_data>

@@ -532,15 +532,6 @@ void WISCO_ElasticFoundationForce::meshCollision(
             mT->getCollidingTriangles(triT, triC);
 
 			// Compute Proximity
-			/*float cnt_point[3];
-			mT->getCollisionPoint(cnt_point, false);
-
-			for (int j = 0; j < 3; ++j) {
-				contact_pnt_ground(j) = cnt_point[j];
-			}
-
-			depth = computeTriProximity(contact_pnt_ground, tri_cenC_ground(i));
-			*/
 			Vec3 vertex0 = meshT_ver_loc_ground(triT, 0);
 			Vec3 vertex1 = meshT_ver_loc_ground(triT, 1);
 			Vec3 vertex2 = meshT_ver_loc_ground(triT, 2);
@@ -581,12 +572,8 @@ void WISCO_ElasticFoundationForce::meshCollision(
 			getConnectee<WISCO_ContactMesh>("casting_mesh").get_mesh_frame() :
 			getConnectee<WISCO_ContactMesh>("target_mesh").get_mesh_frame();
 
-		Vector_<SimTK::Vec3> tri_norT = targetMesh.getTriangleNormals();
-		Vector_<SimTK::Vec3> tri_norC = castingMesh.getTriangleNormals();
-
 		for (int i = 0; i < castingMesh.getNumFaces(); ++i) {
-			//Vec3 prs_force = computeForceVector(meshC_tri_pressure(i), tri_areaC(i), -tri_norC(i));
-
+			
 			Vec3 prs_force = computeForceVector(meshC_tri_pressure(i), tri_areaC(i), -tri_norC_ground(i));
 			applyForceToPoint(state, frameC, tri_cenC(i), prs_force, bodyForces);
 
@@ -633,6 +620,23 @@ void WISCO_ElasticFoundationForce::meshCollision(
 	if (getModelingOption(state, "interpolate_vertex_data")) {
 		computeVertexValues(state, castingMesh, meshC_tri_pressure, meshC_tri_proximity, flipMeshes);
 	}
+	else {
+		Vector empty(castingMesh.getNumVertices());
+		empty = -1;
+
+		if (!flipMeshes) {
+			setCacheVariableValue<Vector>
+				(state, "casting_mesh.vertex.pressure", empty);
+			setCacheVariableValue<Vector>
+				(state, "casting_mesh.vertex.proximity", empty);
+		}
+		else {
+			setCacheVariableValue<Vector>
+				(state, "target_mesh.vertex.pressure", empty);
+			setCacheVariableValue<Vector>
+				(state, "target_mesh.vertex.proximity", empty);
+		}
+	}
 
 	//Debugging Report to console
 	//---------------------------
@@ -666,7 +670,7 @@ bool WISCO_ElasticFoundationForce::rayIntersectTriTest(Vec3 p, Vec3 d, Vec3 v0, 
 
     int i;
     Vec3 e1, e2, h, s, q;
-    double a, f, u, v, t;
+    double a, f, u, v;
 
     // find triangle edges
     for (i = 0; i<3; i++) {
@@ -1230,9 +1234,9 @@ void WISCO_ElasticFoundationForce::computeContactStats(
 				med_proximity(nMed) = tri_proximity(i);
 				med_area(nMed) = tri_area(i);
 				med_normal(nMed) = tri_normal(i);
-				med_tri_cenX = tri_cenX(i);
-				med_tri_cenY = tri_cenY(i);
-				med_tri_cenZ = tri_cenZ(i);
+				med_tri_cenX(nMed) = tri_cenX(i);
+				med_tri_cenY(nMed) = tri_cenY(i);
+				med_tri_cenZ(nMed) = tri_cenZ(i);
 				nMed++;
 
 				if (tri_pressure(i) > 0.0) nMedActive++;
@@ -1243,9 +1247,9 @@ void WISCO_ElasticFoundationForce::computeContactStats(
 				lat_proximity(nLat) = tri_proximity(i);
 				lat_area(nLat) = tri_area(i);
 				lat_normal(nLat) = tri_normal(i);
-				lat_tri_cenX = tri_cenX(i);
-				lat_tri_cenY = tri_cenY(i);
-				lat_tri_cenZ = tri_cenZ(i);
+				lat_tri_cenX(nLat) = tri_cenX(i);
+				lat_tri_cenY(nLat) = tri_cenY(i);
+				lat_tri_cenZ(nLat) = tri_cenZ(i);
 				nLat++;
 
 				if (tri_pressure(i) > 0.0) nLatActive++;

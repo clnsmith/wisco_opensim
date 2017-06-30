@@ -23,7 +23,7 @@
 #define OPENSIM_EXAMPLE_FBKNEE_PASSIVE_H_
 
 
-#include <OpenSim\OpenSim.h>
+#include <OpenSim/OpenSim.h>
 
 namespace OpenSim {
 

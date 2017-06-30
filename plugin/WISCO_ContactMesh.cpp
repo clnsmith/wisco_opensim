@@ -551,7 +551,8 @@ SimTK::Vector_<SimTK::Vec3> WISCO_ContactMesh::getTriangleNormalsInGround(const 
 
 	//Transform all of the faces to ground
 	for (int i = 0; i < mesh.getNumFaces(); ++i) {
-		triNormalsInGround(i) = get_mesh_frame().findStationLocationInGround(state, tri_normal(i));
+		//triNormalsInGround(i) = get_mesh_frame().findStationLocationInGround(state, tri_normal(i));
+		triNormalsInGround(i) = get_mesh_frame().getTransformInGround(state).xformFrameVecToBase(tri_normal(i));
 	}
 	return triNormalsInGround;
 }
@@ -606,11 +607,11 @@ SimTK::Matrix_<SimTK::Vec3> WISCO_ContactMesh::getFaceVertexLocationsInGround(co
 {
 	getModel().realizePosition(state);
 	SimTK::Matrix_<SimTK::Vec3> verLocInGround(mesh.getNumFaces(),3);
-
+	const auto& frame = get_mesh_frame();
 	//Transform all of the faces to ground
 	for (int i = 0; i < mesh.getNumFaces(); ++i) {
 		for (int j = 0; j < 3; ++j) {
-			verLocInGround(i,j) = get_mesh_frame().findStationLocationInGround(state, face_vertex_locations(i,j));
+			verLocInGround(i,j) = frame.findStationLocationInGround(state, face_vertex_locations(i,j));
 		}
 	}
 

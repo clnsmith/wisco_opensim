@@ -277,6 +277,15 @@ double WISCO_Ligament::computeReferenceLength(SimTK::State state) const {
 		//coord.setValue(state, coord.get_default_value());
 		coord.getValue(state);
 	}*/
+	/*else {
+		for (Coordinate coord : getModel().getComponentList<Coordinate>()) {
+			if (coord.getValue(state) != coord.getDefaultValue()) {
+				std::cout << coord.getName() << ": was not set to default value when calculating reference_length" << std::endl;
+			}
+		}
+	}*/
+
+
 	getModel().realizePosition(state);
 
 	return get_GeometryPath().getLength(state);
