@@ -18,7 +18,7 @@ classdef WISCO_h5_Analysis
     methods
         function obj = WISCO_h5_Analysis(h5_file)
             if (exist(h5_file,'file') ~=2)
-                fprintf('File: %s',file);
+                fprintf('File: %s',h5_file);
                 error('File does not exist!')                
             end
             obj.h5_file = h5_file;
@@ -34,7 +34,7 @@ classdef WISCO_h5_Analysis
                     obj.cnt = WISCO_ElasticFoundationForce_Analysis(h5_file);
                 elseif strcmp(h5_grp{i},'/Coordinates')
                     obj.coord = WISCO_Coordinate_Analysis(h5_file);
-                elseif strcmp(h5_grp{i},'/Muscles')
+                elseif strcmp(h5_grp{i},'/WISCO_IdealMuscle')
                     obj.msl = WISCO_Muscle_Analysis(h5_file);
                 elseif strcmp(h5_grp{i},'/States')
                     %obj.states = WISCO_States_Analysis(h5_file);

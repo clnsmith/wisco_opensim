@@ -33,6 +33,15 @@
 //=============================================================================
 //namespace OpenSim {
 
+#ifdef _WIN32
+#  ifdef WISCO_API_EXPORTS
+#    define WISCO_API __declspec(dllexport)
+#  else
+#    define WISCO_API __declspec(dllimport)
+#  endif
+#else
+#  define WISCO_API
+#endif
 //=============================================================================
 //STRING TOOLS
 //=============================================================================
@@ -41,8 +50,8 @@
 */
 std::vector<std::string> split_string(std::string s, std::string delimiter);
 
-bool contains_string(std::vector<std::string> s_vector, std::string s);
-bool contains_string(std::vector<std::string> s_vector, std::string s, int& index);
+WISCO_API bool contains_string(std::vector<std::string> s_vector, std::string s);
+WISCO_API bool contains_string(std::vector<std::string> s_vector, std::string s, int& index);
 
 //}; //namespace
 #endif // #ifndef __WISCO_HELPER_FUNCTIONS_h__

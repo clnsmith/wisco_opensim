@@ -34,7 +34,7 @@ classdef WISCO_Muscle_Analysis
             if(strcmp('.h5',ext))
                 obj.time = h5read(file,'/time');
                 
-                info = h5info(file,'/Muscles');
+                info = h5info(file,'/WISCO_IdealMuscle');
                 
                 obj.nMuscles = length(info.Groups);
                 
@@ -48,7 +48,7 @@ classdef WISCO_Muscle_Analysis
                     
                     for j = 1:nDataSet 
                         param = info.Groups(i).Datasets(j).Name;
-                        data_set_name = ['/Muscles/' obj.names{i} '/' param];
+                        data_set_name = ['/WISCO_IdealMuscle/' obj.names{i} '/' param];
                         obj.data.(obj.names{i}).(param) = h5read(file,data_set_name);
                     end
                 end
