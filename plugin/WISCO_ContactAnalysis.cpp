@@ -102,6 +102,7 @@ void WISCO_ContactAnalysis::constructProperties()
 	constructProperty_h5_ligament_data(true);
 	constructProperty_write_static_vtk_files(true);
 	constructProperty_write_dynamic_vtk_files(true);
+	constructProperty_vtk_include_attached_geometry(true);
 	constructProperty_dynamic_output_frame("ground");
 	constructProperty_write_variable_property_vtk("none");
 
@@ -241,7 +242,7 @@ int WISCO_ContactAnalysis::begin(SimTK::State& s)
 	}
 
 	s = _model->initSystem();
-
+	
 	for (int i = 0; i < _contact_force_names.size(); ++i) {
 
 		WISCO_ElasticFoundationForce& contactForce = _model->updComponent
@@ -265,8 +266,17 @@ int WISCO_ContactAnalysis::begin(SimTK::State& s)
 		}
 	}
 
-
 	//Setup Vertex location storage (dynamic output only)
+	setupDynamicVertexLocationStorage();
+	//Repose state
+	//s.setQ(initial_Q);
+	//s.setU(initial_U);
+
+	record(s);
+	return(0);
+}
+
+void WISCO_ContactAnalysis::setupDynamicVertexLocationStorage() {
 	if (get_write_dynamic_vtk_files()) {
 		_mesh_vertex_locations.resize(_contact_mesh_names.size());
 
@@ -279,16 +289,76 @@ int WISCO_ContactAnalysis::begin(SimTK::State& s)
 		}
 	}
 
+	if (get_vtk_include_attached_geometry()) {
+		std::string model_file = SimTK::Pathname::getAbsolutePathname(_model->getDocumentFileName());
+		std::string model_dir, dummy1, dummy2;
+		bool dummyBool;
+		SimTK::Pathname::deconstructPathname(model_file, dummyBool, model_dir, dummy1, dummy2);
+		
+		for (std::string cnt_name : _contact_force_names) {
+			WISCO_ElasticFoundationForce& contactForce = _model->updComponent
+				<WISCO_ElasticFoundationForce>(cnt_name);
 
-	//Repose state
-	//s.setQ(initial_Q);
-	//s.setU(initial_U);
+			const PhysicalFrame& CparentFrame = contactForce.getConnectee
+				<WISCO_ContactMesh>("casting_mesh").get_mesh_frame().getParentFrame();
 
-	record(s);
-	return(0);
+			int nCParentAttachGeo = CparentFrame.getProperty_attached_geometry().size();
+
+			for (int i = 0; i < nCParentAttachGeo; ++i) {
+
+				const Geometry& geo = CparentFrame.get_attached_geometry(i);
+
+				if (geo.getConcreteClassName() != "Mesh") {
+					continue;
+				}
+
+				if (contains_string(_attach_geo_names, geo.getName())) {
+					continue;
+				}
+
+
+				
+				Mesh* mesh = (Mesh*)&geo;
+				std::string file = mesh->get_mesh_file();
+				SimTK::PolygonalMesh ply_mesh;
+				ply_mesh.loadFile(model_dir + file);
+
+				_attach_geo_names.push_back(geo.getName());
+				_attach_geo_frames.push_back(CparentFrame.getName());
+				_attach_geo_meshes.push_back(ply_mesh);
+				_attach_geo_vertex_locations.push_back(SimTK::Matrix_<SimTK::Vec3>(ply_mesh.getNumVertices(), 0));
+			}
+
+			const PhysicalFrame& TparentFrame = contactForce.getConnectee
+				<WISCO_ContactMesh>("target_mesh").get_mesh_frame().getParentFrame();
+
+			int nTParentAttachGeo = TparentFrame.getProperty_attached_geometry().size();
+
+			for (int i = 0; i < nTParentAttachGeo; ++i) {
+
+				const Geometry& geo = TparentFrame.get_attached_geometry(i);
+
+				if (geo.getConcreteClassName() != "Mesh") {
+					continue;
+				}
+
+				if (contains_string(_attach_geo_names, geo.getName())) {
+					continue;
+				}
+
+				Mesh* mesh = (Mesh*)&geo;
+				std::string file = mesh->get_mesh_file();
+				SimTK::PolygonalMesh ply_mesh;
+				ply_mesh.loadFile(model_dir + file);
+
+				_attach_geo_names.push_back(geo.getName());
+				_attach_geo_frames.push_back(TparentFrame.getName());
+				_attach_geo_meshes.push_back(ply_mesh);
+				_attach_geo_vertex_locations.push_back(SimTK::Matrix_<SimTK::Vec3>(ply_mesh.getNumVertices(), 0));
+			}
+		}
+	}
 }
-
-
 //_____________________________________________________________________________
 /**
 * This method is called to perform the analysis.  It can be called during
@@ -341,13 +411,12 @@ int WISCO_ContactAnalysis::record(const SimTK::State& s)
 {
 	_model->realizeReport(s);
 
+
 	//Store mesh vertex locations
+	std::string frame = get_dynamic_output_frame();
+
 	if (get_write_dynamic_vtk_files()) {
-		std::string frame = get_dynamic_output_frame();
-
 		for (int i = 0; i < _contact_mesh_names.size(); ++i) {
-
-			//Target Mesh
 			int nRow = _mesh_vertex_locations[i].nrow();
 			int nCol = _mesh_vertex_locations[i].ncol();
 
@@ -356,13 +425,30 @@ int WISCO_ContactAnalysis::record(const SimTK::State& s)
 			SimTK::Vector_<SimTK::Vec3> ver = _model->getComponent<WISCO_ContactMesh>
 				(_contact_mesh_names[i]).getVertexLocationsInFrame(s, frame);
 
-			double test = ver(0)(0);
-
 			for (int j = 0; j < nRow; ++j){
 				_mesh_vertex_locations[i](j, nCol) = ver(j);
 			}
 		}
 
+	}
+
+	if (get_vtk_include_attached_geometry()) {
+		for (int i = 0; i < _attach_geo_names.size(); ++i) {
+			int nRow = _attach_geo_vertex_locations[i].nrow();
+			int nCol = _attach_geo_vertex_locations[i].ncol();
+
+			const SimTK::PolygonalMesh& mesh = _attach_geo_meshes[i];
+
+			_attach_geo_vertex_locations[i].resizeKeep(nRow, nCol + 1);
+
+			std::string out_frame_name = get_dynamic_output_frame();
+			const Frame& out_frame = _model->getComponent<Frame>(out_frame_name);
+			SimTK::Transform trans = _model->getComponent<PhysicalFrame>(_attach_geo_frames[i]).findTransformBetween(s, out_frame);
+
+			for (int j = 0; j < mesh.getNumVertices(); ++j) {
+				_attach_geo_vertex_locations[i](j, nCol) = trans.shiftFrameStationToBase(mesh.getVertexPosition(j));
+			}
+		}
 	}
     return(0);
 }
@@ -398,6 +484,15 @@ int WISCO_ContactAnalysis::printResults(const std::string &aBaseName,const std::
 		//Write Dynamic VTK Files
 		if (get_write_dynamic_vtk_files()) {
 			writeVTKFile(aDir, aBaseName, mesh_name, _contact_force_names, true);
+		}
+	}
+
+	if (get_vtk_include_attached_geometry()) {
+		if (get_write_static_vtk_files()) {
+			writeAttachedGeometryVTKFiles(aDir, aBaseName, false);
+		}
+		if (get_write_dynamic_vtk_files()) {
+			writeAttachedGeometryVTKFiles(aDir, aBaseName,true);
 		}
 	}
 
@@ -468,6 +563,43 @@ void WISCO_ContactAnalysis::writeVTKFile(const std::string& file_path,
 	}
 	delete mesh_vtp;
 
+}
+
+void WISCO_ContactAnalysis::writeAttachedGeometryVTKFiles(std::string file_path, std::string base_name, bool isDynamic) {
+	for (int i = 0; i < _attach_geo_names.size(); ++i) {
+		
+		//Face Connectivity
+		const SimTK::PolygonalMesh& mesh = _attach_geo_meshes[i];
+
+		SimTK::Matrix mesh_faces(mesh.getNumFaces(), mesh.getNumVerticesForFace(0));
+
+		for (int j = 0; j < mesh.getNumFaces(); ++j) {
+			for (int k = 0; k < mesh.getNumVerticesForFace(0); ++k) {
+				mesh_faces(j, k) = mesh.getFaceVertex(j, k);
+			}
+		}
+
+		//Write file
+		WISCO_VTPFileAdapter* mesh_vtp = new WISCO_VTPFileAdapter();
+		mesh_vtp->setDataFormat("binary");
+
+		SimTK::String mesh_output_format =
+			SimTK::String::toLower(get_output_data_mesh_format());
+
+		int nTimeStep = _attach_geo_vertex_locations[0].ncol();
+
+		if (isDynamic) {
+			mesh_vtp->write(base_name + "_" + _attach_geo_names[i] + "_dynamic_" + 
+				get_dynamic_output_frame(), file_path + "/",
+				_attach_geo_vertex_locations[i], mesh_faces, nTimeStep);
+		}
+		else { //static
+			mesh_vtp->write(base_name + "_" + _attach_geo_names[i] + "_static_" +
+				get_dynamic_output_frame(), file_path + "/",
+				mesh, nTimeStep);
+		}
+		delete mesh_vtp;
+	}
 }
 
 void WISCO_ContactAnalysis::collectMeshData(const std::string& mesh_name,
