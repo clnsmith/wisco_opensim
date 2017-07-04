@@ -3,7 +3,7 @@
 	<AnalyzeTool name="ball_and_floor">
 		<!--Name of the .osim file used to construct a model.-->
 		<!--<model_file> ../../shared/fbknee/fbknee_simple.osim </model_file>-->
-    <model_file> C:/github/wisco_opensim/build/examples/exampleFBKneePassiveFlexion/results/fbknee.osim </model_file>
+    <model_file> C:/github/wisco_opensim/build/examples/exampleFBKneePassiveFlexion/inputs/fbknee.osim </model_file>
 		<!--Replace the model's force set with sets specified in
 		    <force_set_files>? If false, the force set is appended to.-->
 		<results_directory> C:/github/wisco_opensim/build/examples/exampleFBKneePassiveFlexion/results </results_directory>
@@ -12,7 +12,7 @@
 		<!--Initial time for the simulation.-->
 		<initial_time>       0.0 </initial_time>
 		<!--Final time for the simulation.-->
-		<final_time>      5.0 </final_time>
+		<final_time>      0.05 </final_time>
 		<AnalysisSet name="Analyses">
 			<objects>
 				<WISCO_ContactAnalysis name="ContactAnalysis">
@@ -35,7 +35,7 @@
               <output_proximity> true </output_proximity>
               <output_data_mesh_format> both </output_data_mesh_format>
               <write_h5_file> true </write_h5_file>
-              <h5_states_data> false </h5_states_data>
+              <h5_states_data> true </h5_states_data>
               <h5_kinematics_data> true </h5_kinematics_data>
               <h5_ligament_data> true </h5_ligament_data>
               <h5_muscle_data> true </h5_muscle_data>
@@ -45,6 +45,7 @@
               <write_static_vtk_files> false </write_static_vtk_files>
               <write_dynamic_vtk_files> true </write_dynamic_vtk_files>
               <dynamic_output_frame> ground </dynamic_output_frame>
+              <vtk_include_attached_geometry> true </vtk_include_attached_geometry>
               <write_variable_property_vtk> none </write_variable_property_vtk>
 				</WISCO_ContactAnalysis>
 			</objects>

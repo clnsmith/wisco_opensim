@@ -446,7 +446,7 @@
 								<color>1 1 1</color>
 							</Appearance>
 							<!--Name of geometry file.-->
-							<mesh_file>ACLC01-R-femur-cart.stl</mesh_file>
+							<mesh_file>./Geometry/ACLC01-R-femur-cart.stl</mesh_file>
 						</Mesh>
 						<Mesh name="femur_distal_r_geom_2">
 							<!--Path to a Component that satisfies the Socket 'frame' of type Frame.-->
@@ -463,7 +463,7 @@
 								<color>1 1 1</color>
 							</Appearance>
 							<!--Name of geometry file.-->
-							<mesh_file>ACLC01-R-femur.stl</mesh_file>
+							<mesh_file>./Geometry/ACLC01-R-femur.stl</mesh_file>
 						</Mesh>
 					</attached_geometry>
 					<!--Set of wrap objects fixed to this body that GeometryPaths can wrap over.This property used to be a member of Body but was moved up with the introduction of Frames.-->
@@ -519,7 +519,7 @@
 								<color>1 1 1</color>
 							</Appearance>
 							<!--Name of geometry file.-->
-							<mesh_file>ACLC01-R-patella-cart_shift.stl</mesh_file>
+							<mesh_file>./Geometry/ACLC01-R-patella-cart_shift.stl</mesh_file>
 						</Mesh>
 						<Mesh name="patella_r_geom_2">
 							<!--Path to a Component that satisfies the Socket 'frame' of type Frame.-->
@@ -536,7 +536,7 @@
 								<color>1 1 1</color>
 							</Appearance>
 							<!--Name of geometry file.-->
-							<mesh_file>ACLC01-R-patella_shift.stl</mesh_file>
+							<mesh_file>./Geometry/ACLC01-R-patella_shift.stl</mesh_file>
 						</Mesh>
 					</attached_geometry>
 					<!--Set of wrap objects fixed to this body that GeometryPaths can wrap over.This property used to be a member of Body but was moved up with the introduction of Frames.-->
@@ -589,7 +589,7 @@
 								<color>1 1 1</color>
 							</Appearance>
 							<!--Name of geometry file.-->
-							<mesh_file>ACLC01-R-tibia-cart.stl</mesh_file>
+							<mesh_file>./Geometry/ACLC01-R-tibia-cart.stl</mesh_file>
 						</Mesh>
 						<Mesh name="tibia_proximal_r_geom_2">
 							<!--Path to a Component that satisfies the Socket 'frame' of type Frame.-->
@@ -606,7 +606,7 @@
 								<color>1 1 1</color>
 							</Appearance>
 							<!--Name of geometry file.-->
-							<mesh_file>ACLC01-R-tibia.stl</mesh_file>
+							<mesh_file>./Geometry/ACLC01-R-tibia.stl</mesh_file>
 						</Mesh>
 						<Mesh name="tibia_proximal_r_geom_3">
 							<!--Path to a Component that satisfies the Socket 'frame' of type Frame.-->
@@ -623,7 +623,7 @@
 								<color>1 1 1</color>
 							</Appearance>
 							<!--Name of geometry file.-->
-							<mesh_file>ACLC01-R-fibula.stl</mesh_file>
+							<mesh_file>./Geometry/ACLC01-R-fibula.stl</mesh_file>
 						</Mesh>
 					</attached_geometry>
 					<!--Set of wrap objects fixed to this body that GeometryPaths can wrap over.This property used to be a member of Body but was moved up with the introduction of Frames.-->
