@@ -64,6 +64,7 @@ public:
 	}
 
 protected:
+	//void extendAddToSystem(SimTK::MultibodySystem& system) const override;
 	void extendConnectToModel(Model& model) override;
 
 private:
