@@ -117,16 +117,37 @@ namespace OpenSim {
 		//----
 		SimTK::Vector getTriData(const SimTK::State& state,
 			const std::string& channel) const {
+			if (getModelingOption(state, "flip_meshes")) {
 				return getCacheVariableValue<SimTK::Vector>(state, channel);
+			}
+			else if (channel.substr(0, 12) == "casting_mesh") {
+				return getCacheVariableValue<SimTK::Vector>(state, channel);
+			}
+			else {
+				SimTK::Vector empty(1);
+				empty = -1;
+				return empty;
+			}
 		}
 
 		SimTK::Vector getVertexData(const SimTK::State& state,
 			const std::string& channel) const {
-			return getCacheVariableValue<SimTK::Vector>(state, channel);
+			if (getModelingOption(state, "interpolate_vertex_data")) {
+				return getCacheVariableValue<SimTK::Vector>(state, channel);
+			}
+			else {
+				SimTK::Vector empty(1);
+				empty = -1;
+				return empty;
+			}
 		}
 
 		int getTargetMeshActiveTri(const SimTK::State& state) const {
-			return getCacheVariableValue<int>(state, "target_mesh_n_active_tri");
+			if (getModelingOption(state, "flip_meshes")) {
+				return getCacheVariableValue<int>(state, "target_mesh_n_active_tri");
+			}
+			else
+				return -1;
 		}
 
 		int getCastingMeshActiveTri(const SimTK::State& state) const {
@@ -137,71 +158,81 @@ namespace OpenSim {
 		//-------------
 		double getContactStatsTotal(const SimTK::State& state,
 			const std::string& channel) const {
+			if (getModelingOption(state, "contact_stats")) {
+				for (std::string stat : _stat_names) {
 
-			for (std::string stat : _stat_names) {
-
-				if (channel == "casting_mesh.total." + stat) {
-					return getCacheVariableValue<double>(state, "casting_mesh.total." + stat);
-				}
-				else if (channel == "target_mesh.total." + stat) {
-					return getCacheVariableValue<double>(state, "target_mesh.total." + stat);
+					if (channel == "casting_mesh.total." + stat) {
+						return getCacheVariableValue<double>(state, "casting_mesh.total." + stat);
+					}
+					else if (channel == "target_mesh.total." + stat) {
+						return getCacheVariableValue<double>(state, "target_mesh.total." + stat);
+					}
 				}
 			}
+			else return -1;
 		}
 
 		SimTK::Vec3 getContactStatsTotalVec3(const SimTK::State& state,
 			const std::string& channel) const {
+			if (getModelingOption(state, "contact_stats")) {
+				for (std::string stat_vec3 : _stat_names_vec3) {
 
-			for (std::string stat_vec3 : _stat_names_vec3) {
-
-				if (channel == "casting_mesh.total." + stat_vec3) {
-					return getCacheVariableValue<SimTK::Vec3>(state, "casting_mesh.total." + stat_vec3);
+					if (channel == "casting_mesh.total." + stat_vec3) {
+						return getCacheVariableValue<SimTK::Vec3>(state, "casting_mesh.total." + stat_vec3);
+					}
+					else if (channel == "target_mesh.total." + stat_vec3) {
+						return getCacheVariableValue<SimTK::Vec3>(state, "target_mesh.total." + stat_vec3);
+					}
 				}
-				else if (channel == "target_mesh.total." + stat_vec3) {
-					return getCacheVariableValue<SimTK::Vec3>(state, "target_mesh.total." + stat_vec3);
-				}
+			}
+			else {
+				return SimTK::Vec3(-1);
 			}
 		}
 
 		double getContactStatsMedialLateral(const SimTK::State& state,
 			const std::string& channel) const {
-
-			for (std::string stat : _stat_names) {
-
-				if (channel == "casting_mesh.medial." + stat) {
-					return getCacheVariableValue<double>(state, "casting_mesh.medial." + stat);
-				}
-				else if (channel == "target_mesh.medial." + stat) {
-					return getCacheVariableValue<double>(state, "target_mesh.medial." + stat);
-				}
-				else if (channel == "casting_mesh.lateral." + stat) {
-					return getCacheVariableValue<double>(state, "casting_mesh.lateral." + stat);
-				}
-				else if (channel == "target_mesh.lateral." + stat) {
-					return getCacheVariableValue<double>(state, "target_mesh.lateral." + stat);
+			if (getModelingOption(state, "contact_stats_medial_lateral")) {
+				for (std::string stat : _stat_names) {
+					if (channel == "casting_mesh.medial." + stat) {
+						return getCacheVariableValue<double>(state, "casting_mesh.medial." + stat);
+					}
+					else if (channel == "target_mesh.medial." + stat) {
+						return getCacheVariableValue<double>(state, "target_mesh.medial." + stat);
+					}
+					else if (channel == "casting_mesh.lateral." + stat) {
+						return getCacheVariableValue<double>(state, "casting_mesh.lateral." + stat);
+					}
+					else if (channel == "target_mesh.lateral." + stat) {
+						return getCacheVariableValue<double>(state, "target_mesh.lateral." + stat);
+					}
 				}
 			}
+			else return -1;
 		}
 
 		SimTK::Vec3 getContactStatsMedialLateralVec3(const SimTK::State& state,
 			const std::string& channel) const {
+			if (getModelingOption(state, "contact_stats_medial_lateral")) {
+				for (std::string stat_vec3 : _stat_names_vec3) {
 
-			for (std::string stat_vec3 : _stat_names_vec3) {
-
-				if (channel == "casting_mesh.medial." + stat_vec3) {
-					return getCacheVariableValue<SimTK::Vec3>(state, "casting_mesh.medial." + stat_vec3);
-				}
-				else if (channel == "target_mesh.medial." + stat_vec3) {
-					return getCacheVariableValue<SimTK::Vec3>(state, "target_mesh.medial." + stat_vec3);
-				}
-				else if (channel == "casting_mesh.lateral." + stat_vec3) {
-					return getCacheVariableValue<SimTK::Vec3>(state, "casting_mesh.lateral." + stat_vec3);
-				}
-				else if (channel == "target_mesh.lateral." + stat_vec3) {
-					return getCacheVariableValue<SimTK::Vec3>(state, "target_mesh.lateral." + stat_vec3);					
+					if (channel == "casting_mesh.medial." + stat_vec3) {
+						return getCacheVariableValue<SimTK::Vec3>(state, "casting_mesh.medial." + stat_vec3);
+					}
+					else if (channel == "target_mesh.medial." + stat_vec3) {
+						return getCacheVariableValue<SimTK::Vec3>(state, "target_mesh.medial." + stat_vec3);
+					}
+					else if (channel == "casting_mesh.lateral." + stat_vec3) {
+						return getCacheVariableValue<SimTK::Vec3>(state, "casting_mesh.lateral." + stat_vec3);
+					}
+					else if (channel == "target_mesh.lateral." + stat_vec3) {
+						return getCacheVariableValue<SimTK::Vec3>(state, "target_mesh.lateral." + stat_vec3);
+					}
 				}
 			}
-			OPENSIM_THROW(Exception, "Output channel " + channel + " was not found.");
+			else {
+				return SimTK::Vec3(-1);
+			}
 		}
 
 			
