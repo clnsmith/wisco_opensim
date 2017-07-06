@@ -86,6 +86,8 @@ protected:
 		"Write .vtk files with meshes moving in space.")
 	OpenSim_DECLARE_PROPERTY(dynamic_output_frame,std::string,
 		"Model reference frame for mesh motion.")
+	OpenSim_DECLARE_PROPERTY(vtk_include_attached_geometry, bool,
+		"Generate .vtk files for attached_geometry meshes for visualization.")
 	OpenSim_DECLARE_PROPERTY(write_variable_property_vtk, std::string,
 		"Add cartilage thickness and material property maps to vtk files."
 		"Options: 'thickness','elastic modulus','poisson ratio' or 'all'");
@@ -120,6 +122,9 @@ private:
 	void writeVTKFile(const std::string& file_path,
 		const std::string& base_name, const std::string& mesh_name,
 		const std::vector<std::string>& contact_names, bool isDynamic);
+
+	void writeAttachedGeometryVTKFiles(std::string file_path, std::string base_name, bool isDynamic);
+
 	void writeH5File(const std::string &aBaseName, const std::string &aDir);
 	
 	void addContactReportsToH5File(WISCO_H5FileAdapter& h5_adapt, 
@@ -130,14 +135,18 @@ private:
 		std::string& data_type, std::string& data_name);
 	
 	void renameReportLabelsToH5Path(std::vector<std::string>& labels, std::string mesh_path);
+	void setupDynamicVertexLocationStorage();
 //=============================================================================
 // DATA
 //=============================================================================
 private:
 	std::vector<std::string> _contact_force_names;
 	std::vector<std::string> _contact_mesh_names;
+	std::vector<std::string> _attach_geo_names;
+	std::vector<std::string> _attach_geo_frames;
 	mutable std::vector<SimTK::Matrix_<SimTK::Vec3>> _mesh_vertex_locations;
-
+	std::vector<SimTK::Matrix_<SimTK::Vec3>> _attach_geo_vertex_locations;
+	std::vector<SimTK::PolygonalMesh> _attach_geo_meshes;
 //=============================================================================
 };  // END of class WISCO_ContactAnalysis
 
