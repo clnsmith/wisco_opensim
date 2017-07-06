@@ -3,10 +3,10 @@
 	<AnalyzeTool name="ball_and_floor">
 		<!--Name of the .osim file used to construct a model.-->
 		<!--<model_file> ../../shared/fbknee/fbknee_simple.osim </model_file>-->
-    <model_file> C:\github\wisco_opensim\source\examples\cmd\visualizeContact\fbknee.osim </model_file>
+    <model_file> C:\github\wisco_opensim\source\examples\exampleFBKneePassiveFlexion\inputs\fbknee.osim </model_file>
 		<!--Replace the model's force set with sets specified in
 		    <force_set_files>? If false, the force set is appended to.-->
-		<results_directory> C:/github/wisco_opensim/build/examples/cmd/visualizeContact/results </results_directory>
+		<results_directory> C:\github\wisco_opensim\build\examples\exampleFBKneePassiveFlexion\results </results_directory>
 		<!--Output precision.  It is 20 by default.-->
 		<output_precision> 20 </output_precision>
 		<!--Initial time for the simulation.-->
@@ -31,19 +31,19 @@
 					    not.-->
               <in_degrees> true </in_degrees>
     					<contact_names> all </contact_names>
-              <output_pressure> true </output_pressure>
-              <output_proximity> true </output_proximity>
+              <output_pressure> false </output_pressure>
+              <output_proximity> false </output_proximity>
               <output_data_mesh_format> vertex </output_data_mesh_format>
-              <write_h5_file> false </write_h5_file>
+              <write_h5_file> true </write_h5_file>
               <h5_states_data> false </h5_states_data>
               <h5_kinematics_data> false </h5_kinematics_data>
               <h5_ligament_data> false </h5_ligament_data>
               <h5_muscle_data> false </h5_muscle_data>
               <h5_raw_contact_data> false </h5_raw_contact_data>
               <h5_summary_contact_data> true </h5_summary_contact_data>
-              <h5_medial_lateral_summary> false </h5_medial_lateral_summary>
+              <h5_medial_lateral_summary> true </h5_medial_lateral_summary>
               <write_static_vtk_files> false </write_static_vtk_files>
-              <write_dynamic_vtk_files> true </write_dynamic_vtk_files>
+              <write_dynamic_vtk_files> false </write_dynamic_vtk_files>
               <dynamic_output_frame> ground </dynamic_output_frame>
               <vtk_include_attached_geometry> true </vtk_include_attached_geometry>
               <write_variable_property_vtk> none </write_variable_property_vtk>
@@ -54,7 +54,7 @@
 		<!--Motion file (.mot) or storage file (.sto) containing the time history
 		    of the generalized coordinates for the model. These can be specified
 		    in place of the states file.-->
-		<coordinates_file> C:\github\wisco_opensim\source\examples\cmd\visualizeContact\knee_flex_40_activation_0.5_results.mot </coordinates_file>
+		<coordinates_file> C:\github\wisco_opensim\build\examples\exampleFBKneePassiveFlexion\results\fbknee_passive_flex.mot </coordinates_file>
 		<!--Storage file (.sto) containing the time history of the generalized
 		    speeds for the model. If coordinates_file is used in place of
 		    states_file, these can be optionally set as well to give the speeds.

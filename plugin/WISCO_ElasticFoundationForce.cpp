@@ -474,9 +474,6 @@ void WISCO_ElasticFoundationForce::meshCollision(
 					meshC_tri_pressure(i) = computeTriPressure(
 						i, meshC_target_tri(i), depth, flipMeshes);
 
-					force += computeForceVector(meshC_tri_pressure(i), tri_areaC(i), -normal);
-					moment += computeMomentVector(meshC_tri_pressure(i), tri_areaC(i), -normal, tri_cenC(i));
-
 					meshC_nActiveTri++;
 					same++;
 					continue;
@@ -500,9 +497,6 @@ void WISCO_ElasticFoundationForce::meshCollision(
 						meshC_tri_proximity(i) = depth;
 						meshC_tri_pressure(i) = computeTriPressure(
 							i, neighborTri(j), depth, flipMeshes);
-
-						force += computeForceVector(meshC_tri_pressure(i), tri_areaC(i), -normal);
-						moment += computeMomentVector(meshC_tri_pressure(i), tri_areaC(i), -normal, tri_cenC(i));
 
 						meshC_target_tri(i) = neighborTri(j);
 
@@ -545,9 +539,6 @@ void WISCO_ElasticFoundationForce::meshCollision(
 				//Compute Pressure
 				meshC_tri_pressure(i) = computeTriPressure(i,triT,depth,flipMeshes);
 
-				force += computeForceVector(meshC_tri_pressure(i), tri_areaC(i), -normal);
-				moment += computeMomentVector(meshC_tri_pressure(i), tri_areaC(i), -normal, tri_cenC(i));
-
 				meshC_nActiveTri++;
 				diff++;
 				continue;
@@ -560,7 +551,7 @@ void WISCO_ElasticFoundationForce::meshCollision(
     }
 
 
-    //Apply Resultant Force and Moment
+    //Apply Point Forces
 	//-------------------------------------------------------------------------
 	if (applyContactForces) {
 		const PhysicalFrame& frameT = (!flipMeshes) ?
@@ -579,18 +570,6 @@ void WISCO_ElasticFoundationForce::meshCollision(
 			Vec3 point_in_mT = MeshCtoMeshT.shiftBaseStationToFrame(tri_cenC(i));
 			applyForceToPoint(state, frameT, point_in_mT, -prs_force, bodyForces);
 		}
-
-/*
-		applyForceToPoint(state, frameC, Vec3(0), force, bodyForces);
-		applyTorque(state, frameC, moment, bodyForces);
-
-		Vec3 point_in_mT = MeshCtoMeshT.shiftBaseStationToFrame(Vec3(0));
-
-		applyForceToPoint(state, frameT, point_in_mT, -force, bodyForces);
-		applyTorque(state, frameT, -moment, bodyForces);
-		*/
-		setCacheVariableValue<SimTK::Vec3>(state, "force", force);
-		setCacheVariableValue<SimTK::Vec3>(state, "torque", moment);
 	}
 
 
@@ -612,33 +591,14 @@ void WISCO_ElasticFoundationForce::meshCollision(
 	}
 
 	//Compute Contact Stats
-	//---------------------
 	if (getModelingOption(state, "contact_stats")) {
 		computeContactStats(state, castingMesh, meshC_tri_pressure, meshC_tri_proximity, meshC_nActiveTri, flipMeshes);
 	}
 	
-
 	//Interpolate vertex values
 	if (getModelingOption(state, "interpolate_vertex_data")) {
 		computeVertexValues(state, castingMesh, meshC_tri_pressure, meshC_tri_proximity, flipMeshes);
 	}
-/*	else {
-		Vector empty(castingMesh.getNumVertices());
-		empty = -1;
-
-		if (!flipMeshes) {
-			setCacheVariableValue<Vector>
-				(state, "casting_mesh.vertex.pressure", empty);
-			setCacheVariableValue<Vector>
-				(state, "casting_mesh.vertex.proximity", empty);
-		}
-		else {
-			setCacheVariableValue<Vector>
-				(state, "target_mesh.vertex.pressure", empty);
-			setCacheVariableValue<Vector>
-				(state, "target_mesh.vertex.proximity", empty);
-		}
-	}*/
 
 	//Debugging Report to console
 	//---------------------------
