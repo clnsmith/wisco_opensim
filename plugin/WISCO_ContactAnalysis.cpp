@@ -787,6 +787,9 @@ void WISCO_ContactAnalysis::addContactReportsToH5File(
 			if (r_contact_name != contact_name) continue;
 			if (r_mesh_name != mesh_name) continue;
 
+			if (!get_output_pressure() && r_data_name == "pressure") continue;
+			if (!get_output_proximity() && r_data_name == "proximity") continue;
+
 			if (contains_string(vector_names, r_data_name)) {
 				std::string data_path = mesh_path + "/" + r_data_type + "/" + r_data_name;
 				h5_adapt.writeDataSetVector(report.getTable(), data_path);

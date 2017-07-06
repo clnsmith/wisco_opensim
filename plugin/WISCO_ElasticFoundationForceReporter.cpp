@@ -41,6 +41,7 @@ void WISCO_ElasticFoundationForceReporter::extendConnectToModel(Model& model) {
 
 		//Face and Vertex
 		for (std::string mesh_data : mesh_data_names) {
+			
 			TableReporterVector* casting_rep = new TableReporterVector();
 			adoptSubcomponent(casting_rep);
 			setNextSubcomponentInSystem(*casting_rep);
