@@ -23,7 +23,7 @@
 
 #include "WISCO_CoordinateReporter.h"
 #include <OpenSim/Simulation/SimbodyEngine/Coordinate.h>
-#include <OpenSim\Simulation\Model\Model.h>
+#include <OpenSim/Simulation/Model/Model.h>
 
 using namespace OpenSim;
 
