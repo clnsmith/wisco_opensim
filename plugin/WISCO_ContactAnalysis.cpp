@@ -182,7 +182,7 @@ int WISCO_ContactAnalysis::begin(SimTK::State& s)
 	}
 
 	//Setup WISCO_ElasticFoundationForces in model for contact analysis
-	for (int i = 0; i < _contact_force_names.size(); ++i) {
+	/*for (int i = 0; i < _contact_force_names.size(); ++i) {
 
 		WISCO_ElasticFoundationForce& contactForce = _model->updComponent
 			<WISCO_ElasticFoundationForce>(_contact_force_names[i]);
@@ -203,7 +203,7 @@ int WISCO_ContactAnalysis::begin(SimTK::State& s)
 				contactForce.setModelingOption(s, "contact_stats_medial_lateral", 1);
 			}
 		}
-	}
+	}*/
 
 	//Contact Reporter
 	WISCO_ElasticFoundationForceReporter* cnt_rep = new WISCO_ElasticFoundationForceReporter();

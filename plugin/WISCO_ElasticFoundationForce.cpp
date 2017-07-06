@@ -257,8 +257,7 @@ void WISCO_ElasticFoundationForce::extendFinalizeFromProperties()
 	auto& Ccnt_ml_stat_vec3 = updOutput("casting_contact_stats_medial_lateral_vec3");
 	auto& Tcnt_ml_stat_vec3 = updOutput("target_contact_stats_medial_lateral_vec3");
 
-	for (std::string stat : _stat_names) {
-		
+	for (std::string stat : _stat_names) {		
 		Ccnt_tot_stat.addChannel("casting_mesh.total." + stat);
 		Tcnt_tot_stat.addChannel("target_mesh.total." + stat);
 
@@ -617,10 +616,13 @@ void WISCO_ElasticFoundationForce::meshCollision(
 	if (getModelingOption(state, "contact_stats")) {
 		computeContactStats(state, castingMesh, meshC_tri_pressure, meshC_tri_proximity, meshC_nActiveTri, flipMeshes);
 	}
+	
+
+	//Interpolate vertex values
 	if (getModelingOption(state, "interpolate_vertex_data")) {
 		computeVertexValues(state, castingMesh, meshC_tri_pressure, meshC_tri_proximity, flipMeshes);
 	}
-	else {
+/*	else {
 		Vector empty(castingMesh.getNumVertices());
 		empty = -1;
 
@@ -636,7 +638,7 @@ void WISCO_ElasticFoundationForce::meshCollision(
 			setCacheVariableValue<Vector>
 				(state, "target_mesh.vertex.proximity", empty);
 		}
-	}
+	}*/
 
 	//Debugging Report to console
 	//---------------------------
