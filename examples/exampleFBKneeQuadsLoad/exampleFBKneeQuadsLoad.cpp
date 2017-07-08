@@ -38,7 +38,7 @@ int main(int argc, const char * argv[])
 			//=====================================================================
 			// Configure the model
 			//=====================================================================
-			model.setUseVisualizer(true);
+			//model.setUseVisualizer(false);
 
 			SimTK::State& state = model.initSystem();
 
@@ -50,12 +50,12 @@ int main(int argc, const char * argv[])
 			Joint& pf = model.updJointSet().get("pf_r");
 
 			//Prescribe knee flexion
-			
-			
-			
+
+
+
 			int flex_col_i = pres_table.getColumnIndex("knee_flex_r");
 			const SimTK::Matrix& knee_flex_view = pres_table.getMatrix().getAsMatrix();
-			
+
 			std::vector<double> knee_flex(pres_table.getNumRows());
 
 			for (int i = 0; i < pres_table.getNumRows(); ++i) {
@@ -64,12 +64,12 @@ int main(int argc, const char * argv[])
 
 			SimmSpline knee_flex_func = SimmSpline(pres_time.size(), &pres_time[0], &knee_flex[0], "prescribed_knee_flex");
 
-			
+
 			knee.upd_coordinates(0).set_prescribed(true);
 			knee.upd_coordinates(0).set_prescribed_function(knee_flex_func);
 
 			for (int i = 0; i < 6; ++i) {
-				knee.upd_coordinates(i).set_locked(false);				
+				knee.upd_coordinates(i).set_locked(false);
 				knee.upd_coordinates(i).set_clamped(false);
 				pf.upd_coordinates(i).set_locked(false);
 				pf.upd_coordinates(i).set_clamped(false);
@@ -84,7 +84,7 @@ int main(int argc, const char * argv[])
 			}
 
 			//Add 2% muscle activation
-			
+
 			PrescribedController* msl_control = new PrescribedController();
 			msl_control->setActuators(model.updActuators());
 
@@ -92,12 +92,12 @@ int main(int argc, const char * argv[])
 				int pres_ind;
 				if (contains_string(pres_labels, msl.getName(),pres_ind)) {
 					const SimTK::Matrix& pres_table_view = pres_table.getMatrix().getAsMatrix();
-					
+
 					std::vector<double> Fval(pres_time.size());
 					for (int i = 0; i < pres_table.getNumRows(); ++i) {
 						Fval[i] = pres_table_view(i, pres_ind);
 					}
-					 
+
 					GCVSpline* control_func = new GCVSpline(5, Fval.size(), &pres_time[0], &Fval[0]);
 					msl_control->prescribeControlForActuator(msl.getName(), control_func);
 				}
@@ -114,48 +114,48 @@ int main(int argc, const char * argv[])
 			// Add display geometry.
 			model.updMatterSubsystem().setShowDefaultGeometry(false);
 
-			SimTK::Visualizer& viz = model.updVisualizer().updSimbodyVisualizer();
-			viz.setBackgroundColor(SimTK::White);
-			viz.setShowSimTime(true);			
-		
+			//SimTK::Visualizer& viz = model.updVisualizer().updSimbodyVisualizer();
+			//viz.setBackgroundColor(SimTK::White);
+			//viz.setShowSimTime(true);
+
 			//=====================================================================
 			// Simulate
 			//=====================================================================
 			if (false) {
 				double initialTime = pres_time[0];
 				int size = pres_time.size();
-				double finalTime = 0.1;
-				
-				
+				double finalTime = pres_time.back();
+
+
 				SimTK::RungeKuttaMersonIntegrator integrator(model.getSystem());
 				integrator.setAccuracy(0.00001);
 
 				//SimTK::CPodesIntegrator integrator(model.getSystem(), SimTK::CPodes::BDF, SimTK::CPodes::Newton);
 				//integrator.setAccuracy(0.000001);
-				
+
 				Manager manager(model, integrator);
 				manager.setInitialTime(initialTime); manager.setFinalTime(finalTime);
-				
+
 				manager.integrate(state);
 				manager.getStateStorage().resampleLinear(0.01);
 
-				
+
 				// Report Timer Results
 				duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
 				std::cout << "printf: " << duration << '\n';
 
-				
-				//=====================================================================       
+
+				//=====================================================================
 				//Write Outputs
 				//=====================================================================
 				model.print("./results/fbknee.osim");
 
 				//Motion file
-				
+
 				manager.getStateStorage().print(out_mot_file);
 
 			}
-		
+
 		//Perform ContactAnalysis
 		AnalyzeTool analyzeTool = AnalyzeTool(settings_file);
 		analyzeTool.run();
@@ -186,8 +186,8 @@ int main(int argc, const char * argv[])
 		return 1;
 	}
 	std::cout << "OpenSim example completed successfully" << std::endl;
-	std::cout << "Press return to continue" << std::endl;
-	std::cin.get();
+	//std::cout << "Press return to continue" << std::endl;
+	//std::cin.get();
 	return 0;
 }
 

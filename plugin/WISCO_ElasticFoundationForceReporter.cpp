@@ -21,7 +21,7 @@
  * limitations under the License.                                             *
  * -------------------------------------------------------------------------- */
 
-#include <OpenSim\Simulation\Model\Model.h>
+#include <OpenSim/Simulation/Model/Model.h>
 #include "WISCO_ElasticFoundationForceReporter.h"
 #include "WISCO_ElasticFoundationForce.h"
 

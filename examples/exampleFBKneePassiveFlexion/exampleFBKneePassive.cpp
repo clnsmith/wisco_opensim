@@ -18,7 +18,7 @@ int main()
 		//Load WISCO_Plugin
 		//static const std::string plugin_file{ "../../../install/plugin/WISCO_Plugin" };
 		static const std::string plugin_file{ "C:/github/wisco_opensim/install/plugin/WISCO_Plugin" };
-	
+
 		LoadOpenSimLibrary(plugin_file, true);
 
 		//Load Model
@@ -89,7 +89,7 @@ int main()
 
 		}
 
-		//Add 2% muscle activation 
+		//Add 2% muscle activation
 		PrescribedController* msl_control = new PrescribedController();
 		msl_control->setActuators(model.updActuators());
 
@@ -116,35 +116,35 @@ int main()
 
 			SimTK::Visualizer& viz = model.updVisualizer().updSimbodyVisualizer();
 			viz.setBackgroundColor(SimTK::White);
-			viz.setShowSimTime(true);			
-		
+			viz.setShowSimTime(true);
+
 			//=====================================================================
 			// Simulate
 			//=====================================================================
 			if (false) {
 				double initialTime = 0.0;
 				double finalTime = 5.0;
-				
-				
+
+
 				SimTK::RungeKuttaMersonIntegrator integrator(model.getSystem());
 				integrator.setAccuracy(0.00001);
 
 				//SimTK::CPodesIntegrator integrator(model.getSystem(), SimTK::CPodes::BDF, SimTK::CPodes::Newton);
 				//integrator.setAccuracy(0.00001);
-				
+
 				Manager manager(model, integrator);
 				manager.setInitialTime(initialTime); manager.setFinalTime(finalTime);
-				
+
 				manager.integrate(state);
 				manager.getStateStorage().resampleLinear(0.01);
 
-				
+
 				// Report Timer Results
 				duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
 				std::cout << "printf: " << duration << '\n';
 
-				
-				//=====================================================================       
+
+				//=====================================================================
 				//Write Outputs
 				//=====================================================================
 				model.print("./results/fbknee.osim");
@@ -154,7 +154,7 @@ int main()
 				manager.getStateStorage().print(out_mot_file);
 
 			}
-		
+
 		//Perform ContactAnalysis
 		AnalyzeTool analyzeTool = AnalyzeTool(settings_file);
 		analyzeTool.run();

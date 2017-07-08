@@ -23,7 +23,7 @@
 
 #include "WISCO_IdealMuscleReporter.h"
 #include "WISCO_IdealMuscle.h"
-#include <OpenSim\Simulation\Model\Model.h>
+#include <OpenSim/Simulation/Model/Model.h>
 
 using namespace OpenSim;
 
