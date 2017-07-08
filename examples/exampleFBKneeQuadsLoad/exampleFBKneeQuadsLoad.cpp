@@ -19,9 +19,10 @@ int main(int argc, const char * argv[])
 		// Read Command Line Arguments
 		const std::string plugin_file = argv[1];
 		const std::string model_file = argv[2];
-		const std::string prescribed_mot_file = argv[3];
-		const std::string out_mot_file = argv[4];
-		const std::string settings_file = argv[5];
+		const std::string out_model_file = argv[3];
+		const std::string prescribed_mot_file = argv[4];
+		const std::string out_mot_file = argv[5];
+		const std::string settings_file = argv[6];
 
 		//Load WISCO_Plugin
 		//LoadOpenSimLibrary(plugin_file, true);
@@ -105,25 +106,16 @@ int main(int argc, const char * argv[])
 					msl_control->prescribeControlForActuator(msl.getName(), new Constant(0.5));
 				}
 			}
-
 			model.addComponent(msl_control);
 
 			state = model.initSystem();
 			model.equilibrateMuscles(state);
 
-			// Add display geometry.
-			model.updMatterSubsystem().setShowDefaultGeometry(false);
-
-			//SimTK::Visualizer& viz = model.updVisualizer().updSimbodyVisualizer();
-			//viz.setBackgroundColor(SimTK::White);
-			//viz.setShowSimTime(true);
-
 			//=====================================================================
 			// Simulate
 			//=====================================================================
-			if (false) {
+			if (true) {
 				double initialTime = pres_time[0];
-				int size = pres_time.size();
 				double finalTime = pres_time.back();
 
 
@@ -148,7 +140,7 @@ int main(int argc, const char * argv[])
 				//=====================================================================
 				//Write Outputs
 				//=====================================================================
-				model.print("./results/fbknee.osim");
+				model.print(out_model_file);
 
 				//Motion file
 
