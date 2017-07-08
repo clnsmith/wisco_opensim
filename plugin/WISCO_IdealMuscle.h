@@ -76,10 +76,10 @@ public:
 			const std::string& channel) const {
 
 		if (channel == "activation") {
-			return getActivation(state);
+			return getControl(state);			
 		}
-		else if(channel == "force") {
-			return getTendonForce(state);
+		if(channel == "force") {
+			return getActuation(state);
 		}
 	}
 

@@ -68,7 +68,7 @@ if (WIN32 OR MSVC)
 
   find_library(HDF5_hl_cpp_lib_debug "libhdf5_hl_cpp_D.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
   find_library(HDF5_hl_cpp_lib "libhdf5_hl_cpp.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
- 
+
   find_library(HDF5_cpp_lib_debug "libhdf5_cpp_D.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
   find_library(HDF5_cpp_lib "libhdf5_cpp.lib" HINTS "${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/lib/")
 
@@ -90,16 +90,23 @@ endif()
 
 
  if(HDF5_lib AND HDF5_lib_debug)
-   set(HDF5_LIBRARIES optimized ${HDF5_hl_cpp_lib} ${HDF5_cpp_lib} ${HDF5_lib} debug ${HDF5_hl_cpp_lib_debug} ${HDF5_cpp_lib_debug} )
-      #set(HDF5_LIBRARIES optimized ${HDF5_hl_cpp_lib} ${HDF5_cpp_lib} ${HDF5_lib} debug ${HDF5_hl_cpp_lib_debug} ${HDF5_cpp_lib_debug} ${HDF5_lib_debug})
+   set(HDF5_LIBRARIES_hl optimized ${HDF5_hl_cpp_lib} debug ${HDF5_hl_cpp_lib_debug})
+   set(HDF5_LIBRARIES_cpp optimized ${HDF5_cpp_lib} debug ${HDF5_cpp_lib_debug})
+   set(HDF5_LIBRARIES optimized ${HDF5_lib} debug ${HDF5_lib_debug})
  elseif(HDF5_lib)
-   set(HDF5_LIBRARIES ${HDF5_hl_cpp_lib} ${HDF5_cpp_lib} ${HDF5_lib} )
+   set(HDF5_LIBRARIES_hl ${HDF5_hl_cpp_lib})
+   set(HDF5_LIBRARIES_cpp ${HDF5_cpp_lib})
+   set(HDF5_LIBRARIES ${HDF5_lib})
  elseif(HDF5_lib_debug)
-   set(HDF5_LIBRARIES ${HDF5_hl_cpp_lib_debug} ${HDF5_cpp_lib_debug} ${HDF5_lib_debug})
+   set(HDF5_LIBRARIES_hl ${HDF5_hl_cpp_lib_debug})
+   set(HDF5_LIBRARIES_cpp ${HDF5_cpp_lib_debug})
+   set(HDF5_LIBRARIES ${HDF5_lib_debug})
  else()
    message(SEND_ERROR "No HDF5_lib found!")
  endif()
 
+target_link_libraries(${PLUGIN_NAME} ${HDF5_LIBRARIES_hl})
+target_link_libraries(${PLUGIN_NAME} ${HDF5_LIBRARIES_cpp})
 target_link_libraries(${PLUGIN_NAME} ${HDF5_LIBRARIES})
 
 set_target_properties(

@@ -319,9 +319,20 @@ void WISCO_ContactAnalysis::setupDynamicVertexLocationStorage() {
 
 				
 				Mesh* mesh = (Mesh*)&geo;
-				std::string file = mesh->get_mesh_file();
+				std::string filename = model_dir + mesh->get_mesh_file();
+				std::ifstream file(filename);
+
+				if (!file) {
+					filename = model_dir + "Geometry/" + mesh->get_mesh_file();
+					file.open(filename);
+				}
+
+				if (!file) {
+					OPENSIM_THROW(Exception, "Attached Geometry file doesn't exist:\n" + model_dir + "[Geometry/]" + mesh->get_mesh_file());
+				}
+
 				SimTK::PolygonalMesh ply_mesh;
-				ply_mesh.loadFile(model_dir + file);
+				ply_mesh.loadFile(filename);
 
 				_attach_geo_names.push_back(geo.getName());
 				_attach_geo_frames.push_back(CparentFrame.getName());
@@ -347,9 +358,20 @@ void WISCO_ContactAnalysis::setupDynamicVertexLocationStorage() {
 				}
 
 				Mesh* mesh = (Mesh*)&geo;
-				std::string file = mesh->get_mesh_file();
+				std::string filename = model_dir + mesh->get_mesh_file();
+				std::ifstream file(filename);
+
+				if (!file) {
+					filename = model_dir + "Geometry/" + mesh->get_mesh_file();
+					file.open(filename);
+				}
+
+				if (!file) {
+					OPENSIM_THROW(Exception, "Attached Geometry file doesn't exist:\n" + model_dir + "[Geometry/]" + mesh->get_mesh_file());
+				}
+
 				SimTK::PolygonalMesh ply_mesh;
-				ply_mesh.loadFile(model_dir + file);
+				ply_mesh.loadFile(filename);
 
 				_attach_geo_names.push_back(geo.getName());
 				_attach_geo_frames.push_back(TparentFrame.getName());
