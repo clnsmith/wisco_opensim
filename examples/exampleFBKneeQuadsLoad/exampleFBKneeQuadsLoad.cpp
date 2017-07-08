@@ -24,7 +24,8 @@ int main(int argc, const char * argv[])
 		const std::string settings_file = argv[5];
 
 		//Load WISCO_Plugin
-		LoadOpenSimLibrary(plugin_file, true);
+		//LoadOpenSimLibrary(plugin_file, true);
+		LoadOpenSimLibrary("../../install/plugin/WISCO_plugin", true);
 
 		//Load Model
 		Model model(model_file);
@@ -101,7 +102,7 @@ int main(int argc, const char * argv[])
 					msl_control->prescribeControlForActuator(msl.getName(), control_func);
 				}
 				else {
-					msl_control->prescribeControlForActuator(msl.getName(), new Constant(0.02));
+					msl_control->prescribeControlForActuator(msl.getName(), new Constant(0.5));
 				}
 			}
 
@@ -120,10 +121,10 @@ int main(int argc, const char * argv[])
 			//=====================================================================
 			// Simulate
 			//=====================================================================
-			if (true) {
+			if (false) {
 				double initialTime = pres_time[0];
 				int size = pres_time.size();
-				double finalTime = pres_time[size];
+				double finalTime = 0.1;
 				
 				
 				SimTK::RungeKuttaMersonIntegrator integrator(model.getSystem());
@@ -147,7 +148,7 @@ int main(int argc, const char * argv[])
 				//=====================================================================       
 				//Write Outputs
 				//=====================================================================
-				//model.print("./results/fbknee.osim");
+				model.print("./results/fbknee.osim");
 
 				//Motion file
 				
