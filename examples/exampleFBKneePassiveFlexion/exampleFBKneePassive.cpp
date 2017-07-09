@@ -103,9 +103,9 @@ int main()
 			lig.set_normalized_damping_coefficient(0.003);
 		}
 			/*ConsoleReporter* con = new ConsoleReporter();
-			con->setName("itb_report");
-			con->addToReport(model.getComponent<WISCO_Ligament>("ITB_r").getOutput("dynamic_quantities").getChannel("force_total"));
-			con->set_report_time_interval(0.001);
+			con->setName("acl_report");
+			con->addToReport(model.getComponent<WISCO_Ligament>("ACLpl1").getOutput("dynamic_quantities").getChannel("force_total"));
+			con->set_report_time_interval(0.00001);
 			model.addComponent(con);*/
 
 			state = model.initSystem();
@@ -121,9 +121,9 @@ int main()
 			//=====================================================================
 			// Simulate
 			//=====================================================================
-			if (false) {
+			if (true) {
 				double initialTime = 0.0;
-				double finalTime = 5.0;
+				double finalTime = 0.000001;
 
 
 				SimTK::RungeKuttaMersonIntegrator integrator(model.getSystem());
@@ -157,7 +157,7 @@ int main()
 
 		//Perform ContactAnalysis
 		AnalyzeTool analyzeTool = AnalyzeTool(settings_file);
-		analyzeTool.run();
+		//analyzeTool.run();
 		// **********  END CODE  **********
 	}
 	catch (OpenSim::Exception ex)

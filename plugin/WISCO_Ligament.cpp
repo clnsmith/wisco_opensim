@@ -325,8 +325,9 @@ double WISCO_Ligament::computeReferenceStrain(const SimTK::State& state, SimTK::
 		}
 	}
 	else if (property_name.toLower() == "slack_length") {
-		double ref_strain = ref_length / property_value - 1;
+		ref_strain = ref_length / property_value - 1;
 	}
+	return ref_strain;
 
 }
 
@@ -501,7 +502,13 @@ void WISCO_Ligament::computeForce(const SimTK::State& s,
 		force_spring = 0.25*linearStiffness*strain*strain/(ligamentTransitionStrain/2);
 	else
 		force_spring =0.0;
-
+	/*
+	std::cout << length << std::endl;
+	std::cout << slackLength << std::endl;
+	std::cout << strain << std::endl;
+	std::cout << referenceStrain << std::endl;
+	std::cout << force_spring << std::endl;
+	*/
 	// Calculate Damping Force
 	double force_damping = 0.0;
 	if (strain > 0) {
