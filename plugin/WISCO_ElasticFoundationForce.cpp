@@ -1132,7 +1132,7 @@ void WISCO_ElasticFoundationForce::computeContactStats(
 	Vec3 contact_force(0.0);
 
 	for (int i = 0; i < nTri; ++i) {
-		contact_force += computeForceVector(tri_pressure(i), tri_area(i), tri_normal(i));
+		contact_force += computeForceVector(tri_pressure(i), tri_area(i), -tri_normal(i));
 	}
 
 	//Save contact stats as cache variable
@@ -1237,7 +1237,7 @@ void WISCO_ElasticFoundationForce::computeContactStats(
 
 		for (int i = 0; i < nMed; i++) {
 			if (med_pressure(i) > 0.0) {
-				med_contact_area = 1000000.0 * med_area(i); //convert to mm^2
+				med_contact_area += 1000000.0 * med_area(i); //convert to mm^2
 			}
 		}
 
