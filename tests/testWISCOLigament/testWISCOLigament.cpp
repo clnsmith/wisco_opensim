@@ -145,8 +145,8 @@ int main()
 		integrator.setMaximumStepSize(1.0e-2);
 		integrator.setAccuracy(0.00000001);
 		Manager manager(model, integrator);
-		manager.setInitialTime(0); manager.setFinalTime(1.0);
-		manager.integrate(state);
+		manager.initialize(state);
+		manager.integrate(1.0);
 
 		model.realizeReport(state);
 

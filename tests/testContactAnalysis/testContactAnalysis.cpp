@@ -16,7 +16,7 @@ int main()
 
 		//Run Analysis
 		AnalyzeTool analyzeTool = AnalyzeTool(settings_file);
-		analyzeTool.run();
+		analyzeTool.run(false);
 
 		// **********  END CODE  **********
 	}

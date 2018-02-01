@@ -71,14 +71,6 @@ int main()
 
 			}
 
-			//knee.upd_coordinates(0).set_locked(true);
-			/*
-			CustomJoint& pelvis_jnt = model.updComponent<CustomJoint>("gnd_pelvis");
-			pelvis_jnt.upd_coordinates(0).set_default_value( SimTK::Pi / 2);
-			CustomJoint& hip = model.updComponent<CustomJoint>("hip_r");
-			hip.upd_coordinates(0).set_default_value(SimTK::Pi / 6);
-			*/
-
 			model.set_gravity(Vec3(0, 0, 0));
 
 
@@ -87,17 +79,8 @@ int main()
 
 			}
 
-			PrescribedController* msl_control = new PrescribedController();
-			msl_control->setActuators(model.updActuators());
-
-			for (WISCO_IdealMuscle& msl : model.updComponentList<WISCO_IdealMuscle>()) {
-				msl_control->prescribeControlForActuator(msl.getName(), new Constant(0.02));
-			}
-
-			model.addComponent(msl_control);
-
 			state = model.initSystem();
-			model.equilibrateMuscles(state);
+
 
 			// Add display geometry.
 			model.updMatterSubsystem().setShowDefaultGeometry(false);
@@ -119,9 +102,8 @@ int main()
 				//integrator.setMinimumStepSize(0.000001);
 
 				Manager manager(model, integrator);
-				manager.setInitialTime(0.0); manager.setFinalTime(5.0);
-				
-				manager.integrate(state);
+				manager.initialize(state);
+				manager.integrate(5.0);
 
 				// Report Timer Results
 				duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;

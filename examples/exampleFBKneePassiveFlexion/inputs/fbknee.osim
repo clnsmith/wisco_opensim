@@ -44,8 +44,7 @@
 				<file_name>C:\github\wisco_opensim\source\examples\exampleFBKneePassiveFlexion\inputs\Geometry\ACLC01-R-femur-cart.stl</file_name>
         <medial_lateral_axis> z </medial_lateral_axis>
         <!--Local mesh frame to locate mesh in parent body.-->
-
-				<PhysicalOffsetFrame name="mesh_frame">
+        <PhysicalOffsetFrame name="mesh_frame">
 					<!--The geometry used to display the axes of this Frame.-->
 					<FrameGeometry name="frame_geometry">
 						<!--Path to a Component that satisfies the Socket 'frame' of type Frame.-->

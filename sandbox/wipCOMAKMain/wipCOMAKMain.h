@@ -24,8 +24,12 @@
 
 
 #include <OpenSim/OpenSim.h>
+#include "COMAKParameters.h"
 
-namespace OpenSim {
+//namespace OpenSim {
 
-}
+	void performScaleModel(OpenSim::COMAKParameters& comakParams);
+	void verifyCoordinateParameters(OpenSim::Model& model, OpenSim::COMAKParameters& comakParams);
+//}//OpenSim namespace
+
 #endif // OPENSIM_BUILD_CONTACT_BALL_FLOOR_H_
