@@ -1,12 +1,16 @@
+#ifndef _WISCO_SETTINGS_h_
+#define _WISCO_SETTINGS_h_
 /* -------------------------------------------------------------------------- *
- *                          OpenSim:  buildContactBallFloor.h                        *
+ *                           OpenSim:  Kinematics.h                           *
  * -------------------------------------------------------------------------- *
  * The OpenSim API is a toolkit for musculoskeletal modeling and simulation.  *
+ * See http://opensim.stanford.edu and the NOTICE file for more information.  *
  * OpenSim is developed at Stanford University and supported by the US        *
  * National Institutes of Health (U54 GM072970, R24 HD065690) and by DARPA    *
  * through the Warrior Web program.                                           *
  *                                                                            *
- * Copyright (c) 2005-2015 Stanford University and the Authors                *
+ * Copyright (c) 2005-2017 Stanford University and the Authors                *
+ * Author(s): Frank C. Anderson                                               *
  *                                                                            *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may    *
  * not use this file except in compliance with the License. You may obtain a  *
@@ -19,17 +23,29 @@
  * limitations under the License.                                             *
  * -------------------------------------------------------------------------- */
 
-#ifndef OPENSIM_BUILD_CONTACT_BALL_FLOOR_H_
-#define OPENSIM_BUILD_CONTACT_BALL_FLOOR_H_
 
+//=============================================================================
+// INCLUDES
+//=============================================================================
+#include <OpenSim/Simulation/Model/Analysis.h>
 
-#include <OpenSim/OpenSim.h>
-#include "COMAKParameters.h"
-
+//=============================================================================
+//=============================================================================
 //namespace OpenSim {
 
-	void performScaleModel(OpenSim::COMAKParameters& comakParams);
-	void verifyCoordinateParameters(OpenSim::Model& model, OpenSim::COMAKParameters& comakParams);
-//}//OpenSim namespace
+#ifdef _WIN32
+#  ifdef WISCO_API_EXPORTS
+#    define WISCO_API __declspec(dllexport)
+#  else
+#    define WISCO_API __declspec(dllimport)
+#  endif
+#else
+#  define WISCO_API
+#endif
+//=============================================================================
+//GLOBAL SETTINGS
+//=============================================================================
+static const std::string WISCO_HOME{ "C:/github/wisco_opensim/" };
 
-#endif // OPENSIM_BUILD_CONTACT_BALL_FLOOR_H_
+//}; //namespace
+#endif // #ifndef __WISCO_SETTINGS_h__

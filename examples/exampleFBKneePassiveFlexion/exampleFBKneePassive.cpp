@@ -9,6 +9,8 @@ using SimTK::Vec3;
 int main()
 {
 	try {
+		static const std::string WISCO_HOME{ "C:/github/wisco_opensim" };
+
 
 		// Timer
 		std::clock_t start;
@@ -22,7 +24,7 @@ int main()
 		LoadOpenSimLibrary(plugin_file, true);
 
 		//Load Model
-		static const std::string model_file{ "./inputs/fbknee.osim" };
+		static const std::string model_file = WISCO_HOME + "/source/models/fbknee/fbknee.osim";
 		static const std::string settings_file{ "./inputs/ContactAnalysis_settings.xml" };
 
 		Model model(model_file);
@@ -133,9 +135,10 @@ int main()
 				//integrator.setAccuracy(0.00001);
 
 				Manager manager(model, integrator);
-				manager.setInitialTime(initialTime); manager.setFinalTime(finalTime);
 
-				manager.integrate(state);
+				manager.initialize(state);
+				manager.integrate(finalTime);
+
 				manager.getStateStorage().resampleLinear(0.01);
 
 

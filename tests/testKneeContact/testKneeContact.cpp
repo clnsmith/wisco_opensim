@@ -145,8 +145,8 @@ int main()
 			SimTK::RungeKuttaMersonIntegrator integrator(model.getSystem());
 			integrator.setMaximumStepSize(1.0e-2);
 			Manager manager(model, integrator);
-			manager.setInitialTime(0); manager.setFinalTime(0.05);
-			manager.integrate(state);
+			manager.initialize(state);
+			manager.integrate(1.0);
 
 			static const std::string out_mot_file{ "./results/kneeContact.mot" };
 			manager.getStateStorage().print(out_mot_file);

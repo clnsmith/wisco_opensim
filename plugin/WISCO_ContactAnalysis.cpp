@@ -119,6 +119,66 @@ void WISCO_ContactAnalysis::setModel(Model& aModel)
 	// BASE CLASS
 	Super::setModel(aModel);
 
+	//Contact Reporter
+	WISCO_ElasticFoundationForceReporter* cnt_rep = new WISCO_ElasticFoundationForceReporter();
+	cnt_rep->setName("contact_reporter");
+	_model->addComponent(cnt_rep);
+	//cnt_rep->finalizeFromProperties();
+
+	//States	
+	if (get_h5_states_data()) {
+		StatesReporter* states_rep = new StatesReporter();
+		states_rep->setName("states_analysis");
+		states_rep->setStepInterval(getStepInterval());
+		states_rep->setPrintResultFiles(false);
+		_model->addAnalysis(states_rep);
+	}
+
+	//Kinematics
+	if (get_h5_kinematics_data()) {
+		WISCO_CoordinateReporter* coord_rep = new WISCO_CoordinateReporter();
+		coord_rep->setName("coordinate_reporter");
+		_model->addComponent(coord_rep);
+	}
+
+	//Muscle
+	if (get_h5_muscle_data()) {
+		WISCO_IdealMuscleReporter* msl_rep = new WISCO_IdealMuscleReporter();
+		msl_rep->setName("muscle_reporter");
+		_model->addComponent(msl_rep);
+	}
+	//Ligament
+	if (get_h5_ligament_data()) {
+		WISCO_LigamentReporter* lig_rep = new WISCO_LigamentReporter();
+		lig_rep->setName("ligament_reporter");
+		_model->addComponent(lig_rep);
+	}
+
+	SimTK::State s = _model->initSystem();
+
+	for (int i = 0; i < _contact_force_names.size(); ++i) {
+
+		WISCO_ElasticFoundationForce& contactForce = _model->updComponent
+			<WISCO_ElasticFoundationForce>(_contact_force_names[i]);
+
+		contactForce.setModelingOption(s, "flip_meshes", 1);
+
+		SimTK::String mesh_output_format =
+			SimTK::String::toLower(get_output_data_mesh_format());
+
+		if (mesh_output_format == "vertex" || mesh_output_format == "both") {
+			contactForce.setModelingOption(s, "interpolate_vertex_data", 1);
+		}
+
+		if (get_h5_summary_contact_data()) {
+			contactForce.setModelingOption(s, "contact_stats", 1);
+
+			if (get_h5_medial_lateral_summary()) {
+				contactForce.setModelingOption(s, "contact_stats_medial_lateral", 1);
+			}
+		}
+	}
+
 }
 
 
@@ -138,7 +198,7 @@ void WISCO_ContactAnalysis::setModel(Model& aModel)
 *
 * @return -1 on error, 0 otherwise.
 */
-int WISCO_ContactAnalysis::begin(SimTK::State& s)
+int WISCO_ContactAnalysis::begin(const SimTK::State& s)
 {
 	if (!proceed()) return(0);
 
@@ -180,31 +240,7 @@ int WISCO_ContactAnalysis::begin(SimTK::State& s)
 			}
 		}
 	}
-
-	//Setup WISCO_ElasticFoundationForces in model for contact analysis
-	/*for (int i = 0; i < _contact_force_names.size(); ++i) {
-
-		WISCO_ElasticFoundationForce& contactForce = _model->updComponent
-			<WISCO_ElasticFoundationForce>(_contact_force_names[i]);
-
-		contactForce.setModelingOption(s, "flip_meshes", 1);
-
-		SimTK::String mesh_output_format =
-			SimTK::String::toLower(get_output_data_mesh_format());
-
-		if (mesh_output_format == "vertex" || mesh_output_format == "both") {
-			contactForce.setModelingOption(s, "interpolate_vertex_data", 1);
-		}
-
-		if (get_h5_summary_contact_data()) {
-			contactForce.setModelingOption(s, "contact_stats", 1);
-
-			if (get_h5_medial_lateral_summary()) {
-				contactForce.setModelingOption(s, "contact_stats_medial_lateral", 1);
-			}
-		}
-	}*/
-
+	/*
 	//Contact Reporter
 	WISCO_ElasticFoundationForceReporter* cnt_rep = new WISCO_ElasticFoundationForceReporter();
 	cnt_rep->setName("contact_reporter");
@@ -217,7 +253,6 @@ int WISCO_ContactAnalysis::begin(SimTK::State& s)
 		states_rep->setName("states_analysis");
 		states_rep->setStepInterval(getStepInterval());
 		states_rep->setPrintResultFiles(false);
-		//states_rep->setInDegrees(true);
 		_model->addAnalysis(states_rep);
 	}
 
@@ -265,7 +300,7 @@ int WISCO_ContactAnalysis::begin(SimTK::State& s)
 			}
 		}
 	}
-
+	*/
 	//Setup Vertex location storage (dynamic output only)
 	setupDynamicVertexLocationStorage();
 	//Repose state
@@ -420,7 +455,7 @@ int WISCO_ContactAnalysis::step(const SimTK::State& s, int stepNumber)
 *
 * @return -1 on error, 0 otherwise.
 */
-int WISCO_ContactAnalysis::end(SimTK::State& s)
+int WISCO_ContactAnalysis::end(const SimTK::State& s)
 {
 	if (!proceed()) return 0;
 
@@ -709,7 +744,7 @@ void WISCO_ContactAnalysis::writeH5File(
 		//h5_adapter.writeStatesDataSet(states_table);
 
 		StatesReporter& states_analysis = dynamic_cast<StatesReporter&>(_model->updAnalysisSet().get("states_analysis"));
-		const TimeSeriesTable& states_table = states_analysis.getStatesStorage().getAsTimeSeriesTable();
+		const TimeSeriesTable& states_table = states_analysis.getStatesStorage().exportToTable();
 		h5_adapter.writeStatesDataSet(states_table);
 	}
 

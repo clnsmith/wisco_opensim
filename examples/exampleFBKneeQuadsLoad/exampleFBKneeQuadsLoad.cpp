@@ -126,9 +126,8 @@ int main(int argc, const char * argv[])
 				//integrator.setAccuracy(0.000001);
 
 				Manager manager(model, integrator);
-				manager.setInitialTime(initialTime); manager.setFinalTime(finalTime);
-
-				manager.integrate(state);
+				manager.initialize(state);
+				manager.integrate(finalTime);
 				manager.getStateStorage().resampleLinear(0.01);
 
 

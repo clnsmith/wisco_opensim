@@ -1,7 +1,5 @@
-#ifndef _WISCO_HELPER_FUNCTIONS_h_
-#define _WISCO_HELPER_FUNCTIONS_h_
 /* -------------------------------------------------------------------------- *
- *                           OpenSim:  Kinematics.h                           *
+ *                          OpenSim:  WISCO_ContactAnalysis.cpp               *
  * -------------------------------------------------------------------------- *
  * The OpenSim API is a toolkit for musculoskeletal modeling and simulation.  *
  * See http://opensim.stanford.edu and the NOTICE file for more information.  *
@@ -27,31 +25,52 @@
 //=============================================================================
 // INCLUDES
 //=============================================================================
-#include <OpenSim/Simulation/Model/Analysis.h>
+#include "WISCO_HelperFunctions.h"
+#include <algorithm>
+#include <vector>
+
+//using namespace OpenSim;
 
 //=============================================================================
+// String Tools
 //=============================================================================
-//namespace OpenSim {
+std::vector<std::string> split_string(std::string s, std::string delimiter)
+{
+	std::vector<std::string> split_s;
 
-#ifdef _WIN32
-#  ifdef WISCO_API_EXPORTS
-#    define WISCO_API __declspec(dllexport)
-#  else
-#    define WISCO_API __declspec(dllimport)
-#  endif
-#else
-#  define WISCO_API
-#endif
-//=============================================================================
-//STRING TOOLS
-//=============================================================================
-	
-/** Split string at delimiter
-*/
-std::vector<std::string> split_string(std::string s, std::string delimiter);
+	size_t pos = 0;
 
-WISCO_API bool contains_string(std::vector<std::string> s_vector, std::string s);
-WISCO_API bool contains_string(std::vector<std::string> s_vector, std::string s, int& index);
+	while ((pos = s.find(delimiter)) != std::string::npos) {
 
-//}; //namespace
-#endif // #ifndef __WISCO_HELPER_FUNCTIONS_h__
+		split_s.push_back(s.substr(0, pos));
+
+		s.erase(0, pos + delimiter.length());
+	}
+	split_s.push_back(s.substr(0, pos));
+
+	return split_s;
+}
+
+
+bool contains_string(std::vector<std::string> s_vector, std::string s)
+{
+	int index;
+	return contains_string(s_vector, s, index);
+}
+
+bool contains_string(std::vector<std::string> s_vector, std::string s, int& index)
+{
+	bool found;
+
+	auto it = std::find(s_vector.begin(), s_vector.end(), s);
+
+	if (it == s_vector.end()) {
+		found = false;
+		index = -1;
+	}
+	else {
+		found = true;
+		index = std::distance(s_vector.begin(), it);
+	}
+	return found;
+}

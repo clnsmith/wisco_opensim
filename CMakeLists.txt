@@ -55,8 +55,19 @@ include_directories(${WISCO_OPENSIM_DIR}/../install-dependencies/HDF5/include/)
 
 #Add Subdirectories
 #===============================================================================
-add_subdirectory(plugin)
+
 include_directories("${WISCO_OPENSIM_DIR}/plugin")
+
+FILE(GLOB TOOL_NAMES RELATIVE "${CMAKE_CURRENT_LIST_DIR}/dev_tools" "${CMAKE_CURRENT_LIST_DIR}/dev_tools/*")
+FOREACH(tool_name ${TOOL_NAMES})
+    IF(IS_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/dev_tools/${tool_name}")
+        include_directories("${WISCO_OPENSIM_DIR}/dev_tools/${tool_name}")
+    ENDIF()
+ENDFOREACH(tool_name)
+
+
+add_subdirectory(plugin)
 add_subdirectory(sandbox)
 add_subdirectory(tests)
 add_subdirectory(examples)
+add_subdirectory(dev_tools)

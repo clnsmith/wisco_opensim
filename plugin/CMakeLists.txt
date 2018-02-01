@@ -19,6 +19,7 @@ set_target_properties(${PLUGIN_NAME} PROPERTIES DEBUG_POSTFIX "_d")
 #Specify Libraries to Link
 
 target_link_libraries(${PLUGIN_NAME} ${OpenSim_LIBRARIES})
+target_link_libraries(${PLUGIN_NAME} ${WISCO_TOOLS_NAME})
 
 SET_TARGET_PROPERTIES (${PLUGIN_NAME} PROPERTIES FOLDER WISCO_Plugin)
 

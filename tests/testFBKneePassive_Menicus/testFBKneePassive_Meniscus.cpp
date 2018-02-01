@@ -67,7 +67,6 @@ int main()
 		state.setTime(0);
 		manager.initialize(state);
 		manager.integrate(0.5);
-		
 
 		// Report Timer Results
 		duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;

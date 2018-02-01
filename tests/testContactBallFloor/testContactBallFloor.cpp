@@ -63,8 +63,8 @@ int main()
 			SimTK::RungeKuttaMersonIntegrator integrator(model.getSystem());
 			integrator.setMaximumStepSize(1.0e-2);
 			Manager manager(model, integrator);
-			manager.setInitialTime(0); manager.setFinalTime(1.0);
-			manager.integrate(state);
+			manager.initialize(state);
+			manager.integrate(1.0);
 
 			// Report Timer Results
 			duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;

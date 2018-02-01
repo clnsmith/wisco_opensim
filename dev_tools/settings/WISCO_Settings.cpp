@@ -1,12 +1,14 @@
 /* -------------------------------------------------------------------------- *
- *                          OpenSim:  buildContactBallFloor.h                        *
+ *                          OpenSim:  WISCO_ContactAnalysis.cpp               *
  * -------------------------------------------------------------------------- *
  * The OpenSim API is a toolkit for musculoskeletal modeling and simulation.  *
+ * See http://opensim.stanford.edu and the NOTICE file for more information.  *
  * OpenSim is developed at Stanford University and supported by the US        *
  * National Institutes of Health (U54 GM072970, R24 HD065690) and by DARPA    *
  * through the Warrior Web program.                                           *
  *                                                                            *
- * Copyright (c) 2005-2015 Stanford University and the Authors                *
+ * Copyright (c) 2005-2017 Stanford University and the Authors                *
+ * Author(s): Frank C. Anderson                                               *
  *                                                                            *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may    *
  * not use this file except in compliance with the License. You may obtain a  *
@@ -19,17 +21,17 @@
  * limitations under the License.                                             *
  * -------------------------------------------------------------------------- */
 
-#ifndef OPENSIM_BUILD_CONTACT_BALL_FLOOR_H_
-#define OPENSIM_BUILD_CONTACT_BALL_FLOOR_H_
 
+//=============================================================================
+// INCLUDES
+//=============================================================================
+#include "WISCO_HelperFunctions.h"
+#include <algorithm>
+#include <vector>
 
-#include <OpenSim/OpenSim.h>
-#include "COMAKParameters.h"
+//using namespace OpenSim;
 
-//namespace OpenSim {
+//=============================================================================
+// String Tools
+//=============================================================================
 
-	void performScaleModel(OpenSim::COMAKParameters& comakParams);
-	void verifyCoordinateParameters(OpenSim::Model& model, OpenSim::COMAKParameters& comakParams);
-//}//OpenSim namespace
-
-#endif // OPENSIM_BUILD_CONTACT_BALL_FLOOR_H_

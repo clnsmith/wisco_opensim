@@ -102,9 +102,9 @@ public:
 
 	void setModel(Model& aModel) override;
 
-	int begin(SimTK::State& s) override;
+	int begin(const SimTK::State& s) override;
 	int step(const SimTK::State& s, int setNumber) override;
-	int end(SimTK::State& s) override;
+	int end(const SimTK::State& s) override;
 	int printResults(const std::string &aBaseName, const std::string &aDir, double aDT,
 		const std::string &aExtension);
 private:

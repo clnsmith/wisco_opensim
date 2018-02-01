@@ -81,6 +81,9 @@ public:
 		if(channel == "force") {
 			return getActuation(state);
 		}
+		else {
+			OPENSIM_THROW(Exception,"WISCO_IdealMuscle does not have a channel: " + channel)
+		}
 	}
 
 //==============================================================================
