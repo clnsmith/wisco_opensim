@@ -9,4 +9,4 @@ ENDFOREACH(example_name)
 
 #Copy Shared Folder to build
 #---------------------------
-file(COPY shared DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+#file(COPY shared DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

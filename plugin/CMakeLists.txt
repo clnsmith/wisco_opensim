@@ -27,7 +27,7 @@ SET_TARGET_PROPERTIES (${PLUGIN_NAME} PROPERTIES FOLDER WISCO_Plugin)
 # -----------------------
 set(special_ext_lib "HDF5;")
 
-set(WISCO_dependencies_install_dir "${WISCO_OPENSIM_DIR}/../install-dependencies" CACHE STRING "Location of install-dependencies directory")
+set(WISCO_dependencies_install_dir "${WISCO_OPENSIM_DIR}/../install-dependencies" CACHE PATH "Location of install-dependencies directory" FORCE)
 
 FILE(GLOB EXTERNAL_LIB_NAMES RELATIVE "${WISCO_dependencies_install_dir}/" "${WISCO_dependencies_install_dir}/*")
 
